@@ -1,0 +1,5 @@
+0001-Removal-of-VMS-from-the-main-source-as-it-s-not-requ.patch
+0002-Removed-GNAT-Pro-test.patch
+0003-Added-a-link_version-target-to-get-the-version-infor.patch
+0004-Add-version.o-object-to-list-of-files-to-link.patch
+0005-Added-Closure-values-which-were-missing-for-some-rea.patch

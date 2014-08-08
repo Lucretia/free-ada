@@ -1,0 +1,26 @@
+From 862a4d0bbda89b67125c495251066905a813505a Mon Sep 17 00:00:00 2001
+From: "Luke A. Guest" <laguest@archeia.com>
+Date: Fri, 8 Aug 2014 17:03:12 +0100
+Subject: [PATCH 4/5] Add version.o object to list of files to link.
+
+---
+ gprbuild.gpr | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/gprbuild.gpr b/gprbuild.gpr
+index aac9e65..51300b6 100644
+--- a/gprbuild.gpr
++++ b/gprbuild.gpr
+@@ -102,7 +102,8 @@ project Gprbuild is
+ 
+    package Linker is
+       Common_Switches := (project'Object_Dir & "/gprbuild_dummies.o",
+-                          project'Object_Dir & "/link.o");
++                          project'Object_Dir & "/link.o",
++                          project'Object_Dir & "/version.o");
+       --  We use project'Object_Dir here instead of GprBuild'Object_Dir
+       --  for compatibility with GNAT Pro 6.0.2.
+ 
+-- 
+1.8.5.5
+

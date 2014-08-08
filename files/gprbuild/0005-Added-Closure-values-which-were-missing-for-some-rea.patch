@@ -1,0 +1,76 @@
+From eb33b33219e34389bb1a08e5c394e0137481eb88 Mon Sep 17 00:00:00 2001
+From: "Luke A. Guest" <laguest@archeia.com>
+Date: Fri, 8 Aug 2014 17:31:42 +0100
+Subject: [PATCH 5/5] Added Closure values which were missing for some reason.
+
+---
+ src/gprbuild-main.adb         |  7 ++++---
+ src/gprbuild-post_compile.adb | 21 ++++++++++++---------
+ 2 files changed, 16 insertions(+), 12 deletions(-)
+
+diff --git a/src/gprbuild-main.adb b/src/gprbuild-main.adb
+index 0218c63..24000ed 100644
+--- a/src/gprbuild-main.adb
++++ b/src/gprbuild-main.adb
+@@ -183,9 +183,10 @@ procedure Gprbuild.Main is
+ 
+             if Is_Allowed_Language (Main_Id.Source.Language.Name) then
+                Queue.Insert
+-                 (Source     => (Format => Format_Gprbuild,
+-                                 Tree   => Main_Id.Tree,
+-                                 Id     => Main_Id.Source),
++                 (Source     => (Format  => Format_Gprbuild,
++                                 Tree    => Main_Id.Tree,
++                                 Id      => Main_Id.Source,
++                                 Closure => False),
+                   With_Roots => Builder_Data (Main_Id.Tree).Closure_Needed);
+ 
+                --  If a non Ada main has no roots, then all sources need to be
+diff --git a/src/gprbuild-post_compile.adb b/src/gprbuild-post_compile.adb
+index 2755482..435e9df 100644
+--- a/src/gprbuild-post_compile.adb
++++ b/src/gprbuild-post_compile.adb
+@@ -2557,18 +2557,20 @@ package body Gprbuild.Post_Compile is
+ 
+                if Main_Source.Language.Name = B_Data.Language.Name then
+                   Queue.Insert
+-                    (Source => (Format => Format_Gprbuild,
+-                                Tree   => Main_File.Tree,
+-                                Id     => Main_File.Source));
++                    (Source => (Format  => Format_Gprbuild,
++                                Tree    => Main_File.Tree,
++                                Id      => Main_File.Source,
++                                Closure => False));
+                end if;
+ 
+                Roots := Main_Source.Roots;
+ 
+                while Roots /= null loop
+                   Queue.Insert
+-                    (Source => (Format => Format_Gprbuild,
+-                                Tree   => Main_File.Tree,
+-                                Id     => Roots.Root));
++                    (Source => (Format  => Format_Gprbuild,
++                                Tree    => Main_File.Tree,
++                                Id      => Roots.Root,
++                                Closure => False));
+                   Roots := Roots.Next;
+                end loop;
+ 
+@@ -2626,9 +2628,10 @@ package body Gprbuild.Post_Compile is
+                         end;
+ 
+                         Queue.Insert
+-                          (Source => (Format => Format_Gprbuild,
+-                                      Tree   => Main_File.Tree,
+-                                      Id     => Source));
++                          (Source => (Format  => Format_Gprbuild,
++                                      Tree    => Main_File.Tree,
++                                      Id      => Source,
++                                      Closure => False));
+                      end if;
+ 
+                      Next (Iter);
+-- 
+1.8.5.5
+
