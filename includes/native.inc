@@ -167,7 +167,7 @@ function build_native_xmlada()
     cd $CBD/
 
     if [ ! -f .xmlada-unpacked ]; then
-	echo "  >> [10/$TASK_COUNT_TOTAL] Unpacking XMLAda sources (Native)..."
+	echo "  >> [17/$TASK_COUNT_TOTAL] Unpacking XMLAda sources (Native)..."
 	tar -xzpf $ARC/$XMLADA_VERSION.tar.gz
 
 	check_error .xmlada-unpacked
@@ -176,7 +176,7 @@ function build_native_xmlada()
     cd xmlada-$GPL_YEAR-src
 
     if [ ! -f .config ]; then
-	echo "  >> [11/$TASK_COUNT_TOTAL] Configuring XMLAda (Native)..."
+	echo "  >> [18/$TASK_COUNT_TOTAL] Configuring XMLAda (Native)..."
 	./configure \
 	    --prefix=$STAGE_BASE_DIR$INSTALL_DIR \
 	    &> $LOGPRE-xmlada-$GPL_YEAR-config.txt
@@ -185,13 +185,13 @@ function build_native_xmlada()
     fi
 
     if [ ! -f .make ]; then
-	echo "  >> [12/$TASK_COUNT_TOTAL] Building XMLAda (Native)..."
+	echo "  >> [19/$TASK_COUNT_TOTAL] Building XMLAda (Native)..."
 	make $JOBS &> $LOGPRE-xmlada-$GPL_YEAR-make.txt
 	check_error .make
     fi
 
     if [ ! -f .make-pkg-stage ]; then
-	echo "  >> [13/$TASK_COUNT_TOTAL] Packaging XMLAda (Native)..."
+	echo "  >> [20/$TASK_COUNT_TOTAL] Packaging XMLAda (Native)..."
 	make install &> $LOGPRE-xmlada-$GPL_YEAR-pkg.txt
 	check_error .make-pkg-stage
 
@@ -206,7 +206,7 @@ function build_native_xmlada()
     fi
 
     if [ ! -f .make-install ]; then
-	echo "  >> [14/$TASK_COUNT_TOTAL] Installing XMLAda (Native)..."
+	echo "  >> [21/$TASK_COUNT_TOTAL] Installing XMLAda (Native)..."
 	tar -xjpf $PKG/$PROJECT-$HOST-xmlada-$GPL_YEAR.tbz2 -C $INSTALL_BASE_DIR
 	check_error .make-install
     fi
@@ -419,6 +419,7 @@ function build_native_toolchain()
     fi
 
     build_fsf_gnat_util
+    build_native_xmlada
 #    build_native_adacore
 
     echo "  (x) Finished Processing GNAT/GCC for $NATIVE_LANGUAGES (Native)"
