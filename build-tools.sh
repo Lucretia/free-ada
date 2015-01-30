@@ -215,7 +215,9 @@ echo "  GMP           : " $GMP_VERSION
 echo "  MPFR          : " $MPFR_VERSION
 echo "  MPC           : " $MPC_VERSION
 echo "  ISL           : " $ISL_VERSION
-echo "  CLooG         : " $CLOOG_VERSION
+if [ $CLOOG_REQUIRED = "y" ]; then
+    echo "  CLooG         : " $CLOOG_VERSION
+fi
 #echo "  NewLib        : " $NEWLIB_VERSION
 echo "  Binutils      : " $BINUTILS_SRC_VERSION
 #echo "  GCC           : " $GCC_VERSION

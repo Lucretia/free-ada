@@ -142,13 +142,26 @@ fi
 
 # GDB Tarballs #####################################################################
 
-if [ ! -f gdb-$GDB_VERSION.tar.bz2 ]; then
+if [ ! -f gdb-$GDB_VERSION.tar.xz ]; then
 	echo "  >> Downloading gdb-$GDB_VERSION..."
 	wget -c $GDB_TARBALL
 
 	check_error_exit
 else
 	echo "  (x) Already have gdb-$GDB_VERSION"
+fi
+
+# GCC Tarballs #####################################################################
+
+if [ $GCC_RELEASE == "y" ]; then
+    if [ ! -f gcc-$GCC_VERSION.tar.bz2 ]; then
+	echo "  >> Downloading gcc-$GCC_VERSION..."
+	wget -c $GCC_TARBALL
+
+	check_error_exit
+    else
+	echo "  (x) Already have gcc-$GCC_VERSION"
+    fi
 fi
 
 # Prerequisite Libraries ###########################################################
@@ -169,13 +182,15 @@ else
 	echo "  (x) Already have isl-$ISL_VERSION"
 fi
 
-if [ ! -f cloog-$CLOOG_VERSION.tar.gz ]
-then
-    echo "  >> cloog-$CLOOG_VERSION.tar.gz..."
-    wget -c $CLOOG_MIRROR/cloog-$CLOOG_VERSION.tar.gz
-    check_error_exit
-else
-    echo "  (x) Already have cloog-$CLOOG_VERSION.tar.gz"
+if [ $CLOOG_REQUIRED = "y" ]; then
+    if [ ! -f cloog-$CLOOG_VERSION.tar.gz ]
+    then
+	echo "  >> cloog-$CLOOG_VERSION.tar.gz..."
+	wget -c $CLOOG_MIRROR/cloog-$CLOOG_VERSION.tar.gz
+	check_error_exit
+    else
+	echo "  (x) Already have cloog-$CLOOG_VERSION.tar.gz"
+    fi
 fi
 
 if [ ! -f mpfr-$MPFR_VERSION.tar.gz ]; then
@@ -235,10 +250,32 @@ if [ ! -d binutils-$BINUTILS_SRC_VERSION ]; then
 fi
 
 if [ ! -d gdb-$GDB_SRC_VERSION ]; then
-	echo "  >> Unpacking gdb-$GDB_VERSION.tar.bz2..."
-	tar -xjpf $ARC/gdb-$GDB_VERSION.tar.bz2
+	echo "  >> Unpacking gdb-$GDB_VERSION.tar.xz..."
+	tar -xJpf $ARC/gdb-$GDB_VERSION.tar.xz
 	check_error_exit
 fi
+
+if [ ! -d gcc-$GCC_SRC_VERSION ]; then
+	echo "  >> Unpacking gcc-$GCC_VERSION.tar.bz2..."
+	tar -xjpf $ARC/gcc-$GCC_VERSION.tar.bz2
+	check_error_exit
+fi
+
+# Apply any patches
+
+cd gcc-$GCC_VERSION
+
+if [ "$(ls -A $FILES/gcc-$GCC_VERSION/*)" ] && [ ! -f .patched ]; then
+    echo "  >> Patching gcc-$GCC_VERSION..."
+
+    for f in $FILES/gcc-$GCC_VERSION/*; do
+	patch -p1 < $f
+	check_error_exit
+	check_error .patched
+    done
+fi
+
+cd $SRC
 
 if [ ! -d gmp-$GMP_VERSION ]; then
 	echo "  >> Unpacking gmp-$GMP_VERSION.tar.bz2..."
@@ -290,20 +327,22 @@ if [ ! -d isl-$ISL_VERSION ]; then
 	check_error_exit
 fi
 
-if [ ! -d cloog-$CLOOG_VERSION ]; then
+if [ $CLOOG_REQUIRED = "y" ]; then
+    if [ ! -d cloog-$CLOOG_VERSION ]; then
 	echo "  >> Unpacking cloog-$CLOOG_VERSION.tar.gz..."
 	tar -xzpf $ARC/cloog-$CLOOG_VERSION.tar.gz
 	check_error_exit
+    fi
 fi
 
-if [ ! -d gcc ]; then
-	echo "  >> Downloading GCC sources from GitHub, may take a while..."
-	git clone $GCC_REPO gcc
-	check_error_exit
-else
-	echo "  >> Pulling latest GCC sources from GitHub..."
-	cd gcc
-	git pull
-fi
+# if [ ! -d gcc ]; then
+# 	echo "  >> Downloading GCC sources from GitHub, may take a while..."
+# 	git clone $GCC_REPO gcc
+# 	check_error_exit
+# else
+# 	echo "  >> Pulling latest GCC sources from GitHub..."
+# 	cd gcc
+# 	git pull
+# fi
 
 cd $SRC
