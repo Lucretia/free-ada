@@ -230,11 +230,11 @@ else
 	echo "  (x) Already have $ASIS_VERSION"
 fi
 
-if [ ! -f gnatmem-gpl-2014-src.tar.gz ]; then
-    echo "  >> Downloading gnatmem-gpl-2014..."
-    wget -c -O gnatmem-gpl-2014-src.tar.gz http://mirrors.cdn.adacore.com/art/6de65bb7e300e299711f90396710ace741123656
+if [ ! -f $GNATMEM_VERSION.tar.gz ]; then
+    echo "  >> Downloading $GNATMEM_VERSION..."
+    wget -c -O $GNATMEM_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/6de65bb7e300e299711f90396710ace741123656
 else
-	echo "  (x) Already have gnatmem-gpl-2014"
+	echo "  (x) Already have $GNATMEM_VERSION"
 fi
 
 #################################################################################
