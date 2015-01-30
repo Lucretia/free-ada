@@ -291,10 +291,56 @@ function build_native_gprbuild()
     echo "  >> GPRBuild (Native) Installed"
 }
 
+function build_native_asis()
+{
+    # Build ASIS
+    # Unpack in build dir, config, install to tmp, package, unpack in install_dir.
+    cd $CBD/
+
+    if [ ! -f .asis-unpacked ]; then
+	echo "  >> [30/$TASK_COUNT_TOTAL] Unpacking ASIS sources (Native)..."
+	tar -xzpf $ARC/$ASIS_VERSION.tar.gz
+
+	check_error .asis-unpacked
+    fi
+
+    cd $ASIS_VERSION
+
+    if [ ! -f .make ]; then
+	echo "  >> [31/$TASK_COUNT_TOTAL] Building ASIS (Native)..."
+	make $JOBS &> $LOGPRE-asis-$GPL_YEAR-make.txt
+	check_error .make
+    fi
+
+    if [ ! -f .make-pkg-stage ]; then
+	echo "  >> [32/$TASK_COUNT_TOTAL] Packaging ASIS (Native)..."
+	make install prefix=$STAGE_BASE_DIR$INSTALL_DIR &> $LOGPRE-asis-$GPL_YEAR-pkg.txt
+	check_error .make-pkg-stage
+
+	if [ ! -f .make-pkg ]; then
+	    cd $STAGE_DIR
+	    tar -cjpf $PKG/$PROJECT-$HOST-asis-$GPL_YEAR.tbz2 .
+	    check_error $OBD/$ASIS_VERSION/.make-pkg
+
+	    cd $OBD/$ASIS_VERSION
+	    rm -rf /tmp/opt
+	fi
+    fi
+
+    if [ ! -f .make-install ]; then
+	echo "  >> [33/$TASK_COUNT_TOTAL] Installing ASIS (Native)..."
+	tar -xjpf $PKG/$PROJECT-$HOST-asis-$GPL_YEAR.tbz2 -C $INSTALL_BASE_DIR
+	check_error .make-install
+    fi
+
+    echo "  >> ASIS (Native) Installed"
+}
+
 function build_native_adacore()
 {
     build_native_xmlada
     build_native_gprbuild
+    build_native_asis
 
     # Build ASIS
 
@@ -313,7 +359,7 @@ function build_native_toolchain()
     echo "  ( ) Start Processing GNAT/GCC for $NATIVE_LANGUAGES (Native)"
 
     # Constants
-    TASK_COUNT_TOTAL=22
+    TASK_COUNT_TOTAL=33
     VER="native"
     DIRS="binutils-$BINUTILS_SRC_VERSION gcc"
     LOGPRE=$LOG/native
