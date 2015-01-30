@@ -36,7 +36,6 @@ fname-uf.ads
 fname-uf.adb
 get_scos.adb
 get_scos.ads
-gnatvsn.adb
 gnatvsn.ads
 hostparm.ads
 krunch.adb
