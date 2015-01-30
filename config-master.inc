@@ -11,7 +11,7 @@
 ################################################################################
 # Project name, can change.
 ################################################################################
-export PROJECT_NAME=tinyada
+export PROJECT_NAME=free-ada
 
 ################################################################################
 # So we don't overwrite an already working toolchain! This is only valid when
