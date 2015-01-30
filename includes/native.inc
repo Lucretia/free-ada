@@ -79,6 +79,78 @@ function build_native_binutils() {
 }
 
 ################################################################################
+# This function builds a version of libgnat_util using AdaCore's GPL'd
+# makefiles, but uses the source from the FSF GNAT we are using. The source has
+# to match the compiler.
+#
+# This library is used by the other AdaCore tools.
+################################################################################
+function build_fsf_gnat_util()
+{
+    cd $CBD/
+
+    if [ ! -f .gnat_util-dir ]; then
+	echo "  >> [10/$TASK_COUNT_TOTAL] Creating directory for GNAT_Util (Native)..."
+	mkdir gnat_util
+
+	check_error .gnat_util-dir
+    fi
+
+    cd gnat_util
+
+    if [ ! -f .build-files-copied ]; then
+	echo "  >> [11/$TASK_COUNT_TOTAL] Copying build files for GNAT_Util (Native)..."
+	cp $SRC/gnat_util/* .
+
+	check_error .build-files-copied
+    fi
+
+    if [ ! -f .sources-copied ]; then
+	echo "  >> [12/$TASK_COUNT_TOTAL] Copying FSF GCC sources for GNAT_Util (Native)..."
+	for file in $(cat $SRC/gnat_util/MANIFEST.gnat_util); do cp $GCC_DIR/gcc/ada/"$file" .; done
+
+	check_error .sources-copied
+    fi
+
+    if [ ! -f .gen-sources-copied ]; then
+	echo "  >> [13/$TASK_COUNT_TOTAL] Copying FSF GCC generated sources for GNAT_Util (Native)..."
+	cp $CBD/gcc/gcc/ada/sdefault.adb .
+
+	check_error .gen-sources-copied
+    fi
+
+    if [ ! -f .make ]; then
+	echo "  >> [14/$TASK_COUNT_TOTAL] Building GNAT_Util (Native)..."
+	make &> $LOGPRE-gnat_util-make.txt
+
+	check_error .make
+    fi
+
+    if [ ! -f .make-pkg-stage ]; then
+	echo "  >> [15/$TASK_COUNT_TOTAL] Packaging GNAT_Util (Native)..."
+	make install prefix=$STAGE_BASE_DIR$INSTALL_DIR &> $LOGPRE-gnat_util-pkg.txt
+	check_error .make-pkg-stage
+
+	if [ ! -f .make-pkg ]; then
+	    cd $STAGE_DIR
+	    tar -cjpf $PKG/$PROJECT-$HOST-gnat_util.tbz2 .
+	    check_error $OBD/gnat_util/.make-pkg
+
+	    cd $OBD/gnat_util
+	    rm -rf /tmp/opt
+	fi
+    fi
+
+    if [ ! -f .make-install ]; then
+	echo "  >> [16/$TASK_COUNT_TOTAL] Installing GNAT_Util (Native)..."
+	tar -xjpf $PKG/$PROJECT-$HOST-gnat_util.tbz2 -C $INSTALL_BASE_DIR
+	check_error .make-install
+    fi
+
+    echo "  >> GNAT_Util (Native) Installed"
+}
+
+################################################################################
 # Build GPL'd AdaCore components that we need.
 #
 # XMLAda for gprbuild.
@@ -346,6 +418,7 @@ function build_native_toolchain()
 	check_error .make-install
     fi
 
+    build_fsf_gnat_util
 #    build_native_adacore
 
     echo "  (x) Finished Processing GNAT/GCC for $NATIVE_LANGUAGES (Native)"
