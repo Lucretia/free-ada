@@ -1,5 +1,8 @@
-0001-Removal-of-VMS-from-the-main-source-as-it-s-not-requ.patch
-0002-Removed-GNAT-Pro-test.patch
-0003-Added-a-link_version-target-to-get-the-version-infor.patch
-0004-Add-version.o-object-to-list-of-files-to-link.patch
-0005-Added-Closure-values-which-were-missing-for-some-rea.patch
+0001-Added-gnatvsn.adb-from-FSF-GCC-4.9.2.-Modified-to-re.patch
+0002-Removed-reference-to-Pro.patch
+0003-Removed-reference-to-Try_Help-which-is-GNAT-Pro-only.patch
+0004-Changed-parameter-name-from-Env-to-Root_Environment.patch
+0005-Added-back-in-Rewrite_Data-as-it-doesn-t-exist-in-4..patch
+0006-Fixed-up-Rewrite_Data.-Removed-Link-calls-as-doesn-t.patch
+0007-File-permissions-not-available-in-4.9-yet.patch
+0008-Timestamp-setting-not-available-on-4.9-yet.patch

@@ -1,0 +1,35 @@
+From 07582582197fb3756e59bd7938045c4b56331870 Mon Sep 17 00:00:00 2001
+From: "Luke A. Guest" <laguest@archeia.com>
+Date: Fri, 30 Jan 2015 19:22:54 +0000
+Subject: [PATCH 8/8] Timestamp setting not available on 4.9 yet.
+
+---
+ src/gprslave.adb | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
+
+diff --git a/src/gprslave.adb b/src/gprslave.adb
+index a9ce851..f342863 100644
+--- a/src/gprslave.adb
++++ b/src/gprslave.adb
+@@ -1261,17 +1261,8 @@ procedure Gprslave is
+          procedure Set_Stamp
+            (Path_Name : String; Time_Stamp : Time_Stamp_Type)
+          is
+-            TS : constant String := String (Time_Stamp);
+          begin
+-            Set_File_Last_Modify_Time_Stamp
+-              (Path_Name,
+-               GM_Time_Of
+-                 (Year   => Year_Type'Value (TS (1 .. 4)),
+-                  Month  => Month_Type'Value (TS (5 .. 6)),
+-                  Day    => Day_Type'Value (TS (7 .. 8)),
+-                  Hour   => Hour_Type'Value (TS (9 .. 10)),
+-                  Minute => Minute_Type'Value (TS (11 .. 12)),
+-                  Second => Second_Type'Value (TS (13 .. 14))));
++	    pragma Unreferenced (Path_Name, Time_Stamp);
+          end Set_Stamp;
+ 
+          ------------------
+-- 
+2.0.5
+

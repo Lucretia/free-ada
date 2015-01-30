@@ -1,0 +1,25 @@
+From dc71209972e5062499898d1ed1e040032658bd9a Mon Sep 17 00:00:00 2001
+From: "Luke A. Guest" <laguest@archeia.com>
+Date: Fri, 30 Jan 2015 19:22:33 +0000
+Subject: [PATCH 7/8] File permissions not available in 4.9 yet.
+
+---
+ src/gprinstall-install.adb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/gprinstall-install.adb b/src/gprinstall-install.adb
+index d174846..2b186ee 100644
+--- a/src/gprinstall-install.adb
++++ b/src/gprinstall-install.adb
+@@ -723,7 +723,7 @@ package body Gprinstall.Install is
+ 
+                if Executable then
+                   Set_Executable
+-                    (Dest_Filename, Mode => S_Owner + S_Group + S_Others);
++                    (Dest_Filename);
+                end if;
+ 
+                --  Add file to manifest
+-- 
+2.0.5
+

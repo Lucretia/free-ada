@@ -1,0 +1,25 @@
+From c90d15aeeb53c30ee4dd50b097914c3e57f518a9 Mon Sep 17 00:00:00 2001
+From: "Luke A. Guest" <laguest@archeia.com>
+Date: Fri, 30 Jan 2015 18:57:30 +0000
+Subject: [PATCH 2/8] Removed reference to Pro.
+
+---
+ src/gpr_version.adb | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/src/gpr_version.adb b/src/gpr_version.adb
+index 4ec66a8..64c82cc 100644
+--- a/src/gpr_version.adb
++++ b/src/gpr_version.adb
+@@ -66,8 +66,6 @@ package body GPR_Version is
+       end loop Last_Loop;
+ 
+       case Build_Type is
+-         when Gnatpro =>
+-            return "Pro " & Gpr_Version & " " & Date & Host;
+          when GPL =>
+             return "GPL " & Gpr_Version & " " & Date & Host;
+          when FSF =>
+-- 
+2.0.5
+
