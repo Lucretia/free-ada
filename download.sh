@@ -223,11 +223,11 @@ else
 	echo "  (x) Already have $GPRBUILD_VERSION"
 fi
 
-if [ ! -f asis-gpl-2014-src.tar.gz ]; then
-    echo "  >> Downloading asis-gpl-2014..."
-    wget -c -O asis-gpl-2014-src.tar.gz http://mirrors.cdn.adacore.com/art/51ecea080c3c6760cd024e8b467502de26f3c3f2
+if [ ! -f $ASIS_VERSION.tar.gz ]; then
+    echo "  >> Downloading $ASIS_VERSION..."
+    wget -c -O $ASIS_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$ASIS_HASH
 else
-	echo "  (x) Already have asis-gpl-2014"
+	echo "  (x) Already have $ASIS_VERSION"
 fi
 
 if [ ! -f gnatmem-gpl-2014-src.tar.gz ]; then
