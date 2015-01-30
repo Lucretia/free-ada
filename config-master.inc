@@ -131,19 +131,19 @@ export JOBS="-j $(($CORES*2))"
 # BINUTILS #####################################################################
 ################################################################################
 
-export BINUTILS_SNAPSHOT=y
+export BINUTILS_SNAPSHOT=n
 
 if [ $BINUTILS_SNAPSHOT == "y" ]; then
-	# Snapshot
-	export BINUTILS_VERSION=2.24.51 # filename version
-	BINUTILS_SRC_VERSION=2.24.51 # extracted version
-	BINUTILS_TARBALL=ftp://sourceware.org/pub/binutils/snapshots/binutils-$BINUTILS_VERSION.tar.bz2
+    # Snapshot
+    export BINUTILS_VERSION=2.24.51 # filename version
+    BINUTILS_SRC_VERSION=2.24.51 # extracted version
+    BINUTILS_TARBALL=ftp://sourceware.org/pub/binutils/snapshots/binutils-$BINUTILS_VERSION.tar.bz2
 else
-	# Release
-	export BINUTILS_VERSION=2.24 # filename version
-	BINUTILS_SRC_VERSION=2.24 # extracted version
-	export BINUTILS_MIRROR=http://ftp.gnu.org/gnu/binutils
-	BINUTILS_TARBALL=$BINUTILS_MIRROR/binutils-$BINUTILS_VERSION.tar.bz2
+    # Release
+    export BINUTILS_VERSION=2.25 # filename version
+    BINUTILS_SRC_VERSION=2.25 # extracted version
+    export BINUTILS_MIRROR=http://ftp.gnu.org/gnu/binutils
+    BINUTILS_TARBALL=$BINUTILS_MIRROR/binutils-$BINUTILS_VERSION.tar.bz2
 fi
 
 export BINUTILS_TARBALL
@@ -152,21 +152,33 @@ export BINUTILS_SRC_VERSION
 ################################################################################
 # GDB ##########################################################################
 ################################################################################
-export GDB_VERSION=7.7.1 # filename version
-export GDB_SRC_VERSION=7.7.1 # extracted version
+export GDB_VERSION=7.8.1 # filename version
+export GDB_SRC_VERSION=7.8.1 # extracted version
 export GDB_MIRROR=http://ftp.gnu.org/gnu/gdb
-export GDB_TARBALL=$GDB_MIRROR/gdb-$GDB_VERSION.tar.bz2
+export GDB_TARBALL=$GDB_MIRROR/gdb-$GDB_VERSION.tar.xz
 
 ################################################################################
 # GCC ##########################################################################
 ################################################################################
 
-export NATIVE_LANGUAGES="c,c++,objc,ada,go"
+export NATIVE_LANGUAGES="c,c++,objc,obj-c++,ada"
 
-# Always get GCC from GitHub now.
-export GCC_REPO=git@github.com:Lucretia/gcc.git
+export GCC_RELEASE=y
 
-export GCC_DIR=$SRC/gcc
+if [ $GCC_RELEASE == "y" ]; then
+    export GCC_VERSION=4.9.2 # filename version
+    export GCC_SRC_VERSION=4.9.2 # extracted version
+    export GCC_MIRROR=ftp://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-4.9.2
+    export GCC_TARBALL=$GCC_MIRROR/gcc-$GCC_VERSION.tar.bz2
+
+    export GCC_DIR=$SRC/gcc-$GCC_SRC_VERSION
+else
+    # Always get GCC from GitHub now.
+    #export GCC_REPO=git@github.com:Lucretia/gcc.git
+    #export GCC_REPO=https://github.com/gcc-mirror/gcc.git
+
+    export GCC_DIR=$SRC/gcc
+fi
 
 ################################################################################
 # Required libs ################################################################
@@ -208,8 +220,12 @@ export ISL_MIRROR=ftp://gcc.gnu.org/pub/gcc/infrastructure
 # not its included copy of ISL which is too old. Use --with-isl=system to direct
 # CLooG to pick up an already installed ISL. CLooG needs to be configured to use
 # GMP internally, use --with-bits=gmp to direct it to do that.
-export CLOOG_VERSION=0.18.1
-export CLOOG_MIRROR=ftp://gcc.gnu.org/pub/gcc/infrastructure
+export CLOOG_REQUIRED=y
+
+if [ $CLOOG_REQUIRED = "y" ]; then
+    export CLOOG_VERSION=0.18.1
+    export CLOOG_MIRROR=ftp://gcc.gnu.org/pub/gcc/infrastructure
+fi
 
 ################################################################################
 # AdaCore GPL components #######################################################
@@ -219,6 +235,10 @@ export XMLADA_HASH=065e0e6750288d9ecc2f7780d3ed8ef3c86ab991
 export XMLADA_VERSION=xmlada-gpl-$GPL_YEAR-src
 export GPRBUILD_HASH=c9d9271952a829ff1d355a01285a8558f24baf93
 export GPRBUILD_VERSION=gprbuild-gpl-$GPL_YEAR-src
+export ASIS_HASH=51ecea080c3c6760cd024e8b467502de26f3c3f2
+export ASIS_VERSION=asis-gpl-$GPL_YEAR-src
+export GNATMEM_HASH=6de65bb7e300e299711f90396710ace741123656
+export GNATMEM_VERSION=gnatmem-gpl-$GPL_YEAR-src
 
 ################################################################################
 # Additional Options ###########################################################
