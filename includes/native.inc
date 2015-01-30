@@ -8,6 +8,10 @@
 
 function build_native_binutils() {
 
+    if [ $CLOOG_REQUIRED = "y" ]; then
+	CLOOG_OPTS="--enable-cloog-backend=isl --disable-cloog-version-check --with-cloog=$INSTALL_DIR"
+    fi
+
     # Build BinUtils.
     cd $CBD/binutils-$BINUTILS_SRC_VERSION
 
@@ -26,15 +30,13 @@ function build_native_binutils() {
 	    --with-gnu-as \
 	    --with-gnu-ld \
             --with-ppl=$INSTALL_DIR \
-	    --enable-cloog-backend=isl \
-	    --disable-cloog-version-check \
 	    --disable-isl-version-check \
             --disable-ppl-version-check \
 	    --with-gmp=$INSTALL_DIR \
 	    --with-mpfr=$INSTALL_DIR \
 	    --with-mpc=$INSTALL_DIR \
 	    --with-isl=$INSTALL_DIR \
-	    --with-cloog=$INSTALL_DIR \
+	    $CLOOG_OPTS \
 	    &> $LOGPRE-binutils-$BINUTILS_SRC_VERSION-config.txt
 
 
@@ -289,13 +291,12 @@ function build_native_toolchain()
 	    --disable-libmudflap \
 	    --disable-nls \
 	    --disable-libstdcxx-pch \
-	    --disable-cloog-version-check \
 	    --disable-isl-version-check \
 	    --with-gmp=$INSTALL_DIR \
 	    --with-mpfr=$INSTALL_DIR \
 	    --with-mpc=$INSTALL_DIR \
 	    --with-isl=$INSTALL_DIR \
-	    --with-cloog=$INSTALL_DIR \
+	    $CLOOG_OPTS \
 	    CFLAGS="$EXTRA_NATIVE_CFLAGS" \
 	    $EXTRA_NATIVE_GCC_CONFIGURE_FLAGS \
 	    &> $LOGPRE-gcc-configure.txt
@@ -345,7 +346,7 @@ function build_native_toolchain()
 	check_error .make-install
     fi
 
-    build_native_adacore
+#    build_native_adacore
 
     echo "  (x) Finished Processing GNAT/GCC for $NATIVE_LANGUAGES (Native)"
 
