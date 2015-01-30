@@ -1,7 +1,7 @@
-From 917a76bdb741c534e05064c68c34857a03c177b4 Mon Sep 17 00:00:00 2001
+From c90d15aeeb53c30ee4dd50b097914c3e57f518a9 Mon Sep 17 00:00:00 2001
 From: "Luke A. Guest" <laguest@archeia.com>
-Date: Fri, 8 Aug 2014 16:52:25 +0100
-Subject: [PATCH 2/5] Removed GNAT Pro test.
+Date: Fri, 30 Jan 2015 18:57:30 +0000
+Subject: [PATCH 2/8] Removed reference to Pro.
 
 ---
  src/gpr_version.adb | 2 --
@@ -21,5 +21,5 @@ index 4ec66a8..64c82cc 100644
              return "GPL " & Gpr_Version & " " & Date & Host;
           when FSF =>
 -- 
-1.8.5.5
+2.0.5
 

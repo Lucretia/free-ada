@@ -1,0 +1,25 @@
+From 6f6c113dd6c949f19d4b48df3d2f807d5832f714 Mon Sep 17 00:00:00 2001
+From: "Luke A. Guest" <laguest@archeia.com>
+Date: Fri, 30 Jan 2015 19:11:42 +0000
+Subject: [PATCH 4/8] Changed parameter name from Env to Root_Environment.
+
+---
+ src/gprbuild-main.adb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/gprbuild-main.adb b/src/gprbuild-main.adb
+index 4144f60..2ed45a5 100644
+--- a/src/gprbuild-main.adb
++++ b/src/gprbuild-main.adb
+@@ -2098,7 +2098,7 @@ begin
+ 
+    Do_Compute_Builder_Switches
+      (Project_Tree     => Project_Tree,
+-      Env              => Root_Environment,
++      Root_Environment => Root_Environment,
+       Main_Project     => Main_Project);
+ 
+    Queue.Initialize (Opt.One_Compilation_Per_Obj_Dir);
+-- 
+2.0.5
+

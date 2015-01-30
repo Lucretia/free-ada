@@ -1,0 +1,63 @@
+From 8731b60512dfaae2cdbee50a2625549bda001cbe Mon Sep 17 00:00:00 2001
+From: "Luke A. Guest" <laguest@archeia.com>
+Date: Fri, 30 Jan 2015 18:58:50 +0000
+Subject: [PATCH 3/8] Removed reference to Try_Help which is GNAT Pro only at
+ this time.
+
+---
+ src/gprbuild-main.adb   | 1 -
+ src/gprclean-main.adb   | 1 -
+ src/gprconfig-main.adb  | 1 -
+ src/gprinstall-main.adb | 1 -
+ 4 files changed, 4 deletions(-)
+
+diff --git a/src/gprbuild-main.adb b/src/gprbuild-main.adb
+index 860ae23..4144f60 100644
+--- a/src/gprbuild-main.adb
++++ b/src/gprbuild-main.adb
+@@ -1573,7 +1573,6 @@ procedure Gprbuild.Main is
+       end if;
+ 
+       if Project_File_Name = null then
+-         Try_Help;
+          Fail_Program
+            (Project_Tree,
+             "no project file specified and no default project file");
+diff --git a/src/gprclean-main.adb b/src/gprclean-main.adb
+index 8cac791..135b430 100644
+--- a/src/gprclean-main.adb
++++ b/src/gprclean-main.adb
+@@ -642,7 +642,6 @@ begin
+    --  Check that a project file was specified and get the configuration
+ 
+    if Project_File_Name = null then
+-      Try_Help;
+       Fail_Program
+         (Project_Tree,
+          "no project file specified and no default project file");
+diff --git a/src/gprconfig-main.adb b/src/gprconfig-main.adb
+index 476690a..d7178a5 100644
+--- a/src/gprconfig-main.adb
++++ b/src/gprconfig-main.adb
+@@ -642,6 +642,5 @@ exception
+       null;
+    when Invalid_Switch | Invalid_Parameter =>
+       Put_Line ("Invalid command line switch: -" & Full_Switch);
+-      Try_Help;
+       Ada.Command_Line.Set_Exit_Status (2);
+ end GprConfig.Main;
+diff --git a/src/gprinstall-main.adb b/src/gprinstall-main.adb
+index f736eb6..fd9d714 100644
+--- a/src/gprinstall-main.adb
++++ b/src/gprinstall-main.adb
+@@ -556,7 +556,6 @@ procedure Gprinstall.Main is
+       if Project_File_Name = null
+         and then Usage_Mode /= List_Mode
+       then
+-         Try_Help;
+          Fail_Program (Project_Tree, "no project file specified");
+       end if;
+ 
+-- 
+2.0.5
+

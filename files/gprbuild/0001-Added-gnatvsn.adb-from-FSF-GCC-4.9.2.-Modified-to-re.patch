@@ -1,0 +1,103 @@
+From 6c94308813cb670419ea87b844643a8b9fc93771 Mon Sep 17 00:00:00 2001
+From: "Luke A. Guest" <laguest@archeia.com>
+Date: Fri, 30 Jan 2015 18:57:08 +0000
+Subject: [PATCH 1/8] Added gnatvsn.adb from FSF GCC 4.9.2. Modified to return
+ the compiler version from attribute.
+
+---
+ gnat/MANIFEST.GPRBUILD |  1 -
+ gnat/gnatvsn.adb       | 45 ++++++++++-----------------------------------
+ 2 files changed, 10 insertions(+), 36 deletions(-)
+
+diff --git a/gnat/MANIFEST.GPRBUILD b/gnat/MANIFEST.GPRBUILD
+index 609dbe9..4ced04a 100644
+--- a/gnat/MANIFEST.GPRBUILD
++++ b/gnat/MANIFEST.GPRBUILD
+@@ -36,7 +36,6 @@ fname-uf.ads
+ fname.adb
+ fname.ads
+ gnat_style.css
+-gnatvsn.adb
+ gnatvsn.ads
+ hostparm.ads
+ krunch.adb
+diff --git a/gnat/gnatvsn.adb b/gnat/gnatvsn.adb
+index c5a3cee..84b34b6 100644
+--- a/gnat/gnatvsn.adb
++++ b/gnat/gnatvsn.adb
+@@ -6,7 +6,7 @@
+ --                                                                          --
+ --                                 B o d y                                  --
+ --                                                                          --
+---          Copyright (C) 1992-2007, Free Software Foundation, Inc.         --
++--       Copyright (C) 2002-2009 Free Software Foundation, Inc.             --
+ --                                                                          --
+ -- GNAT is free software;  you can  redistribute it  and/or modify it under --
+ -- terms of the  GNU General Public License as published  by the Free Soft- --
+@@ -15,9 +15,9 @@
+ -- OUT ANY WARRANTY;  without even the  implied warranty of MERCHANTABILITY --
+ -- or FITNESS FOR A PARTICULAR PURPOSE.                                     --
+ --                                                                          --
+---                                                                          --
+---                                                                          --
+---                                                                          --
++-- As a special exception under Section 7 of GPL version 3, you are granted --
++-- additional permissions described in the GCC Runtime Library Exception,   --
++-- version 3.1, as published by the Free Software Foundation.               --
+ --                                                                          --
+ -- You should have received a copy of the GNU General Public License and    --
+ -- a copy of the GCC Runtime Library Exception along with this program;     --
+@@ -46,29 +46,11 @@ package body Gnatvsn is
+ 
+    function Gnat_Free_Software return String is
+    begin
+-      case Build_Type is
+-         when GPL | FSF =>
+-            return
+-              "This is free software; see the source for copying conditions." &
+-              ASCII.LF &
+-              "There is NO warranty; not even for MERCHANTABILITY or FITNESS" &
+-              " FOR A PARTICULAR PURPOSE.";
+-
+-         when Gnatpro =>
+-            return
+-              "This is free software; see the source for copying conditions." &
+-               ASCII.LF &
+-               "See your AdaCore support agreement for details of warranty" &
+-               " and support." &
+-               ASCII.LF &
+-               "If you do not have a current support agreement, then there" &
+-               " is absolutely" &
+-               ASCII.LF &
+-               "no warranty; not even for MERCHANTABILITY or FITNESS FOR" &
+-               " A PARTICULAR" &
+-               ASCII.LF &
+-               "PURPOSE.";
+-      end case;
++      return
++        "This is free software; see the source for copying conditions." &
++        ASCII.LF &
++        "There is NO warranty; not even for MERCHANTABILITY or FITNESS" &
++        " FOR A PARTICULAR PURPOSE.";
+    end Gnat_Free_Software;
+ 
+    -------------------------
+@@ -77,14 +59,7 @@ package body Gnatvsn is
+ 
+    function Gnat_Version_String return String is
+    begin
+-      case Build_Type is
+-         when Gnatpro =>
+-            return "Pro " & Gnat_Static_Version_String;
+-         when GPL =>
+-            return "GPL " & Gnat_Static_Version_String;
+-         when FSF =>
+-            return Gnat_Static_Version_String;
+-      end case;
++      return Standard'Compiler_Version;
+    end Gnat_Version_String;
+ 
+ end Gnatvsn;
+-- 
+2.0.5
+
