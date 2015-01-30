@@ -221,7 +221,7 @@ function build_native_gprbuild()
     cd $CBD/
 
     if [ ! -f .gprbuild-unpacked ]; then
-	echo "  >> [15/$TASK_COUNT_TOTAL] Unpacking GPRBuild sources (Native)..."
+	echo "  >> [22/$TASK_COUNT_TOTAL] Unpacking GPRBuild sources (Native)..."
 	tar -xzpf $ARC/$GPRBUILD_VERSION.tar.gz
 
 	check_error .gprbuild-unpacked
@@ -230,7 +230,7 @@ function build_native_gprbuild()
     cd gprbuild-gpl-$GPL_YEAR-src
 
     if [ ! -f .patched ]; then
-	echo "  >> [16/$TASK_COUNT_TOTAL] Patching GPRBuild (Native)..."
+	echo "  >> [23/$TASK_COUNT_TOTAL] Patching GPRBuild (Native)..."
 	for f in $(cat $FILES/gprbuild/MANIFEST); do
 	    patch -p1 < $FILES/gprbuild/$f;
 	done
@@ -238,13 +238,14 @@ function build_native_gprbuild()
     fi
 
     if [ ! -f .links ]; then
-	echo "  >> [17/$TASK_COUNT_TOTAL] Creating links for GPRBuild (Native)..."
-	ln -s $CBD/gcc gcc_build >/dev/null
-	ln -s $SRC/gcc/gcc/ada gnat_src >/dev/null
+	echo "  >> [24/$TASK_COUNT_TOTAL] Creating links for GPRBuild (Native)..."
+	ln -s $GCC_DIR/gcc/ada gnat_src >/dev/null
+
+    	check_error .links
     fi
 
     if [ ! -f .config ]; then
-	echo "  >> [18/$TASK_COUNT_TOTAL] Configuring GPRBuild (Native)..."
+	echo "  >> [25/$TASK_COUNT_TOTAL] Configuring GPRBuild (Native)..."
 	./configure \
 	    --prefix=$STAGE_BASE_DIR$INSTALL_DIR \
 	    &> $LOGPRE-gprbuild-$GPL_YEAR-config.txt
@@ -253,36 +254,36 @@ function build_native_gprbuild()
     fi
 
     if [ ! -f .copy ]; then
-	echo "  >> [19/$TASK_COUNT_TOTAL] Copying files for GPRBuild (Native)..."
+	echo "  >> [26/$TASK_COUNT_TOTAL] Copying files for GPRBuild (Native)..."
 
-	make copy_gnat_src >/dev/null && make link_version >/dev/null
+	make copy_gnat_src >/dev/null >/dev/null
 
 	check_error .copy
     fi
 
     if [ ! -f .make ]; then
-	echo "  >> [20/$TASK_COUNT_TOTAL] Building GPRBuild (Native)..."
+	echo "  >> [27/$TASK_COUNT_TOTAL] Building GPRBuild (Native)..."
 	make $JOBS &> $LOGPRE-gprbuild-$GPL_YEAR-make.txt
 	check_error .make
     fi
 
     if [ ! -f .make-pkg-stage ]; then
-	echo "  >> [21/$TASK_COUNT_TOTAL] Packaging GPRBuild (Native)..."
+	echo "  >> [28/$TASK_COUNT_TOTAL] Packaging GPRBuild (Native)..."
 	make install &> $LOGPRE-gprbuild-$GPL_YEAR-pkg.txt
 	check_error .make-pkg-stage
 
 	if [ ! -f .make-pkg ]; then
 	    cd $STAGE_DIR
 	    tar -cjpf $PKG/$PROJECT-$HOST-gprbuild-$GPL_YEAR.tbz2 .
-	    check_error $OBD/gprbuild-$GPL_YEAR-src/.make-pkg
+	    check_error $OBD/gprbuild-gpl-$GPL_YEAR-src/.make-pkg
 
-	    cd $OBD/gprbuild-$GPL_YEAR-src
+	    cd $OBD/gprbuild-gpl-$GPL_YEAR-src
 	    rm -rf /tmp/opt
 	fi
     fi
 
     if [ ! -f .make-install ]; then
-	echo "  >> [22/$TASK_COUNT_TOTAL] Installing GPRBuild (Native)..."
+	echo "  >> [29/$TASK_COUNT_TOTAL] Installing GPRBuild (Native)..."
 	tar -xjpf $PKG/$PROJECT-$HOST-gprbuild-$GPL_YEAR.tbz2 -C $INSTALL_BASE_DIR
 	check_error .make-install
     fi
@@ -419,8 +420,7 @@ function build_native_toolchain()
     fi
 
     build_fsf_gnat_util
-    build_native_xmlada
-#    build_native_adacore
+    build_native_adacore
 
     echo "  (x) Finished Processing GNAT/GCC for $NATIVE_LANGUAGES (Native)"
 
