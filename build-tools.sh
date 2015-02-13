@@ -27,18 +27,22 @@ Options:
 
                       Valid values for TARGET
                       -----------------------
-                      1  - native
-                      2  - i386 Steam
-                      3  - AMD64 Steam
-                      4  - Win64
-                      5  - Mac OS X
-                      6  - iOS
-                      7  - ARM Android
-                      8  - MIPS Android
-                      9  - x86 Android
-                      10 - arm-none-eabi
-                      11 - i386-elf
-                      12 - mips-elf
+                       1  - native
+                       2  - arm-none-eabi
+                       3  - i386-elf
+                       4  - x86_64-elf
+                       5  - mips-elf
+                       6  - msp430-elf
+                       7  - avr
+                       8  - ARM Android  (TODO)
+                       9  - MIPS Android (TODO)
+                      10  - x86 Android  (TODO)
+                      11  - Win32        (TODO)
+                      12  - Win64        (TODO)
+                      13  - Mac OS X     (TODO)
+                      14  - iOS          (TODO)
+                      15  - i386 Steam   (TODO)
+                      16  - AMD64 Steam  (TODO)
 "
 
 target_list="You must enter a target number to build, use -h flag to see list."
@@ -64,6 +68,24 @@ case "$1" in
 	    1)
 		# TODO: build_type: native, cross, canadian
 		build_type="native"
+		;;
+	    2)
+		build_type="arm-none-eabi"
+		;;
+	    3)
+		build_type="i386-elf"
+		;;
+	    4)
+		build_type="x86_64-elf"
+		;;
+	    5)
+		build_type="mips-elf"
+		;;
+	    6)
+		build_type="msp430-elf"
+		;;
+	    7)
+		build_type="avr"
 		;;
 	    *)
 		echo "$target_list"
@@ -125,7 +147,8 @@ export INC=$TOP/includes
 source $INC/errors.inc
 source $INC/arithmetic.inc
 source $INC/native.inc
-source $INC/cross.inc
+source $INC/bare_metal.inc
+#source $INC/cross.inc
 
 ################################################################################
 # Enforce a personalised configuration
@@ -420,23 +443,41 @@ case "$build_type" in
 	    } }
 	;;
 
-    # arm-none-eabi)
-    # 	{ time {
-    # 		build_cross_toolchain arm-none-eabi --enable-interwork;
-    # 	    } }
-    # 	;;
+    arm-none-eabi)
+	{ time {
+		build_bare_metal_cross_toolchain arm-none-eabi y y n;
+	    } }
+	;;
 
-    # i386-elf)
-    # 	{ time {
-    # 		build_cross_toolchain i386-elf;
-    # 	    } }
-    # 	;;
+    i386-elf)
+	{ time {
+		build_bare_metal_cross_toolchain i386-elf n n y;
+	    } }
+	;;
 
-    # mips-elf)
-    # 	{ time {
-    # 		build_cross_toolchain mips-elf;
-    # 	    } }
-    # 	;;
+    x86_64-elf)
+	{ time {
+		build_bare_metal_cross_toolchain x86_64-elf n n n;
+	    } }
+	;;
+
+    mips-elf)
+	{ time {
+		build_bare_metal_cross_toolchain mips-elf n y n;
+	    } }
+	;;
+
+    msp430-elf)
+	{ time {
+		build_bare_metal_cross_toolchain msp430-elf n y n;
+	    } }
+	;;
+
+    avr)
+	{ time {
+		build_bare_metal_cross_toolchain avr n y n;
+	    } }
+	;;
 
     *)				# Default
     	{ time {
@@ -447,6 +488,7 @@ case "$build_type" in
     		#build_cross_toolchain mips-elf;
     	    } }
     	;;
+
 esac
 
 exit 0
