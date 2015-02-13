@@ -25,6 +25,12 @@ GCC is a bitch to build and worse still are AdaCore's GPL'd (extra) projects. Ha
 
 To find out what versions are built, see the config-master.inc file.
 
+## Help
+
+Get help with the scripts and what can be built so far:
+
+  ./build-tools.sh -h
+
 ## Building instructions
 
 To get a native toolchain, use the following instructions:
@@ -36,6 +42,19 @@ To get a native toolchain, use the following instructions:
 
 If you leave everything as default, you will have a bunch of archives in a packages directory and the toolchain installed
 to ```$HOME/opt/free-ada-new
+
+### Bare metal cross compilers
+
+These options allow you to build bare metal C and Ada compilers, you have to provide your own runtime.
+
+The following targets have been built, but any target supported by GCC should build now.
+
+* arm-none-eabi
+* i386-elf
+* x86_64-elf
+* mips-elf
+* msp430-elf
+* avr
 
 ## Notes
 
