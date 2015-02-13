@@ -99,7 +99,7 @@ function build_bare_metal_cross_toolchain()
 
     if [ ! -f .make-pkg-stage ]; then
 	echo "  >> [4/$TASK_COUNT_TOTAL] Packaging Binutils ($TARGET)..."
-	make DESTDIR=$STAGE_BASE_DIR install &> $LOGPRE-binutils-$BINUTILS_SRC_VERSION-pkg.txt
+	make DESTDIR=$STAGE_BASE_DIR install-strip &> $LOGPRE-binutils-$BINUTILS_SRC_VERSION-pkg.txt
 	check_error .make-pkg-stage
 
 	if [ ! -f .make-pkg ]; then
@@ -174,7 +174,7 @@ function build_bare_metal_cross_toolchain()
 
     if [ ! -f .make-pkg-stage ]; then
 	echo "  >> [10/$TASK_COUNT_TOTAL] Packaging GNAT/GCC ($TARGET)..."
-	make DESTDIR=$STAGE_BASE_DIR install-gcc install-target-libgcc &> $LOGPRE-gcc-pkg.txt
+	make DESTDIR=$STAGE_BASE_DIR install-strip-gcc install-target-libgcc &> $LOGPRE-gcc-pkg.txt
 	check_error .make-pkg-stage
 
 	if [ ! -f .make-pkg ]; then

@@ -29,7 +29,7 @@ Options:
                       -----------------------
                        1  - native
                        2  - arm-none-eabi
-                       3  - i386-elf
+                       3  - i586-elf
                        4  - x86_64-elf
                        5  - mips-elf
                        6  - msp430-elf
@@ -41,7 +41,7 @@ Options:
                       12  - Win64        (TODO)
                       13  - Mac OS X     (TODO)
                       14  - iOS          (TODO)
-                      15  - i386 Steam   (TODO)
+                      15  - i586 Steam   (TODO)
                       16  - AMD64 Steam  (TODO)
 "
 
@@ -73,7 +73,7 @@ case "$1" in
 		build_type="arm-none-eabi"
 		;;
 	    3)
-		build_type="i386-elf"
+		build_type="i586-elf"
 		;;
 	    4)
 		build_type="x86_64-elf"
@@ -449,9 +449,9 @@ case "$build_type" in
 	    } }
 	;;
 
-    i386-elf)
+    i586-elf)
 	{ time {
-		build_bare_metal_cross_toolchain i386-elf n n y;
+		build_bare_metal_cross_toolchain i586-elf n n y;
 	    } }
 	;;
 

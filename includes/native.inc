@@ -22,6 +22,7 @@ function build_native_binutils() {
 	    --prefix=$INSTALL_DIR \
 	    --target=$HOST \
 	    --build=$HOST \
+	    --host=$HOST \
 	    $MULTILIB \
 	    $EXTRA_BINUTILS_FLAGS \
 	    --disable-nls \
@@ -50,13 +51,13 @@ function build_native_binutils() {
     if [ ! -f .make ]
     then
 	echo "  >> [2/$TASK_COUNT_TOTAL] Building Binutils (Native)..."
-	make $JOBS &> $LOGPRE-binutils-$BINUTILS_SRC_VERSION-make.txt
+	make all $JOBS &> $LOGPRE-binutils-$BINUTILS_SRC_VERSION-make.txt
 	check_error .make
     fi
 
     if [ ! -f .make-pkg-stage ]; then
 	echo "  >> [3/$TASK_COUNT_TOTAL] Packaging Binutils (Native)..."
-	make DESTDIR=$STAGE_BASE_DIR install &> $LOGPRE-binutils-$BINUTILS_SRC_VERSION-pkg.txt
+	make DESTDIR=$STAGE_BASE_DIR install-strip install-html &> $LOGPRE-binutils-$BINUTILS_SRC_VERSION-pkg.txt
 	check_error .make-pkg-stage
 
 	if [ ! -f .make-pkg ]; then
@@ -483,7 +484,7 @@ function build_native_toolchain()
 
     if [ ! -f .make ]; then
 	echo "  >> [6/$TASK_COUNT_TOTAL] Building and Bootstrapping GNAT/GCC (Native)..."
-	make $JOBS &> $LOGPRE-gcc-make.txt
+	make all $JOBS &> $LOGPRE-gcc-make.txt
 
 	check_error .make
     fi
@@ -505,7 +506,7 @@ function build_native_toolchain()
 
     if [ ! -f .make-pkg-stage ]; then
 	echo "  >> [9/$TASK_COUNT_TOTAL] Packaging GNAT/GCC (Native)..."
-	make DESTDIR=$STAGE_BASE_DIR install &> $LOGPRE-gcc-pkg.txt
+	make DESTDIR=$STAGE_BASE_DIR install-strip install-html &> $LOGPRE-gcc-pkg.txt
 	check_error .make-pkg-stage
 
 	if [ ! -f .make-pkg ]; then
