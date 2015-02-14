@@ -43,9 +43,13 @@ function build_bare_metal_cross_toolchain()
 
     echo "  ( ) Start Processing GNAT/GCC for $TARGET"
 
-    DIRS="binutils-$BINUTILS_SRC_VERSION gcc"
+    if [ $TARGET = "x86_64-elf" ]; then
+	DIRS="binutils-$BINUTILS_SRC_VERSION gcc"
+    else
+	DIRS="binutils-$BINUTILS_SRC_VERSION gcc gdb-$GDB_SRC_VERSION"
+    fi
 
-    local TASK_COUNT_TOTAL=11
+    local TASK_COUNT_TOTAL=15
     echo "  >> [1/$TASK_COUNT_TOTAL] Creating Directories (if needed)..."
 
     for d in $DIRS; do
@@ -162,7 +166,7 @@ function build_bare_metal_cross_toolchain()
 	echo "  >> [8/$TASK_COUNT_TOTAL] Building Cross libgcc ($TARGET)..."
 	make $JOBS all-target-libgcc &> $LOGPRE-gcc-make.txt
 
-	check_error .make
+	check_error .make-libgcc
     fi
 
     if [ ! -f .make-gnattools ]; then
@@ -192,5 +196,61 @@ function build_bare_metal_cross_toolchain()
 	tar -xjpf $PKG/$PROJECT-$TARGET-gcc-$GCC_VERSION.tbz2 -C $INSTALL_BASE_DIR
 
 	check_error .make-install
+    fi
+
+    echo "  >> GCC ($TARGET) Installed"
+
+    ## GDB
+
+    if [ $TARGET = "x86_64-elf" ]; then
+	echo "  >> [12-15/$TASK_COUNT_TOTAL] Skipping x86-elf-gdb as it is broken and doesn't build, use your native gdb instead"
+    else
+	cd $CBD/gdb-$GDB_SRC_VERSION
+
+	if [ ! -f .config ]; then
+	    echo "  >> [12/$TASK_COUNT_TOTAL] Configuring Cross GDB ($TARGET)..."
+	    CFLAGS="-O2" LDFLAGS="-s" $SRC/gdb-$GDB_SRC_VERSION/configure \
+		  --prefix=$INSTALL_DIR \
+		  --target=$TARGET \
+		  $EXTRA_CONFIGURE_FLAGS \
+		  --disable-nls \
+		  --disable-shared \
+		  --disable-threads \
+	    &> $LOGPRE-gdb-$GDB_SRC_VERSION-config.txt
+
+	    check_error .config
+	fi
+
+	if [ ! -f .make ]; then
+	    echo "  >> [13/$TASK_COUNT_TOTAL] Building Cross GDB ($TARGET)..."
+	    make all $JOBS &> $LOGPRE-gdb-$GDB_SRC_VERSION-make.txt
+	    check_error .make
+	fi
+
+	if [ ! -f .make-pkg-stage ]; then
+	    echo "  >> [14/$TASK_COUNT_TOTAL] Packaging Cross GDB ($TARGET)..."
+	    make DESTDIR=$STAGE_BASE_DIR install &> $LOGPRE-gdb-$GDB_SRC_VERSION-pkg.txt
+	    check_error .make-pkg-stage
+
+	    #	strip $STAGE_BASE_DIR$INSTALL_DIR/bin/gdb
+	    #	strip $STAGE_BASE_DIR$INSTALL_DIR/bin/gdbserver
+
+	    if [ ! -f .make-pkg ]; then
+		cd $STAGE_DIR
+		tar -cjpf $PKG/$PROJECT-$TARGET-gdb-$GDB_SRC_VERSION.tbz2 .
+		check_error $OBD/gdb-$GDB_VERSION/.make-pkg
+
+		cd $OBD/gdb-$GDB_VERSION
+		rm -rf /tmp/opt
+	    fi
+	fi
+
+	if [ ! -f .make-install ]; then
+	    echo "  >> [15/$TASK_COUNT_TOTAL] Installing Cross GDB ($TARGET)..."
+	    tar -xjpf $PKG/$PROJECT-$TARGET-gdb-$GDB_SRC_VERSION.tbz2 -C $INSTALL_BASE_DIR
+	    check_error .make-install
+	fi
+
+	echo "  >> GDB ($TARGET) Installed"
     fi
 }
