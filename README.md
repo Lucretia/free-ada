@@ -55,6 +55,7 @@ The following targets have been built, but any target supported by GCC should bu
 * mips-elf
 * msp430-elf
 * avr
+* ppc-elf
 
 ## Notes
 
