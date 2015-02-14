@@ -79,6 +79,58 @@ function build_native_binutils() {
     echo "  >> Binutils (Native) Installed"
 }
 
+function build_native_gdb() {
+    cd $CBD/gdb-$GDB_SRC_VERSION
+
+    if [ ! -f .config ]; then
+	echo "  >> [11/$TASK_COUNT_TOTAL] Configuring GDB (Native)..."
+	$SRC/gdb-$GDB_SRC_VERSION/configure \
+	    --prefix=$INSTALL_DIR \
+	    --target=$HOST \
+	    --build=$HOST \
+	    --host=$HOST \
+	    $MULTILIB \
+	    $EXTRA_BINUTILS_FLAGS \
+	    --disable-nls \
+	    --enable-threads=posix \
+	    &> $LOGPRE-gdb-$GDB_SRC_VERSION-config.txt
+
+	check_error .config
+    fi
+
+    if [ ! -f .make ]; then
+	echo "  >> [12/$TASK_COUNT_TOTAL] Building GDB (Native)..."
+	make all $JOBS &> $LOGPRE-gdb-$GDB_SRC_VERSION-make.txt
+	check_error .make
+    fi
+
+    if [ ! -f .make-pkg-stage ]; then
+	echo "  >> [13/$TASK_COUNT_TOTAL] Packaging GDB (Native)..."
+	make DESTDIR=$STAGE_BASE_DIR install install-html &> $LOGPRE-gdb-$GDB_SRC_VERSION-pkg.txt
+	check_error .make-pkg-stage
+
+	strip $STAGE_BASE_DIR$INSTALL_DIR/bin/gdb
+	strip $STAGE_BASE_DIR$INSTALL_DIR/bin/gdbserver
+
+	if [ ! -f .make-pkg ]; then
+	    cd $STAGE_DIR
+	    tar -cjpf $PKG/$PROJECT-$HOST-gdb-$GDB_SRC_VERSION.tbz2 .
+	    check_error $OBD/gdb-$GDB_VERSION/.make-pkg
+
+	    cd $OBD/gdb-$GDB_VERSION
+	    rm -rf /tmp/opt
+	fi
+    fi
+
+    if [ ! -f .make-install ]; then
+	echo "  >> [14/$TASK_COUNT_TOTAL] Installing GDB (Native)..."
+	tar -xjpf $PKG/$PROJECT-$HOST-gdb-$GDB_SRC_VERSION.tbz2 -C $INSTALL_BASE_DIR
+	check_error .make-install
+    fi
+
+    echo "  >> GDB (Native) Installed"
+}
+
 ################################################################################
 # This function builds a version of libgnat_util using AdaCore's GPL'd
 # makefiles, but uses the source from the FSF GNAT we are using. The source has
@@ -91,7 +143,7 @@ function build_fsf_gnat_util()
     cd $CBD/
 
     if [ ! -f .gnat_util-dir ]; then
-	echo "  >> [11/$TASK_COUNT_TOTAL] Creating directory for GNAT_Util (Native)..."
+	echo "  >> [15/$TASK_COUNT_TOTAL] Creating directory for GNAT_Util (Native)..."
 	mkdir gnat_util
 
 	check_error .gnat_util-dir
@@ -100,35 +152,35 @@ function build_fsf_gnat_util()
     cd gnat_util
 
     if [ ! -f .build-files-copied ]; then
-	echo "  >> [12/$TASK_COUNT_TOTAL] Copying build files for GNAT_Util (Native)..."
+	echo "  >> [16/$TASK_COUNT_TOTAL] Copying build files for GNAT_Util (Native)..."
 	cp $SRC/gnat_util/* .
 
 	check_error .build-files-copied
     fi
 
     if [ ! -f .sources-copied ]; then
-	echo "  >> [13/$TASK_COUNT_TOTAL] Copying FSF GCC sources for GNAT_Util (Native)..."
+	echo "  >> [17/$TASK_COUNT_TOTAL] Copying FSF GCC sources for GNAT_Util (Native)..."
 	for file in $(cat $SRC/gnat_util/MANIFEST.gnat_util); do cp $GCC_DIR/gcc/ada/"$file" .; done
 
 	check_error .sources-copied
     fi
 
     if [ ! -f .gen-sources-copied ]; then
-	echo "  >> [14/$TASK_COUNT_TOTAL] Copying FSF GCC generated sources for GNAT_Util (Native)..."
+	echo "  >> [18/$TASK_COUNT_TOTAL] Copying FSF GCC generated sources for GNAT_Util (Native)..."
 	cp $CBD/gcc/gcc/ada/sdefault.adb .
 
 	check_error .gen-sources-copied
     fi
 
     if [ ! -f .make ]; then
-	echo "  >> [15/$TASK_COUNT_TOTAL] Building GNAT_Util (Native)..."
+	echo "  >> [19/$TASK_COUNT_TOTAL] Building GNAT_Util (Native)..."
 	make &> $LOGPRE-gnat_util-make.txt
 
 	check_error .make
     fi
 
     if [ ! -f .make-pkg-stage ]; then
-	echo "  >> [16/$TASK_COUNT_TOTAL] Packaging GNAT_Util (Native)..."
+	echo "  >> [20/$TASK_COUNT_TOTAL] Packaging GNAT_Util (Native)..."
 	make install prefix=$STAGE_BASE_DIR$INSTALL_DIR &> $LOGPRE-gnat_util-pkg.txt
 	check_error .make-pkg-stage
 
@@ -143,7 +195,7 @@ function build_fsf_gnat_util()
     fi
 
     if [ ! -f .make-install ]; then
-	echo "  >> [17/$TASK_COUNT_TOTAL] Installing GNAT_Util (Native)..."
+	echo "  >> [21/$TASK_COUNT_TOTAL] Installing GNAT_Util (Native)..."
 	tar -xjpf $PKG/$PROJECT-$HOST-gnat_util.tbz2 -C $INSTALL_BASE_DIR
 	check_error .make-install
     fi
@@ -168,7 +220,7 @@ function build_native_xmlada()
     cd $CBD/
 
     if [ ! -f .xmlada-unpacked ]; then
-	echo "  >> [18/$TASK_COUNT_TOTAL] Unpacking XMLAda sources (Native)..."
+	echo "  >> [22/$TASK_COUNT_TOTAL] Unpacking XMLAda sources (Native)..."
 	tar -xzpf $ARC/$XMLADA_VERSION.tar.gz
 
 	check_error .xmlada-unpacked
@@ -177,7 +229,7 @@ function build_native_xmlada()
     cd xmlada-$GPL_YEAR-src
 
     if [ ! -f .config ]; then
-	echo "  >> [19/$TASK_COUNT_TOTAL] Configuring XMLAda (Native)..."
+	echo "  >> [23/$TASK_COUNT_TOTAL] Configuring XMLAda (Native)..."
 	./configure \
 	    --prefix=$STAGE_BASE_DIR$INSTALL_DIR \
 	    &> $LOGPRE-xmlada-$GPL_YEAR-config.txt
@@ -186,13 +238,13 @@ function build_native_xmlada()
     fi
 
     if [ ! -f .make ]; then
-	echo "  >> [20/$TASK_COUNT_TOTAL] Building XMLAda (Native)..."
+	echo "  >> [24/$TASK_COUNT_TOTAL] Building XMLAda (Native)..."
 	make $JOBS &> $LOGPRE-xmlada-$GPL_YEAR-make.txt
 	check_error .make
     fi
 
     if [ ! -f .make-pkg-stage ]; then
-	echo "  >> [21/$TASK_COUNT_TOTAL] Packaging XMLAda (Native)..."
+	echo "  >> [25/$TASK_COUNT_TOTAL] Packaging XMLAda (Native)..."
 	make install &> $LOGPRE-xmlada-$GPL_YEAR-pkg.txt
 	check_error .make-pkg-stage
 
@@ -207,7 +259,7 @@ function build_native_xmlada()
     fi
 
     if [ ! -f .make-install ]; then
-	echo "  >> [22/$TASK_COUNT_TOTAL] Installing XMLAda (Native)..."
+	echo "  >> [26/$TASK_COUNT_TOTAL] Installing XMLAda (Native)..."
 	tar -xjpf $PKG/$PROJECT-$HOST-xmlada-$GPL_YEAR.tbz2 -C $INSTALL_BASE_DIR
 	check_error .make-install
     fi
@@ -222,7 +274,7 @@ function build_native_gprbuild()
     cd $CBD/
 
     if [ ! -f .gprbuild-unpacked ]; then
-	echo "  >> [23/$TASK_COUNT_TOTAL] Unpacking GPRBuild sources (Native)..."
+	echo "  >> [27/$TASK_COUNT_TOTAL] Unpacking GPRBuild sources (Native)..."
 	tar -xzpf $ARC/$GPRBUILD_VERSION.tar.gz
 
 	check_error .gprbuild-unpacked
@@ -231,7 +283,7 @@ function build_native_gprbuild()
     cd gprbuild-gpl-$GPL_YEAR-src
 
     if [ ! -f .patched ]; then
-	echo "  >> [24/$TASK_COUNT_TOTAL] Patching GPRBuild (Native)..."
+	echo "  >> [28/$TASK_COUNT_TOTAL] Patching GPRBuild (Native)..."
 	for f in $(cat $FILES/gprbuild/MANIFEST); do
 	    patch -p1 < $FILES/gprbuild/$f;
 	done
@@ -239,14 +291,14 @@ function build_native_gprbuild()
     fi
 
     if [ ! -f .links ]; then
-	echo "  >> [25/$TASK_COUNT_TOTAL] Creating links for GPRBuild (Native)..."
+	echo "  >> [29/$TASK_COUNT_TOTAL] Creating links for GPRBuild (Native)..."
 	ln -s $GCC_DIR/gcc/ada gnat_src >/dev/null
 
     	check_error .links
     fi
 
     if [ ! -f .config ]; then
-	echo "  >> [26/$TASK_COUNT_TOTAL] Configuring GPRBuild (Native)..."
+	echo "  >> [30/$TASK_COUNT_TOTAL] Configuring GPRBuild (Native)..."
 	./configure \
 	    --prefix=$STAGE_BASE_DIR$INSTALL_DIR \
 	    &> $LOGPRE-gprbuild-$GPL_YEAR-config.txt
@@ -255,7 +307,7 @@ function build_native_gprbuild()
     fi
 
     if [ ! -f .copy ]; then
-	echo "  >> [27/$TASK_COUNT_TOTAL] Copying files for GPRBuild (Native)..."
+	echo "  >> [31/$TASK_COUNT_TOTAL] Copying files for GPRBuild (Native)..."
 
 	make copy_gnat_src >/dev/null >/dev/null
 
@@ -263,13 +315,13 @@ function build_native_gprbuild()
     fi
 
     if [ ! -f .make ]; then
-	echo "  >> [28/$TASK_COUNT_TOTAL] Building GPRBuild (Native)..."
+	echo "  >> [32/$TASK_COUNT_TOTAL] Building GPRBuild (Native)..."
 	make $JOBS &> $LOGPRE-gprbuild-$GPL_YEAR-make.txt
 	check_error .make
     fi
 
     if [ ! -f .make-pkg-stage ]; then
-	echo "  >> [29/$TASK_COUNT_TOTAL] Packaging GPRBuild (Native)..."
+	echo "  >> [33/$TASK_COUNT_TOTAL] Packaging GPRBuild (Native)..."
 	make install &> $LOGPRE-gprbuild-$GPL_YEAR-pkg.txt
 	check_error .make-pkg-stage
 
@@ -284,7 +336,7 @@ function build_native_gprbuild()
     fi
 
     if [ ! -f .make-install ]; then
-	echo "  >> [30/$TASK_COUNT_TOTAL] Installing GPRBuild (Native)..."
+	echo "  >> [34/$TASK_COUNT_TOTAL] Installing GPRBuild (Native)..."
 	tar -xjpf $PKG/$PROJECT-$HOST-gprbuild-$GPL_YEAR.tbz2 -C $INSTALL_BASE_DIR
 	check_error .make-install
     fi
@@ -299,7 +351,7 @@ function build_native_asis()
     cd $CBD/
 
     if [ ! -f .asis-unpacked ]; then
-	echo "  >> [31/$TASK_COUNT_TOTAL] Unpacking ASIS sources (Native)..."
+	echo "  >> [35/$TASK_COUNT_TOTAL] Unpacking ASIS sources (Native)..."
 	tar -xzpf $ARC/$ASIS_VERSION.tar.gz
 
 	check_error .asis-unpacked
@@ -308,13 +360,13 @@ function build_native_asis()
     cd $ASIS_VERSION
 
     if [ ! -f .make ]; then
-	echo "  >> [32/$TASK_COUNT_TOTAL] Building ASIS (Native)..."
+	echo "  >> [36/$TASK_COUNT_TOTAL] Building ASIS (Native)..."
 	make $JOBS &> $LOGPRE-asis-$GPL_YEAR-make.txt
 	check_error .make
     fi
 
     if [ ! -f .make-pkg-stage ]; then
-	echo "  >> [33/$TASK_COUNT_TOTAL] Packaging ASIS (Native)..."
+	echo "  >> [37/$TASK_COUNT_TOTAL] Packaging ASIS (Native)..."
 	make install prefix=$STAGE_BASE_DIR$INSTALL_DIR &> $LOGPRE-asis-$GPL_YEAR-pkg.txt
 	check_error .make-pkg-stage
 
@@ -329,7 +381,7 @@ function build_native_asis()
     fi
 
     if [ ! -f .make-install ]; then
-	echo "  >> [34/$TASK_COUNT_TOTAL] Installing ASIS (Native)..."
+	echo "  >> [38/$TASK_COUNT_TOTAL] Installing ASIS (Native)..."
 	tar -xjpf $PKG/$PROJECT-$HOST-asis-$GPL_YEAR.tbz2 -C $INSTALL_BASE_DIR
 	check_error .make-install
     fi
@@ -344,7 +396,7 @@ function build_native_gnatmem()
     cd $CBD/
 
     if [ ! -f .gnatmem-unpacked ]; then
-	echo "  >> [35/$TASK_COUNT_TOTAL] Unpacking GNATMem sources (Native)..."
+	echo "  >> [39/$TASK_COUNT_TOTAL] Unpacking GNATMem sources (Native)..."
 	tar -xzpf $ARC/$GNATMEM_VERSION.tar.gz
 
 	check_error .gnatmem-unpacked
@@ -353,13 +405,13 @@ function build_native_gnatmem()
     cd $GNATMEM_VERSION
 
     if [ ! -f .patched ]; then
-	echo "  >> [36/$TASK_COUNT_TOTAL] Patching GNATMem (Native)..."
+	echo "  >> [40/$TASK_COUNT_TOTAL] Patching GNATMem (Native)..."
 	patch -p1 < $FILES/gnatmem/0001-Added-missing-libs.patch;
 	check_error .patched
     fi
 
     if [ ! -f .config ]; then
-	echo "  >> [37/$TASK_COUNT_TOTAL] Configuring GNATMem (Native)..."
+	echo "  >> [41/$TASK_COUNT_TOTAL] Configuring GNATMem (Native)..."
 	./configure \
 	    --with-binutils-buildtree=$CBD/binutils-$BINUTILS_SRC_VERSION \
 	    --with-binutils-sources=$SRC/binutils-$BINUTILS_SRC_VERSION \
@@ -369,13 +421,13 @@ function build_native_gnatmem()
     fi
 
     if [ ! -f .make ]; then
-	echo "  >> [38/$TASK_COUNT_TOTAL] Building GNATMem (Native)..."
+	echo "  >> [42/$TASK_COUNT_TOTAL] Building GNATMem (Native)..."
 	make $JOBS &> $LOGPRE-gnatmem-$GPL_YEAR-make.txt
 	check_error .make
     fi
 
     if [ ! -f .make-pkg-stage ]; then
-	echo "  >> [39/$TASK_COUNT_TOTAL] Packaging GNATMem (Native)..."
+	echo "  >> [43/$TASK_COUNT_TOTAL] Packaging GNATMem (Native)..."
 	mkdir -p $STAGE_BASE_DIR$INSTALL_DIR/bin &&
 	    cp ./obj/gnatmem $STAGE_BASE_DIR$INSTALL_DIR/bin &> $LOGPRE-gnatmem-$GPL_YEAR-pkg.txt
 	check_error .make-pkg-stage
@@ -391,7 +443,7 @@ function build_native_gnatmem()
     fi
 
     if [ ! -f .make-install ]; then
-	echo "  >> [40/$TASK_COUNT_TOTAL] Installing GNATMem (Native)..."
+	echo "  >> [44/$TASK_COUNT_TOTAL] Installing GNATMem (Native)..."
 	tar -xjpf $PKG/$PROJECT-$HOST-gnatmem-$GPL_YEAR.tbz2 -C $INSTALL_BASE_DIR
 	check_error .make-install
     fi
@@ -419,9 +471,9 @@ function build_native_toolchain()
     echo "  ( ) Start Processing GNAT/GCC for $NATIVE_LANGUAGES (Native)"
 
     # Constants
-    TASK_COUNT_TOTAL=40
+    TASK_COUNT_TOTAL=44
     VER="native"
-    DIRS="binutils-$BINUTILS_SRC_VERSION gcc"
+    DIRS="binutils-$BINUTILS_SRC_VERSION gcc gdb-$GDB_SRC_VERSION"
     LOGPRE=$LOG/native
     CBD=$BLD/$VER
 
@@ -525,6 +577,7 @@ function build_native_toolchain()
 	check_error .make-install
     fi
 
+    build_native_gdb
     build_fsf_gnat_util
     build_native_adacore
 
