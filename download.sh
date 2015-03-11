@@ -232,9 +232,16 @@ fi
 
 if [ ! -f $GNATMEM_VERSION.tar.gz ]; then
     echo "  >> Downloading $GNATMEM_VERSION..."
-    wget -c -O $GNATMEM_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/6de65bb7e300e299711f90396710ace741123656
+    wget -c -O $GNATMEM_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$GNATMEM_HASH
 else
 	echo "  (x) Already have $GNATMEM_VERSION"
+fi
+
+if [ ! -f $AUNIT_VERSION.tar.gz ]; then
+    echo "  >> Downloading $AUNIT_VERSION..."
+    wget -c -O $AUNIT_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$AUNIT_HASH
+else
+	echo "  (x) Already have $AUNIT_VERSION"
 fi
 
 #################################################################################

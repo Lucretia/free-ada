@@ -451,12 +451,57 @@ function build_native_gnatmem()
     echo "  >> GNATMem (Native) Installed"
 }
 
+function build_native_aunit()
+{
+    # Build AUnit
+    # Unpack in build dir, config, install to tmp, package, unpack in install_dir.
+    cd $CBD/
+
+    if [ ! -f .aunit-unpacked ]; then
+	echo "  >> [45/$TASK_COUNT_TOTAL] Unpacking AUnit sources (Native)..."
+	tar -xzpf $ARC/$AUNIT_VERSION.tar.gz
+
+	check_error .aunit-unpacked
+    fi
+
+    cd $AUNIT_DIR
+
+    if [ ! -f .make ]; then
+	echo "  >> [46/$TASK_COUNT_TOTAL] Building AUnit (Native)..."
+	make $JOBS &> $LOGPRE-aunit-$GPL_YEAR-make.txt
+	check_error .make
+    fi
+
+    if [ ! -f .make-pkg-stage ]; then
+	echo "  >> [47/$TASK_COUNT_TOTAL] Packaging AUnit (Native)..."
+	make install INSTALL=$STAGE_BASE_DIR$INSTALL_DIR &> $LOGPRE-aunit-pkg.txt
+	check_error .make-pkg-stage
+
+	if [ ! -f .make-pkg ]; then
+	    cd $STAGE_DIR
+	    tar -cjpf $PKG/$PROJECT-$HOST-aunit-$GPL_YEAR.tbz2 .
+	    check_error $OBD/$AUNIT_DIR/.make-pkg
+
+	    cd $OBD/$AUNIT_DIR
+	    rm -rf /tmp/opt
+	fi
+    fi
+
+    if [ ! -f .make-install ]; then
+	echo "  >> [48/$TASK_COUNT_TOTAL] Installing AUnit (Native)..."
+	tar -xjpf $PKG/$PROJECT-$HOST-aunit-$GPL_YEAR.tbz2 -C $INSTALL_BASE_DIR
+	check_error .make-install
+    fi
+
+    echo "  >> AUnit (Native) Installed"
+}
 function build_native_adacore()
 {
     build_native_xmlada
     build_native_gprbuild
     build_native_asis
     build_native_gnatmem
+    build_native_aunit
 
     # Build SPARK
 }
