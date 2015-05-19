@@ -239,6 +239,11 @@ export ASIS_HASH=51ecea080c3c6760cd024e8b467502de26f3c3f2
 export ASIS_VERSION=asis-gpl-$GPL_YEAR-src
 export GNATMEM_HASH=6de65bb7e300e299711f90396710ace741123656
 export GNATMEM_VERSION=gnatmem-gpl-$GPL_YEAR-src
+export AUNIT_HASH=43f6630248c40941c77be5c06571000925764bbb
+export AUNIT_VERSION=aunit-gpl-$GPL_YEAR-src
+export AUNIT_DIR=aunit-3.7.0w-src
+export GNATCOLL_HASH=0f1572cadf981e4e493497dfbf783889387d52be
+export GNATCOLL_VERSION=gnatcoll-gpl-$GPL_YEAR-src
 
 ################################################################################
 # Additional Options ###########################################################

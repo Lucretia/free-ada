@@ -244,6 +244,13 @@ else
 	echo "  (x) Already have $AUNIT_VERSION"
 fi
 
+if [ ! -f $GNATCOLL_VERSION.tar.gz ]; then
+    echo "  >> Downloading $GNATCOLL_VERSION..."
+    wget -c -O $GNATCOLL_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$GNATCOLL_HASH
+else
+	echo "  (x) Already have $GNATCOLL_VERSION"
+fi
+
 #################################################################################
 # Unpack the downloaded archives.
 #################################################################################

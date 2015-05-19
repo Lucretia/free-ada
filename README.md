@@ -21,6 +21,7 @@ GCC is a bitch to build and worse still are AdaCore's GPL'd (extra) projects. Ha
 * XML/Ada
 * GPRBuild
 * GNATMem
+* GNATColl
 * ASIS
 
 To find out what versions are built, see the config-master.inc file.
@@ -60,3 +61,4 @@ The following targets have been built, but any target supported by GCC should bu
 ## Notes
 
 * This project uses git flow.
+* GNATColl requires Python 2 to create documentation, it will not build with Python 3.
