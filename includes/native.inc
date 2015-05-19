@@ -174,14 +174,14 @@ function build_fsf_gnat_util()
 
     if [ ! -f .make ]; then
 	echo "  >> [19/$TASK_COUNT_TOTAL] Building GNAT_Util (Native)..."
-	make &> $LOGPRE-gnat_util-make.txt
+	make ENABLE_SHARED=yes &> $LOGPRE-gnat_util-make.txt
 
 	check_error .make
     fi
 
     if [ ! -f .make-pkg-stage ]; then
 	echo "  >> [20/$TASK_COUNT_TOTAL] Packaging GNAT_Util (Native)..."
-	make install prefix=$STAGE_BASE_DIR$INSTALL_DIR &> $LOGPRE-gnat_util-pkg.txt
+	make install prefix=$STAGE_BASE_DIR$INSTALL_DIR ENABLE_SHARED=yes &> $LOGPRE-gnat_util-pkg.txt
 	check_error .make-pkg-stage
 
 	if [ ! -f .make-pkg ]; then
