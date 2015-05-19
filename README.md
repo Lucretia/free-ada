@@ -22,7 +22,7 @@ GCC is a bitch to build and worse still are AdaCore's GPL'd (extra) projects. Ha
 * GPRBuild
 * GNATMem
 * GNATColl
-* ASIS
+* ASIS (with tools)
 
 To find out what versions are built, see the config-master.inc file.
 
