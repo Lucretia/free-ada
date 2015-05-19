@@ -427,9 +427,15 @@ function build_native_asis()
 	check_error .make
     fi
 
+    if [ ! -f .make-tools ]; then
+	echo "  >> [43/$TASK_COUNT_TOTAL] Building ASIS Tools (Native)..."
+	make tools $JOBS &> $LOGPRE-asis-$GPL_YEAR-make-tools.txt
+	check_error .make-tools
+    fi
+
     if [ ! -f .make-pkg-stage ]; then
-	echo "  >> [43/$TASK_COUNT_TOTAL] Packaging ASIS (Native)..."
-	make install prefix=$STAGE_BASE_DIR$INSTALL_DIR &> $LOGPRE-asis-$GPL_YEAR-pkg.txt
+	echo "  >> [44/$TASK_COUNT_TOTAL] Packaging ASIS (Native)..."
+	make install install-tools prefix=$STAGE_BASE_DIR$INSTALL_DIR &> $LOGPRE-asis-$GPL_YEAR-pkg.txt
 	check_error .make-pkg-stage
 
 	if [ ! -f .make-pkg ]; then
@@ -443,7 +449,7 @@ function build_native_asis()
     fi
 
     if [ ! -f .make-install ]; then
-	echo "  >> [44/$TASK_COUNT_TOTAL] Installing ASIS (Native)..."
+	echo "  >> [45/$TASK_COUNT_TOTAL] Installing ASIS (Native)..."
 	tar -xjpf $PKG/$PROJECT-$HOST-asis-$GPL_YEAR.tbz2 -C $INSTALL_BASE_DIR
 	check_error .make-install
     fi
@@ -458,7 +464,7 @@ function build_native_gnatmem()
     cd $CBD/
 
     if [ ! -f .gnatmem-unpacked ]; then
-	echo "  >> [45/$TASK_COUNT_TOTAL] Unpacking GNATMem sources (Native)..."
+	echo "  >> [46/$TASK_COUNT_TOTAL] Unpacking GNATMem sources (Native)..."
 	tar -xzpf $ARC/$GNATMEM_VERSION.tar.gz
 
 	check_error .gnatmem-unpacked
@@ -467,13 +473,13 @@ function build_native_gnatmem()
     cd $GNATMEM_VERSION
 
     if [ ! -f .patched ]; then
-	echo "  >> [46/$TASK_COUNT_TOTAL] Patching GNATMem (Native)..."
+	echo "  >> [47/$TASK_COUNT_TOTAL] Patching GNATMem (Native)..."
 	patch -p1 < $FILES/gnatmem/0001-Added-missing-libs.patch;
 	check_error .patched
     fi
 
     if [ ! -f .config ]; then
-	echo "  >> [47/$TASK_COUNT_TOTAL] Configuring GNATMem (Native)..."
+	echo "  >> [48/$TASK_COUNT_TOTAL] Configuring GNATMem (Native)..."
 	./configure \
 	    --with-binutils-buildtree=$CBD/binutils-$BINUTILS_SRC_VERSION \
 	    --with-binutils-sources=$SRC/binutils-$BINUTILS_SRC_VERSION \
@@ -483,13 +489,13 @@ function build_native_gnatmem()
     fi
 
     if [ ! -f .make ]; then
-	echo "  >> [48/$TASK_COUNT_TOTAL] Building GNATMem (Native)..."
+	echo "  >> [49/$TASK_COUNT_TOTAL] Building GNATMem (Native)..."
 	make $JOBS &> $LOGPRE-gnatmem-$GPL_YEAR-make.txt
 	check_error .make
     fi
 
     if [ ! -f .make-pkg-stage ]; then
-	echo "  >> [49/$TASK_COUNT_TOTAL] Packaging GNATMem (Native)..."
+	echo "  >> [50/$TASK_COUNT_TOTAL] Packaging GNATMem (Native)..."
 	mkdir -p $STAGE_BASE_DIR$INSTALL_DIR/bin &&
 	    cp ./obj/gnatmem $STAGE_BASE_DIR$INSTALL_DIR/bin &> $LOGPRE-gnatmem-$GPL_YEAR-pkg.txt
 	check_error .make-pkg-stage
@@ -505,7 +511,7 @@ function build_native_gnatmem()
     fi
 
     if [ ! -f .make-install ]; then
-	echo "  >> [50/$TASK_COUNT_TOTAL] Installing GNATMem (Native)..."
+	echo "  >> [51/$TASK_COUNT_TOTAL] Installing GNATMem (Native)..."
 	tar -xjpf $PKG/$PROJECT-$HOST-gnatmem-$GPL_YEAR.tbz2 -C $INSTALL_BASE_DIR
 	check_error .make-install
     fi
@@ -520,7 +526,7 @@ function build_native_aunit()
     cd $CBD/
 
     if [ ! -f .aunit-unpacked ]; then
-	echo "  >> [51/$TASK_COUNT_TOTAL] Unpacking AUnit sources (Native)..."
+	echo "  >> [52/$TASK_COUNT_TOTAL] Unpacking AUnit sources (Native)..."
 	tar -xzpf $ARC/$AUNIT_VERSION.tar.gz
 
 	check_error .aunit-unpacked
@@ -529,13 +535,13 @@ function build_native_aunit()
     cd $AUNIT_DIR
 
     if [ ! -f .make ]; then
-	echo "  >> [52/$TASK_COUNT_TOTAL] Building AUnit (Native)..."
+	echo "  >> [53/$TASK_COUNT_TOTAL] Building AUnit (Native)..."
 	make $JOBS &> $LOGPRE-aunit-$GPL_YEAR-make.txt
 	check_error .make
     fi
 
     if [ ! -f .make-pkg-stage ]; then
-	echo "  >> [53/$TASK_COUNT_TOTAL] Packaging AUnit (Native)..."
+	echo "  >> [54/$TASK_COUNT_TOTAL] Packaging AUnit (Native)..."
 	make install INSTALL=$STAGE_BASE_DIR$INSTALL_DIR &> $LOGPRE-aunit-pkg.txt
 	check_error .make-pkg-stage
 
@@ -550,7 +556,7 @@ function build_native_aunit()
     fi
 
     if [ ! -f .make-install ]; then
-	echo "  >> [54/$TASK_COUNT_TOTAL] Installing AUnit (Native)..."
+	echo "  >> [55/$TASK_COUNT_TOTAL] Installing AUnit (Native)..."
 	tar -xjpf $PKG/$PROJECT-$HOST-aunit-$GPL_YEAR.tbz2 -C $INSTALL_BASE_DIR
 	check_error .make-install
     fi
@@ -579,7 +585,7 @@ function build_native_toolchain()
     echo "  ( ) Start Processing GNAT/GCC for $NATIVE_LANGUAGES (Native)"
 
     # Constants
-    TASK_COUNT_TOTAL=54
+    TASK_COUNT_TOTAL=55
     VER="native"
     DIRS="binutils-$BINUTILS_SRC_VERSION gcc gdb-$GDB_SRC_VERSION"
     LOGPRE=$LOG/native
