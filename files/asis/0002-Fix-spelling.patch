@@ -1,7 +1,7 @@
 From a5c2f52fd3d966b2b1e0724509ffbea335beaf30 Mon Sep 17 00:00:00 2001
 From: "Luke A. Guest" <laguest@archeia.com>
 Date: Sun, 26 Apr 2015 11:26:53 +0100
-Subject: [PATCH 2/2] Fix spelling.
+Subject: [PATCH 2/3] Fix spelling.
 
 ---
  asis/a4g-ee_cache.adb          | 4 ++--
