@@ -1,7 +1,7 @@
 From 435a8b981938566cc869c3d54819934ee17324f5 Mon Sep 17 00:00:00 2001
 From: "Luke A. Guest" <laguest@archeia.com>
 Date: Tue, 19 May 2015 19:32:10 +0100
-Subject: [PATCH 3/3] Removed Try_Help procedure call as it doesn't exist in
+Subject: [PATCH 3/4] Removed Try_Help procedure call as it doesn't exist in
  current FSF GNAT sources (yet).
 
 ---
