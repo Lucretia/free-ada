@@ -436,6 +436,9 @@ function build_native_asis()
     if [ ! -f .make-pkg-stage ]; then
 	echo "  >> [44/$TASK_COUNT_TOTAL] Packaging ASIS (Native)..."
 	make install install-tools prefix=$STAGE_BASE_DIR$INSTALL_DIR &> $LOGPRE-asis-$GPL_YEAR-pkg.txt
+        install -s tools/gnat2xml/gnat2xml $STAGE_BASE_DIR$INSTALL_DIR/bin
+        install -s tools/gnat2xml/gnat2xsd $STAGE_BASE_DIR$INSTALL_DIR/bin
+        install -s tools/gnat2xml/xml2gnat $STAGE_BASE_DIR$INSTALL_DIR/bin
 	check_error .make-pkg-stage
 
 	if [ ! -f .make-pkg ]; then
