@@ -251,6 +251,13 @@ else
 	echo "  (x) Already have $GNATCOLL_VERSION"
 fi
 
+if [ ! -f $POLYORB_VERSION.tar.gz ]; then
+    echo "  >> Downloading $POLYORB_VERSION..."
+    wget -c -O $POLYORB_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$POLYORB_HASH
+else
+	echo "  (x) Already have $POLYORB_VERSION"
+fi
+
 #################################################################################
 # Unpack the downloaded archives.
 #################################################################################

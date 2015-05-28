@@ -566,6 +566,68 @@ function build_native_aunit()
 
     echo "  >> AUnit (Native) Installed"
 }
+
+function build_native_polyorb()
+{
+    # Build PolyORB
+    # Unpack in build dir, config, install to tmp, package, unpack in install_dir.
+    cd $CBD/
+
+    if [ ! -f .polyorb-unpacked ]; then
+	echo "  >> [56/$TASK_COUNT_TOTAL] Unpacking PolyORB sources (Native)..."
+	tar -xzpf $ARC/$POLYORB_VERSION.tar.gz
+
+	check_error .polyorb-unpacked
+    fi
+
+    cd $POLYORB_DIR
+
+    if [ ! -f .config ]; then
+	echo "  >> [57/$TASK_COUNT_TOTAL] Configuring PolyORB (Native)..."
+
+	ADA=gcc CC=gcc ./configure \
+	    --prefix=$INSTALL_DIR \
+	    --target=$HOST \
+	    --build=$HOST \
+	    --enable-shared \
+	    --with-gprbuild=gprbuild \
+	    --with-appli-perso="corba dsa moma" \
+	    --with-proto-perso="giop soap srp" \
+	    --with-corba-services="event ir naming notification time"
+	    &> $LOGPRE-polyorb-$GPL_YEAR-configure.txt
+	check_error .config
+    fi
+
+    if [ ! -f .make ]; then
+	echo "  >> [58/$TASK_COUNT_TOTAL] Building PolyORB (Native)..."
+	make &> $LOGPRE-polyorb-$GPL_YEAR-make.txt
+	check_error .make
+    fi
+
+    if [ ! -f .make-pkg-stage ]; then
+	echo "  >> [59/$TASK_COUNT_TOTAL] Packaging PolyORB (Native)..."
+	make install prefix=$STAGE_BASE_DIR$INSTALL_DIR &> $LOGPRE-polyorb-pkg.txt
+	check_error .make-pkg-stage
+
+	if [ ! -f .make-pkg ]; then
+	    cd $STAGE_DIR
+	    tar -cjpf $PKG/$PROJECT-$HOST-polyorb-$GPL_YEAR.tbz2 .
+	    check_error $OBD/$POLYORB_DIR/.make-pkg
+
+	    cd $OBD/$POLYORB_DIR
+	    rm -rf /tmp/opt
+	fi
+    fi
+
+    if [ ! -f .make-install ]; then
+	echo "  >> [60/$TASK_COUNT_TOTAL] Installing PolyORB (Native)..."
+	tar -xjpf $PKG/$PROJECT-$HOST-polyorb-$GPL_YEAR.tbz2 -C $INSTALL_BASE_DIR
+	check_error .make-install
+    fi
+
+    echo "  >> PolyORB (Native) Installed"
+}
+
 function build_native_adacore()
 {
     build_native_xmlada
@@ -574,6 +636,7 @@ function build_native_adacore()
     build_native_asis
     build_native_gnatmem
     build_native_aunit
+    build_native_polyorb
 
     # Build SPARK
 }
@@ -588,7 +651,7 @@ function build_native_toolchain()
     echo "  ( ) Start Processing GNAT/GCC for $NATIVE_LANGUAGES (Native)"
 
     # Constants
-    TASK_COUNT_TOTAL=55
+    TASK_COUNT_TOTAL=60
     VER="native"
     DIRS="binutils-$BINUTILS_SRC_VERSION gcc gdb-$GDB_SRC_VERSION"
     LOGPRE=$LOG/native

@@ -252,6 +252,11 @@ echo "  GCC           :  GitHub"
 echo "  GDB           : " $GDB_VERSION
 echo "  XMLAda        : " $GPL_YEAR
 echo "  GPRBuild      : " $GPL_YEAR
+echo "  ASIS          : " $GPL_YEAR
+echo "  GNATMem       : " $GPL_YEAR
+echo "  AUnit         : " $GPL_YEAR
+echo "  GNATColl      : " $GPL_YEAR
+echo "  PolyORB       : " $GPL_YEAR
 #echo "  ST-Link       :  GitHub"
 
 echo "  Other"
