@@ -244,6 +244,9 @@ export AUNIT_VERSION=aunit-gpl-$GPL_YEAR-src
 export AUNIT_DIR=aunit-3.7.0w-src
 export GNATCOLL_HASH=0f1572cadf981e4e493497dfbf783889387d52be
 export GNATCOLL_VERSION=gnatcoll-gpl-$GPL_YEAR-src
+export POLYORB_HASH=22f27fec50a9c2b92be2e10aa5027eb49567787c
+export POLYORB_VERSION=polyorb-gpl-$GPL_YEAR-src
+export POLYORB_DIR=polyorb-$GPL_YEAR-src
 
 ################################################################################
 # Additional Options ###########################################################
