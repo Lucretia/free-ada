@@ -17,12 +17,17 @@ GCC is a bitch to build and worse still are AdaCore's GPL'd (extra) projects. Ha
 
 * FSF GCC
 * Binutils
+* GDB
 * libgnat_util (using the FSF sources)
+
+The following are AdaCore GPL-2014 versions:
+
 * XML/Ada
 * GPRBuild
 * GNATMem
 * GNATColl
 * ASIS (with tools)
+* PolyORB
 
 To find out what versions are built, see the config-master.inc file.
 
