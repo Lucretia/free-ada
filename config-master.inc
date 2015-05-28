@@ -252,6 +252,10 @@ export POLYORB_DIR=polyorb-$GPL_YEAR-src
 # Additional Options ###########################################################
 ################################################################################
 
+export MATRESHKA_VERSION=0.7.0
+export MATRESHKA_MIRROR=http://forge.ada-ru.org/matreshka/downloads
+export MATRESHKA_DIR=matreshka-$MATRESHKA_VERSION
+
 # export U_BOOT_VERSION=1.3.4
 # export U_BOOT_MIRROR=ftp://ftp.denx.de/pub/u-boot
 #export NEWLIB_VERSION=1.20.0
