@@ -209,6 +209,8 @@ else
 	echo "  (x) Already have mpc-$MPC_VERSION"
 fi
 
+# AdaCore Libraries/Tools ###########################################################
+
 if [ ! -f $XMLADA_VERSION.tar.gz ]; then
     echo "  >> Downloading $XMLADA_VERSION..."
     wget -c -O $XMLADA_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$XMLADA_HASH
@@ -256,6 +258,15 @@ if [ ! -f $POLYORB_VERSION.tar.gz ]; then
     wget -c -O $POLYORB_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$POLYORB_HASH
 else
 	echo "  (x) Already have $POLYORB_VERSION"
+fi
+
+# Other Libraries/Tools ###########################################################
+
+if [ ! -f matreshka-$MATRESHKA_VERSION.tar.gz ]; then
+    echo "  >> Downloading matreshka-$MATRESHKA_VERSION..."
+    wget -c $MATRESHKA_MIRROR/matreshka-$MATRESHKA_VERSION.tar.gz
+else
+	echo "  (x) Already have matreshka-$MATRESHKA_VERSION"
 fi
 
 #################################################################################
