@@ -259,6 +259,8 @@ echo "  GNATColl      : " $GPL_YEAR
 echo "  PolyORB       : " $GPL_YEAR
 #echo "  ST-Link       :  GitHub"
 
+echo "  Matreshka     : " $MATRESHKA_VERSION
+
 echo "  Other"
 echo "  -----"
 echo "  Parallelism   : " $JOBS

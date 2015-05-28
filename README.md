@@ -29,6 +29,10 @@ The following are AdaCore GPL-2014 versions:
 * ASIS (with tools)
 * PolyORB
 
+The following other tools/libraries are built:
+
+* Matreshka
+
 To find out what versions are built, see the config-master.inc file.
 
 ## Help

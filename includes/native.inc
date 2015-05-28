@@ -642,6 +642,74 @@ function build_native_adacore()
 }
 
 ################################################################################
+# Build other components.
+################################################################################
+function build_native_matreshka()
+{
+    # Build Matreshka
+    # Unpack in build dir, config, install to tmp, package, unpack in install_dir.
+    cd $CBD/
+
+    if [ ! -f .matreshka-unpacked ]; then
+	echo "  >> [61/$TASK_COUNT_TOTAL] Unpacking Matreshka sources (Native)..."
+	tar -xzpf $ARC/matreshka-$MATRESHKA_VERSION.tar.gz
+
+	check_error .matreshka-unpacked
+    fi
+
+    cd $MATRESHKA_DIR
+
+    if [ ! -f .make-config ]; then
+	echo "  >> [62/$TASK_COUNT_TOTAL] Make config Matreshka (Native)..."
+	make config &> $LOGPRE-matreshka-$MATRESHKA_VERSION-make-config.txt
+	check_error .make-config
+    fi
+
+    if [ ! -f .config ]; then
+	echo "  >> [63/$TASK_COUNT_TOTAL] Configuring Matreshka (Native)..."
+
+	./configure \
+	    --prefix=$INSTALL_DIR \
+	    &> $LOGPRE-matreshka-$MATRESHKA_VERSION-configure.txt
+	check_error .config
+    fi
+
+    if [ ! -f .make ]; then
+	echo "  >> [64/$TASK_COUNT_TOTAL] Building Matreshka (Native)..."
+	make $JOBS &> $LOGPRE-matreshka-$MATRESHKA_VERSION-make.txt
+	check_error .make
+    fi
+
+    if [ ! -f .make-pkg-stage ]; then
+	echo "  >> [65/$TASK_COUNT_TOTAL] Packaging Matreshka (Native)..."
+	make install DESTDIR=$STAGE_BASE_DIR &> $LOGPRE-matreshka-$MATRESHKA_VERSION-pkg.txt
+	check_error .make-pkg-stage
+
+	if [ ! -f .make-pkg ]; then
+	    cd $STAGE_DIR
+	    tar -cjpf $PKG/$PROJECT-$HOST-matreshka-$MATRESHKA_VERSION.tbz2 .
+	    check_error $OBD/$MATRESHKA_DIR/.make-pkg
+
+	    cd $OBD/$MATRESHKA_DIR
+	    rm -rf /tmp/opt
+	fi
+    fi
+
+    if [ ! -f .make-install ]; then
+	echo "  >> [66/$TASK_COUNT_TOTAL] Installing Matreshka (Native)..."
+	tar -xjpf $PKG/$PROJECT-$HOST-matreshka-$MATRESHKA_VERSION.tbz2 -C $INSTALL_BASE_DIR
+	check_error .make-install
+    fi
+
+    echo "  >> Matreshka (Native) Installed"
+}
+
+function build_native_other()
+{
+    build_native_matreshka
+}
+
+################################################################################
 # Build the Native Compiler (using the compiler found on PATH).
 ################################################################################
 
@@ -651,7 +719,7 @@ function build_native_toolchain()
     echo "  ( ) Start Processing GNAT/GCC for $NATIVE_LANGUAGES (Native)"
 
     # Constants
-    TASK_COUNT_TOTAL=60
+    TASK_COUNT_TOTAL=66
     VER="native"
     DIRS="binutils-$BINUTILS_SRC_VERSION gcc gdb-$GDB_SRC_VERSION"
     LOGPRE=$LOG/native
@@ -760,6 +828,7 @@ function build_native_toolchain()
     build_native_gdb
     build_fsf_gnat_util
     build_native_adacore
+    build_native_other
 
     echo "  (x) Finished Processing GNAT/GCC for $NATIVE_LANGUAGES (Native)"
 
