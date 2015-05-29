@@ -628,6 +628,60 @@ function build_native_polyorb()
     echo "  >> PolyORB (Native) Installed"
 }
 
+function build_native_florist()
+{
+    # Build Florist
+    # Unpack in build dir, config, install to tmp, package, unpack in install_dir.
+    cd $CBD/
+
+    if [ ! -f .florist-unpacked ]; then
+	echo "  >> [61/$TASK_COUNT_TOTAL] Unpacking Florist sources (Native)..."
+	tar -xzpf $ARC/$FLORIST_VERSION.tar.gz
+
+	check_error .florist-unpacked
+    fi
+
+    cd $FLORIST_DIR
+
+    if [ ! -f .config ]; then
+	echo "  >> [62/$TASK_COUNT_TOTAL] Configuring Florist (Native)..."
+
+	ADA=gcc CC=gcc ./configure \
+	    --prefix=$INSTALL_DIR \
+	    &> $LOGPRE-florist-$GPL_YEAR-configure.txt
+	check_error .config
+    fi
+
+    if [ ! -f .make ]; then
+	echo "  >> [63/$TASK_COUNT_TOTAL] Building Florist (Native)..."
+	make &> $LOGPRE-florist-$GPL_YEAR-make.txt
+	check_error .make
+    fi
+
+    if [ ! -f .make-pkg-stage ]; then
+	echo "  >> [64/$TASK_COUNT_TOTAL] Packaging Florist (Native)..."
+	make install PREFIX=$STAGE_BASE_DIR$INSTALL_DIR &> $LOGPRE-florist-pkg.txt
+	check_error .make-pkg-stage
+
+	if [ ! -f .make-pkg ]; then
+	    cd $STAGE_DIR
+	    tar -cjpf $PKG/$PROJECT-$HOST-florist-$GPL_YEAR.tbz2 .
+	    check_error $OBD/$FLORIST_DIR/.make-pkg
+
+	    cd $OBD/$FLORIST_DIR
+	    rm -rf /tmp/opt
+	fi
+    fi
+
+    if [ ! -f .make-install ]; then
+	echo "  >> [65/$TASK_COUNT_TOTAL] Installing Florist (Native)..."
+	tar -xjpf $PKG/$PROJECT-$HOST-florist-$GPL_YEAR.tbz2 -C $INSTALL_BASE_DIR
+	check_error .make-install
+    fi
+
+    echo "  >> Florist (Native) Installed"
+}
+
 function build_native_adacore()
 {
     build_native_xmlada
@@ -637,6 +691,7 @@ function build_native_adacore()
     build_native_gnatmem
     build_native_aunit
     build_native_polyorb
+    build_native_florist
 
     # Build SPARK
 }
@@ -651,7 +706,7 @@ function build_native_matreshka()
     cd $CBD/
 
     if [ ! -f .matreshka-unpacked ]; then
-	echo "  >> [61/$TASK_COUNT_TOTAL] Unpacking Matreshka sources (Native)..."
+	echo "  >> [66/$TASK_COUNT_TOTAL] Unpacking Matreshka sources (Native)..."
 	tar -xzpf $ARC/matreshka-$MATRESHKA_VERSION.tar.gz
 
 	check_error .matreshka-unpacked
@@ -660,13 +715,13 @@ function build_native_matreshka()
     cd $MATRESHKA_DIR
 
     if [ ! -f .make-config ]; then
-	echo "  >> [62/$TASK_COUNT_TOTAL] Make config Matreshka (Native)..."
+	echo "  >> [67/$TASK_COUNT_TOTAL] Make config Matreshka (Native)..."
 	make config &> $LOGPRE-matreshka-$MATRESHKA_VERSION-make-config.txt
 	check_error .make-config
     fi
 
     if [ ! -f .config ]; then
-	echo "  >> [63/$TASK_COUNT_TOTAL] Configuring Matreshka (Native)..."
+	echo "  >> [68/$TASK_COUNT_TOTAL] Configuring Matreshka (Native)..."
 
 	./configure \
 	    --prefix=$INSTALL_DIR \
@@ -675,13 +730,13 @@ function build_native_matreshka()
     fi
 
     if [ ! -f .make ]; then
-	echo "  >> [64/$TASK_COUNT_TOTAL] Building Matreshka (Native)..."
+	echo "  >> [69/$TASK_COUNT_TOTAL] Building Matreshka (Native)..."
 	make $JOBS &> $LOGPRE-matreshka-$MATRESHKA_VERSION-make.txt
 	check_error .make
     fi
 
     if [ ! -f .make-pkg-stage ]; then
-	echo "  >> [65/$TASK_COUNT_TOTAL] Packaging Matreshka (Native)..."
+	echo "  >> [70/$TASK_COUNT_TOTAL] Packaging Matreshka (Native)..."
 	make install DESTDIR=$STAGE_BASE_DIR &> $LOGPRE-matreshka-$MATRESHKA_VERSION-pkg.txt
 	check_error .make-pkg-stage
 
@@ -696,7 +751,7 @@ function build_native_matreshka()
     fi
 
     if [ ! -f .make-install ]; then
-	echo "  >> [66/$TASK_COUNT_TOTAL] Installing Matreshka (Native)..."
+	echo "  >> [71/$TASK_COUNT_TOTAL] Installing Matreshka (Native)..."
 	tar -xjpf $PKG/$PROJECT-$HOST-matreshka-$MATRESHKA_VERSION.tbz2 -C $INSTALL_BASE_DIR
 	check_error .make-install
     fi
@@ -719,7 +774,7 @@ function build_native_toolchain()
     echo "  ( ) Start Processing GNAT/GCC for $NATIVE_LANGUAGES (Native)"
 
     # Constants
-    TASK_COUNT_TOTAL=66
+    TASK_COUNT_TOTAL=71
     VER="native"
     DIRS="binutils-$BINUTILS_SRC_VERSION gcc gdb-$GDB_SRC_VERSION"
     LOGPRE=$LOG/native
