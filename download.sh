@@ -260,6 +260,13 @@ else
 	echo "  (x) Already have $POLYORB_VERSION"
 fi
 
+if [ ! -f $FLORIST_VERSION.tar.gz ]; then
+    echo "  >> Downloading $FLORIST_VERSION..."
+    wget -c -O $FLORIST_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$FLORIST_HASH
+else
+	echo "  (x) Already have $FLORIST_VERSION"
+fi
+
 # Other Libraries/Tools ###########################################################
 
 if [ ! -f matreshka-$MATRESHKA_VERSION.tar.gz ]; then
