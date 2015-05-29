@@ -28,6 +28,7 @@ The following are AdaCore GPL-2014 versions:
 * GNATColl
 * ASIS (with tools)
 * PolyORB
+* Florist
 
 The following other tools/libraries are built:
 

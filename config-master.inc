@@ -247,6 +247,9 @@ export GNATCOLL_VERSION=gnatcoll-gpl-$GPL_YEAR-src
 export POLYORB_HASH=22f27fec50a9c2b92be2e10aa5027eb49567787c
 export POLYORB_VERSION=polyorb-gpl-$GPL_YEAR-src
 export POLYORB_DIR=polyorb-$GPL_YEAR-src
+export FLORIST_HASH=224f73e1cd4afd1f0f6ca3bd1ad0191aa7f81e05
+export FLORIST_VERSION=florist-gpl-$GPL_YEAR-src
+export FLORIST_DIR=florist-src
 
 ################################################################################
 # Additional Options ###########################################################
