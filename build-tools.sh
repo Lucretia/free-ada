@@ -257,6 +257,8 @@ echo "  GNATMem       : " $GPL_YEAR
 echo "  AUnit         : " $GPL_YEAR
 echo "  GNATColl      : " $GPL_YEAR
 echo "  PolyORB       : " $GPL_YEAR
+echo "  Florist       : " $GPL_YEAR
+
 #echo "  ST-Link       :  GitHub"
 
 echo "  Matreshka     : " $MATRESHKA_VERSION
