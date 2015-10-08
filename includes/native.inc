@@ -583,7 +583,7 @@ function build_native_polyorb()
     cd $POLYORB_DIR
 
     if [ ! -f .config ]; then
-	echo "  >> [57/$TASK_COUNT_TOTAL] Configuring PolyORB (Native)..."
+	echo "  >> [57/$TASK_COUNT_TOTAL] Configuring PolyORB (Native shared)..."
 
 	ADA=gcc CC=gcc ./configure \
 	    --prefix=$INSTALL_DIR \
@@ -599,33 +599,68 @@ function build_native_polyorb()
     fi
 
     if [ ! -f .make ]; then
-	echo "  >> [58/$TASK_COUNT_TOTAL] Building PolyORB (Native)..."
+	echo "  >> [58/$TASK_COUNT_TOTAL] Building PolyORB (Native shared)..."
 	make &> $LOGPRE-polyorb-$GPL_YEAR-make.txt
 	check_error .make
     fi
 
     if [ ! -f .make-pkg-stage ]; then
-	echo "  >> [59/$TASK_COUNT_TOTAL] Packaging PolyORB (Native)..."
+	echo "  >> [59/$TASK_COUNT_TOTAL] Packaging (part 1) PolyORB (Native shared)..."
 	make install prefix=$STAGE_BASE_DIR$INSTALL_DIR &> $LOGPRE-polyorb-pkg.txt
 	check_error .make-pkg-stage
+    fi
 
-	if [ ! -f .make-pkg ]; then
-	    cd $STAGE_DIR
-	    tar -cjpf $PKG/$PROJECT-$HOST-polyorb-$GPL_YEAR.tbz2 .
-	    check_error $OBD/$POLYORB_DIR/.make-pkg
+    make distclean
 
-	    cd $OBD/$POLYORB_DIR
-	    rm -rf /tmp/opt
-	fi
+    # Static version
+
+    if [ ! -f .config-static ]; then
+	echo "  >> [60/$TASK_COUNT_TOTAL] Configuring PolyORB (Native static)..."
+
+	ADA=gcc CC=gcc ./configure \
+	    --prefix=$INSTALL_DIR \
+	    --target=$HOST \
+	    --build=$HOST \
+	    --disable-shared \
+	    --with-gprbuild=gprbuild \
+	    --with-appli-perso="corba dsa moma" \
+	    --with-proto-perso="giop soap srp" \
+	    --with-corba-services="event ir naming notification time"
+	    &> $LOGPRE-polyorb-$GPL_YEAR-configure-static.txt
+	check_error .config-static
+    fi
+
+    if [ ! -f .make-static ]; then
+	echo "  >> [61/$TASK_COUNT_TOTAL] Building PolyORB (Native static)..."
+	make &> $LOGPRE-polyorb-$GPL_YEAR-make-static.txt
+	check_error .make-static
+    fi
+
+    if [ ! -f .make-pkg-stage-static ]; then
+	echo "  >> [62/$TASK_COUNT_TOTAL] Packaging (part 2) PolyORB (Native static)..."
+	make install prefix=$STAGE_BASE_DIR$INSTALL_DIR &> $LOGPRE-polyorb-pkg-static.txt
+	check_error .make-pkg-stage-static
+    fi
+
+    # Now package them both.
+
+    if [ ! -f .make-pkg ]; then
+	echo "  >> [63/$TASK_COUNT_TOTAL] Packaging (part 3) PolyORB (Native shared/static)..."
+	cd $STAGE_DIR
+	tar -cjpf $PKG/$PROJECT-$HOST-polyorb-$GPL_YEAR.tbz2 .
+	check_error $OBD/$POLYORB_DIR/.make-pkg
+
+	cd $OBD/$POLYORB_DIR
+	rm -rf /tmp/opt
     fi
 
     if [ ! -f .make-install ]; then
-	echo "  >> [60/$TASK_COUNT_TOTAL] Installing PolyORB (Native)..."
+	echo "  >> [64/$TASK_COUNT_TOTAL] Installing PolyORB (Native shared/static)..."
 	tar -xjpf $PKG/$PROJECT-$HOST-polyorb-$GPL_YEAR.tbz2 -C $INSTALL_BASE_DIR
 	check_error .make-install
     fi
 
-    echo "  >> PolyORB (Native) Installed"
+    echo "  >> PolyORB (Native shared/static) Installed"
 }
 
 function build_native_florist()
@@ -635,7 +670,7 @@ function build_native_florist()
     cd $CBD/
 
     if [ ! -f .florist-unpacked ]; then
-	echo "  >> [61/$TASK_COUNT_TOTAL] Unpacking Florist sources (Native)..."
+	echo "  >> [65/$TASK_COUNT_TOTAL] Unpacking Florist sources (Native)..."
 	tar -xzpf $ARC/$FLORIST_VERSION.tar.gz
 
 	check_error .florist-unpacked
@@ -644,7 +679,7 @@ function build_native_florist()
     cd $FLORIST_DIR
 
     if [ ! -f .config ]; then
-	echo "  >> [62/$TASK_COUNT_TOTAL] Configuring Florist (Native)..."
+	echo "  >> [66/$TASK_COUNT_TOTAL] Configuring Florist (Native)..."
 
 	ADA=gcc CC=gcc ./configure \
 	    --prefix=$INSTALL_DIR \
@@ -653,13 +688,13 @@ function build_native_florist()
     fi
 
     if [ ! -f .make ]; then
-	echo "  >> [63/$TASK_COUNT_TOTAL] Building Florist (Native)..."
+	echo "  >> [67/$TASK_COUNT_TOTAL] Building Florist (Native)..."
 	make &> $LOGPRE-florist-$GPL_YEAR-make.txt
 	check_error .make
     fi
 
     if [ ! -f .make-pkg-stage ]; then
-	echo "  >> [64/$TASK_COUNT_TOTAL] Packaging Florist (Native)..."
+	echo "  >> [68/$TASK_COUNT_TOTAL] Packaging Florist (Native)..."
 	make install PREFIX=$STAGE_BASE_DIR$INSTALL_DIR &> $LOGPRE-florist-pkg.txt
 	check_error .make-pkg-stage
 
@@ -674,7 +709,7 @@ function build_native_florist()
     fi
 
     if [ ! -f .make-install ]; then
-	echo "  >> [65/$TASK_COUNT_TOTAL] Installing Florist (Native)..."
+	echo "  >> [69/$TASK_COUNT_TOTAL] Installing Florist (Native)..."
 	tar -xjpf $PKG/$PROJECT-$HOST-florist-$GPL_YEAR.tbz2 -C $INSTALL_BASE_DIR
 	check_error .make-install
     fi
