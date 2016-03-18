@@ -1,0 +1,45 @@
+From acd8e7e37df3cad29e1a2ee3903895fe24bd8c59 Mon Sep 17 00:00:00 2001
+From: "Luke A. Guest" <laguest@archeia.com>
+Date: Sat, 10 Oct 2015 16:06:48 +0100
+Subject: [PATCH] Reinstate dropped code.
+
+---
+ gcc/ada/ChangeLog                 | 5 +++++
+ gcc/ada/gcc-interface/Makefile.in | 8 ++++++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/gcc/ada/ChangeLog b/gcc/ada/ChangeLog
+index de30982..b5c7a8f 100644
+--- a/gcc/ada/ChangeLog
++++ b/gcc/ada/ChangeLog
+@@ -1,3 +1,8 @@
++2015-01-05 Eric Botcazou <ebotcazou@adacore.com>
++
++	PR ada/64492
++	* gcc-interface/Makefile.in (../stamp-tools): Reinstate dropped code.
++
+ 2014-10-30  Release Manager
+ 
+ 	* GCC 4.9.2 released.
+diff --git a/gcc/ada/gcc-interface/Makefile.in b/gcc/ada/gcc-interface/Makefile.in
+index 5c36962..fef0975 100644
+--- a/gcc/ada/gcc-interface/Makefile.in
++++ b/gcc/ada/gcc-interface/Makefile.in
+@@ -2513,6 +2513,14 @@ GCC_LINK=$(CXX) $(GCC_LINK_FLAGS) $(ADA_INCLUDES) $(LDFLAGS)
+ # Note: dummy target, stamp-tools is mainly handled by gnattools.
+ 
+ ../stamp-tools:
++	-$(RM) tools/*
++	-$(RMDIR) tools
++	-$(MKDIR) tools
++	-(cd tools; $(LN_S) ../sdefault.adb ../snames.ads ../snames.adb .)
++	-$(foreach PAIR,$(TOOLS_TARGET_PAIRS), \
++		$(RM) tools/$(word 1,$(subst <, ,$(PAIR)));\
++		$(LN_S) $(fsrcpfx)ada/$(word 2,$(subst <, ,$(PAIR))) \
++			tools/$(word 1,$(subst <, ,$(PAIR)));)
+ 	touch ../stamp-tools
+ 
+ # when compiling the tools, the runtime has to be first on the path so that
+-- 
+2.4.9
+
