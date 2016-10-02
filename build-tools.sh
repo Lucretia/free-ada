@@ -28,22 +28,24 @@ Options:
                       Valid values for TARGET
                       -----------------------
                        1  - native
-                       2  - arm-none-eabi (Generic boards)
-                       3  - i586-elf      (Generic boards)
-                       4  - x86_64-elf    (Generic boards)
-                       5  - mips-elf      (Generic boards)
-                       6  - msp430-elf    (Generic boards)
-                       7  - avr           (Generic boards)
-                       8  - ppc-elf       (Generic boards)
-                       9  - ARM Android   (TODO)
-                      10  - MIPS Android  (TODO)
-                      11  - x86 Android   (TODO)
-                      12  - Win32         (TODO)
-                      13  - Win64         (TODO)
-                      14  - Mac OS X      (TODO)
-                      15  - iOS           (TODO)
-                      16  - i586 Steam    (TODO)
-                      17  - AMD64 Steam   (TODO)
+                       2  - arm-none-eabi     (Generic boards)
+                       3  - i586-elf          (Generic boards)
+                       4  - x86_64-elf        (Generic boards)
+                       5  - mips-elf          (Generic boards)
+                       6  - msp430-elf        (Generic boards)
+                       7  - avr               (Generic boards)
+                       8  - ppc-elf           (Generic boards)
+                       9  - ARM Android       (TODO)
+                      10  - MIPS Android      (TODO)
+                      11  - x86 Android       (TODO)
+                      12  - Win32             (TODO)
+                      13  - Win64             (TODO)
+                      14  - Mac OS X          (TODO)
+                      15  - iOS               (TODO)
+                      16  - i586 Steam        (TODO)
+                      17  - AMD64 Steam       (TODO)
+                      18  - i686-pc-linux-gnu (cross)
+                      19  - i686-pc-linux-gnu (host-x-host)
 "
 
 target_list="You must enter a target number to build, use -h flag to see list."
@@ -90,6 +92,11 @@ case "$1" in
 		;;
 	    8)
 		build_type="ppc-elf"
+		;;
+	    18)
+		build_type="i686-pc-linux-gnu"
+		;;
+	    19)
 		;;
 	    *)
 		echo "$target_list"

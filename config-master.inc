@@ -124,6 +124,46 @@ export JOBS="-j $(($CORES*2))"
 # Edit package versions/mirrors as required.
 
 ################################################################################
+# Bootstrap builds #############################################################
+#
+# These builds consist of two types of build, a normal cross compiler using an
+# existing system root (--sysroot flag) and a host-x-host compiler which is
+# a compiler built to run on that system and produce binaries for that system.
+#
+# See https://gcc.gnu.org/onlinedocs/gccint/Configure-Terms.html
+#
+# The toolchains required to be built to gain a native i686 Linux bootstrap
+# compiler are as follows:
+#
+# e.g. Cross compiler
+#   --build=x86_64-pc-linux-gnu = Built compiler is built on amd64 Linux
+#   --host=x86_64-pc-linux-gnu  = Built compiler runs on amd64 Linux
+#   --target=i686-pc-linux-gnu  = Built compiler builds programs for x86 Linux
+#
+# and e.g. host-x-host
+#   --build=x86_64-pc-linux-gnu = Built compiler is built on amd64 Linux
+#   --host=i686-pc-linux-gnu    = Built compiler runs on x86 Linux
+#   --target=i686-pc-linux-gnu  = Built compiler builds programs for x86 Linux
+#
+# The host-x-host compiler wouldn't need binutils as these should be supplied
+# by the installed OS on which this compiler is to run.
+################################################################################
+
+# For bootstrap builds we are building compilers for full systems
+SYSROOT_X86_LINUX	=	<point me to>/usr
+#SYSROOT_AMD64_LINUX	=	<point me to>/usr
+#SYSROOT_SPARC_LINUX	=	<point me to>/usr
+#SYSROOT_MIPS_LINUX	=	<point me to>/usr
+#SYSROOT_ARM_LINUX	=	<point me to>/usr
+#SYSROOT_AMD64_WINDOWS	=	<point me to>/usr
+
+# This flag tells the script whether to just build the bootstrap packages
+INSTALL_BOOTSTRAPS	=	n
+
+# Build this bootstrap statically, no shared libs.
+STATIC_BOOTSTRAP	=	y
+
+################################################################################
 # Required tools ###############################################################
 ################################################################################
 
