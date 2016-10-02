@@ -108,10 +108,10 @@ CORES=`grep 'model name' /proc/cpuinfo | wc -l`
 
 # Static Jobs
 # 1 = No Parallel Make Jobs (slow)
-#export JOBS="-j 1"
+export JOBS="-j 4"
 
 # Scaled Jobs, 2 jobs per cpu core (fast)
-export JOBS="-j $(($CORES*2))"
+# export JOBS="-j $(($CORES*2))"
 
 # Dynamic Load-average Threshold (slow, but can reduce cpu hammering)
 # Spawn parallel processes only at < 100% core utilization
@@ -122,46 +122,6 @@ export JOBS="-j $(($CORES*2))"
 
 
 # Edit package versions/mirrors as required.
-
-################################################################################
-# Bootstrap builds #############################################################
-#
-# These builds consist of two types of build, a normal cross compiler using an
-# existing system root (--sysroot flag) and a host-x-host compiler which is
-# a compiler built to run on that system and produce binaries for that system.
-#
-# See https://gcc.gnu.org/onlinedocs/gccint/Configure-Terms.html
-#
-# The toolchains required to be built to gain a native i686 Linux bootstrap
-# compiler are as follows:
-#
-# e.g. Cross compiler
-#   --build=x86_64-pc-linux-gnu = Built compiler is built on amd64 Linux
-#   --host=x86_64-pc-linux-gnu  = Built compiler runs on amd64 Linux
-#   --target=i686-pc-linux-gnu  = Built compiler builds programs for x86 Linux
-#
-# and e.g. host-x-host
-#   --build=x86_64-pc-linux-gnu = Built compiler is built on amd64 Linux
-#   --host=i686-pc-linux-gnu    = Built compiler runs on x86 Linux
-#   --target=i686-pc-linux-gnu  = Built compiler builds programs for x86 Linux
-#
-# The host-x-host compiler wouldn't need binutils as these should be supplied
-# by the installed OS on which this compiler is to run.
-################################################################################
-
-# For bootstrap builds we are building compilers for full systems
-SYSROOT_X86_LINUX	=	<point me to>/usr
-#SYSROOT_AMD64_LINUX	=	<point me to>/usr
-#SYSROOT_SPARC_LINUX	=	<point me to>/usr
-#SYSROOT_MIPS_LINUX	=	<point me to>/usr
-#SYSROOT_ARM_LINUX	=	<point me to>/usr
-#SYSROOT_AMD64_WINDOWS	=	<point me to>/usr
-
-# This flag tells the script whether to just build the bootstrap packages
-INSTALL_BOOTSTRAPS	=	n
-
-# Build this bootstrap statically, no shared libs.
-STATIC_BOOTSTRAP	=	y
 
 ################################################################################
 # Required tools ###############################################################
@@ -225,10 +185,12 @@ fi
 ################################################################################
 
 # GMP (GNU Multiple Precision Arithmetic Library)
+#export GMP_VERSION=4.3.2
 export GMP_VERSION=5.1.2
 export GMP_MIRROR=ftp://ftp.gmplib.org/pub/gmp-$GMP_VERSION
 
 # MPC
+#export MPC_VERSION=0.8.1
 export MPC_VERSION=1.0.2
 export MPC_MIRROR=http://www.multiprecision.org/mpc/download
 
@@ -241,17 +203,19 @@ export MPC_MIRROR=http://www.multiprecision.org/mpc/download
 # --disable-thread-safe configure option to disable TLS and see if this solves
 # these failures. But you should not use an MPFR library with TLS disabled in a
 # multithreaded program (unless you know what you are doing).
+#export MPFR_VERSION=2.4.2
+#export MPFR_MIRROR=http://www.mpfr.org/mpfr-$MPFR_VERSION
+#export MPFR_PATCHES=http://www.mpfr.org/mpfr-$MPFR_VERSION/allpatches
 export MPFR_VERSION=3.1.2
-export MPFR_MIRROR=http://www.mpfr.org/mpfr-current
-export MPFR_PATCHES=http://www.mpfr.org/mpfr-current/allpatches
-#export MPFR_MIRROR=http://mpfr.loria.fr/mpfr-current
-#export MPFR_PATCHES=http://mpfr.loria.fr/mpfr-current/allpatches
+export MPFR_MIRROR=http://mpfr.loria.fr/mpfr-current
+export MPFR_PATCHES=http://mpfr.loria.fr/mpfr-current/allpatches
 
 # ISL (Dependancy for CLooG)
 # Added support to use the official cloog.org
 # The --with-isl configure option should be used if ISL is not installed in your
 # default library search path.
 export ISL_VERSION=0.12.2
+#export ISL_VERSION=0.14
 export ISL_MIRROR=ftp://gcc.gnu.org/pub/gcc/infrastructure
 
 #CLooG (uses isl as polyhedral library)
@@ -298,6 +262,10 @@ export FLORIST_DIR=florist-src
 export MATRESHKA_VERSION=0.7.0
 export MATRESHKA_MIRROR=http://forge.ada-ru.org/matreshka/downloads
 export MATRESHKA_DIR=matreshka-$MATRESHKA_VERSION
+
+export AHVEN_VERSION=2.6
+export AHVEN_MIRROR=http://www.ahven-framework.com/releases
+export AHVEN_DIR=ahven-$AHVEN_VERSION
 
 # export U_BOOT_VERSION=1.3.4
 # export U_BOOT_MIRROR=ftp://ftp.denx.de/pub/u-boot
