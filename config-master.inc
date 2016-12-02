@@ -243,11 +243,11 @@ export MPC_MIRROR=http://www.multiprecision.org/mpc/download
 # these failures. But you should not use an MPFR library with TLS disabled in a
 # multithreaded program (unless you know what you are doing).
 #export MPFR_VERSION=2.4.2
-#export MPFR_MIRROR=http://www.mpfr.org/mpfr-$MPFR_VERSION
-#export MPFR_PATCHES=http://www.mpfr.org/mpfr-$MPFR_VERSION/allpatches
 export MPFR_VERSION=3.1.2
-export MPFR_MIRROR=http://mpfr.loria.fr/mpfr-current
-export MPFR_PATCHES=http://mpfr.loria.fr/mpfr-current/allpatches
+export MPFR_MIRROR=http://www.mpfr.org/mpfr-$MPFR_VERSION
+export MPFR_PATCHES=http://www.mpfr.org/mpfr-$MPFR_VERSION/allpatches
+#export MPFR_MIRROR=http://mpfr.loria.fr/mpfr-current
+#export MPFR_PATCHES=http://mpfr.loria.fr/mpfr-current/allpatches
 
 # ISL (Dependancy for CLooG)
 # Added support to use the official cloog.org
