@@ -304,14 +304,16 @@ fi
 
 cd gcc-$GCC_VERSION
 
-if [ "$(ls -A $FILES/gcc-$GCC_VERSION/*)" ] && [ ! -f .patched ]; then
-    echo "  >> Patching gcc-$GCC_VERSION..."
+if [ -d $FILES/gcc-$GCC_VERSION ]; then
+    if [ "$(ls -A $FILES/gcc-$GCC_VERSION/*)" ] && [ ! -f .patched ]; then
+	echo "  >> Patching gcc-$GCC_VERSION..."
 
-    for f in $FILES/gcc-$GCC_VERSION/*; do
-	patch -p1 < $f
-	check_error_exit
-	check_error .patched
-    done
+	for f in $FILES/gcc-$GCC_VERSION/*; do
+	    patch -p1 < $f
+	    check_error_exit
+	    check_error .patched
+	done
+    fi
 fi
 
 cd $SRC
