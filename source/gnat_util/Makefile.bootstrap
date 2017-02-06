@@ -1,0 +1,102 @@
+# This makefile is used to build and install Gnat_Util using gnatmake.
+
+BUILD_TYPE=Production
+
+prefix=/usr/local
+
+
+CP		=	cp -p
+MV		=	mv
+MKDIR		=	mkdir -p
+AR		=	ar rc
+RANLIB		=	ranlib
+RM		=	rm -rf
+SRC		=	gen_src
+STATIC_BUILD_DIR=	lib/static
+SHARED_BUILD_DIR=	lib/shared
+
+# Only listing these files to pass to gnatmake. Gnatmake builds the rest automatically.
+ADA_SRCS	=	ali-util.adb \
+			binderr.adb \
+			butil.adb \
+			get_scos.adb \
+			lib.adb \
+			mlib.adb \
+			prj-attr-pm.adb \
+			prj-conf.adb \
+			put_scos.adb \
+			repinfo.adb \
+			switch-m.adb \
+			tree_in.adb \
+			xsnamest.adb
+C_SRCS		=	gnat_util_dummies.c \
+			link.c
+
+COMMON_ADAFLAGS	=	-c -k -aI$(SRC)
+COMMON_CFLAGS	=	-c
+
+ifeq ($(BUILD_TYPE), Production)
+BUILD_ADAFLAGS	=	-O2 -gnatn -gnatws -gnat05
+BUILD_CFLAGS	=	-O2
+else
+BUILD_ADAFLAGS	=	-O0 -gnato -g -gnata -gnat05
+BUILD_CFLAGS	=	-g
+endif
+
+STATIC_ADAFLAGS	=	$(COMMON_ADAFLAGS) $(BUILD_ADAFLAGS) -D $(STATIC_BUILD_DIR)
+STATIC_CFLAGS	=	$(COMMON_CFLAGS) $(BUILD_CFLAGS)
+
+SHARED_ADAFLAGS	=	$(COMMON_ADAFLAGS) $(BUILD_ADAFLAGS) -D $(SHARED_BUILD_DIR) -fPIC
+SHARED_CFLAGS	=	$(COMMON_CFLAGS) $(BUILD_CFLAGS) -fPIC
+
+.PHONY: all
+all: dirs generate_sources static shared
+
+# Build static lib.
+static: $(STATIC_BUILD_DIR)/libgnat_util.a
+
+$(STATIC_BUILD_DIR)/libgnat_util.a:
+	gnatmake $(STATIC_ADAFLAGS) $(ADA_SRCS)
+	gcc $(STATIC_CFLAGS) gnat_util_dummies.c -o $(STATIC_BUILD_DIR)/gnat_util_dummies.o
+	gcc $(STATIC_CFLAGS) link.c -o $(STATIC_BUILD_DIR)/link.o
+	$(AR) $@ $(STATIC_BUILD_DIR)/*.o
+	$(RANLIB) $@
+
+# Build shared lib.
+shared: $(SHARED_BUILD_DIR)/libgnat_util.so
+
+$(SHARED_BUILD_DIR)/libgnat_util.so:
+	gnatmake $(SHARED_ADAFLAGS) $(ADA_SRCS)
+	gcc $(SHARED_CFLAGS) gnat_util_dummies.c -o $(SHARED_BUILD_DIR)/gnat_util_dummies.o
+	gcc $(SHARED_CFLAGS) link.c -o $(SHARED_BUILD_DIR)/link.o
+	gcc -shared -o $@ $(SHARED_BUILD_DIR)/*.o
+
+.PHONY: dirs
+dirs:
+	$(MKDIR) $(STATIC_BUILD_DIR)
+	$(MKDIR) $(SHARED_BUILD_DIR)
+
+.PHONY: generate_sources
+generate_sources:
+	$(MKDIR) $(SRC)
+	$(CP) xsnamest.adb xutil.* snames.adb-tmpl snames.ads-tmpl snames.h-tmpl $(SRC)
+	(cd $(SRC) && \
+		gnatmake -gnatf -gnatwae -gnatyg -gnatyS xsnamest && \
+			./xsnamest && mv snames.ns snames.ads && mv snames.nb snames.adb)
+
+.PHONY: install
+install:
+	$(MKDIR) $(prefix)/include/gnat_util
+	$(MKDIR) $(prefix)/lib/gnat
+	$(MKDIR) $(prefix)/lib/gnat_util/static
+	$(MKDIR) $(prefix)/lib/gnat_util/relocatable
+	$(CP) gnat_util-installed.gpr $(prefix)/lib/gnat/gnat_util.gpr
+	$(CP) *.ads $(prefix)/include/gnat_util
+	$(RM) $(prefix)/include/gnat_util/xutil.ads
+	$(CP) $(STATIC_BUILD_DIR)/*.ali $(STATIC_BUILD_DIR)/libgnat_util.a $(prefix)/lib/gnat_util/static
+	$(CP) $(SHARED_BUILD_DIR)/*.ali $(SHARED_BUILD_DIR)/libgnat_util.so $(prefix)/lib/gnat_util/relocatable
+
+.PHONY: clean
+clean:
+	$(RM) $(STATIC_BUILD_DIR)
+	$(RM) $(SHARED_BUILD_DIR)
