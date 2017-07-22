@@ -138,7 +138,7 @@ function build_native_gdb() {
 #
 # This library is used by the other AdaCore tools.
 ################################################################################
-function build_fsf_gnat_util()
+function build_fsf_gnat_util_bootstrap()
 {
     cd $CBD/
 
@@ -174,30 +174,30 @@ function build_fsf_gnat_util()
 
     if [ ! -f .make ]; then
 	echo "  >> [19/$TASK_COUNT_TOTAL] Building GNAT_Util (Native)..."
-	make ENABLE_SHARED=yes &> $LOGPRE-gnat_util-make.txt
+	make -f Makefile.bootstrap ENABLE_SHARED=yes &> $LOGPRE-gnat_util-make.txt
 
 	check_error .make
     fi
 
     if [ ! -f .make-pkg-stage ]; then
-	echo "  >> [20/$TASK_COUNT_TOTAL] Packaging GNAT_Util (Native)..."
-	make install prefix=$STAGE_BASE_DIR$INSTALL_DIR ENABLE_SHARED=yes &> $LOGPRE-gnat_util-pkg.txt
-	check_error .make-pkg-stage
+    	echo "  >> [20/$TASK_COUNT_TOTAL] Packaging GNAT_Util (Native)..."
+    	make -f Makefile.bootstrap install prefix=$STAGE_BASE_DIR$INSTALL_DIR ENABLE_SHARED=yes &> $LOGPRE-gnat_util-pkg.txt
+    	check_error .make-pkg-stage
 
-	if [ ! -f .make-pkg ]; then
-	    cd $STAGE_DIR
-	    tar -cjpf $PKG/$PROJECT-$HOST-gnat_util.tbz2 .
-	    check_error $OBD/gnat_util/.make-pkg
+    	if [ ! -f .make-pkg ]; then
+    	    cd $STAGE_DIR
+    	    tar -cjpf $PKG/$PROJECT-$HOST-gnat_util.tbz2 .
+    	    check_error $OBD/gnat_util/.make-pkg
 
-	    cd $OBD/gnat_util
-	    rm -rf /tmp/opt
-	fi
+    	    cd $OBD/gnat_util
+    	    rm -rf /tmp/opt
+    	fi
     fi
 
     if [ ! -f .make-install ]; then
-	echo "  >> [21/$TASK_COUNT_TOTAL] Installing GNAT_Util (Native)..."
-	tar -xjpf $PKG/$PROJECT-$HOST-gnat_util.tbz2 -C $INSTALL_BASE_DIR
-	check_error .make-install
+    	echo "  >> [21/$TASK_COUNT_TOTAL] Installing GNAT_Util (Native)..."
+    	tar -xjpf $PKG/$PROJECT-$HOST-gnat_util.tbz2 -C $INSTALL_BASE_DIR
+    	check_error .make-install
     fi
 
     echo "  >> GNAT_Util (Native) Installed"
@@ -205,7 +205,36 @@ function build_fsf_gnat_util()
 
 ################################################################################
 # Build GPL'd AdaCore components that we need.
-#
+################################################################################
+
+################################################################################
+# Bootstrap GPRBuild/XMLAda
+################################################################################
+function bootstrap_gprbuild()
+{
+    cd $CBD/
+
+    STRAP_DIR=gprbuild-bootstrap
+
+    if [ ! -d $STRAP_DIR ]; then
+	echo "  >> [??/$TASK_COUNT_TOTAL] Bootstrapping GPRBuild (Native)..."
+
+	mkdir $STRAP_DIR
+    fi
+
+    cd $STRAP_DIR
+
+    if [ ! -f .gprbuild-strapped ]; then
+	$SRC/gprbuild/bootstrap.sh --prefix=$GPRBUILD_BOOTSTRAP_DIR --srcdir=$SRC/gprbuild --with-xmlada=$SRC/xmlada \
+	    &> $LOGPRE-gdb-gprbuild-bootstrap-make.txt
+
+	cp $SRC/gprbuild/share/gprconfig/*.ent $GPRBUILD_BOOTSTRAP_DIR/share/gprconfig/
+
+	check_error .gprbuild-strapped
+    fi
+}
+
+################################################################################
 # XMLAda for gprbuild.
 # gprbuild for better project files and multilanguage support.
 #
@@ -221,16 +250,23 @@ function build_native_xmlada()
 
     if [ ! -f .xmlada-unpacked ]; then
 	echo "  >> [22/$TASK_COUNT_TOTAL] Unpacking XMLAda sources (Native)..."
-	tar -xzpf $ARC/$XMLADA_VERSION.tar.gz
+
+	if [ $XMLADA_GIT = "y" ]; then
+	    git clone file://$SRC/xmlada
+
+	    cd xmlada
+	else
+	    tar -xzpf $ARC/$XMLADA_VERSION.tar.gz
+
+	    cd xmlada-$GPL_YEAR-src
+	fi
 
 	check_error .xmlada-unpacked
     fi
 
-    cd xmlada-$GPL_YEAR-src
-
     if [ ! -f .config ]; then
 	echo "  >> [23/$TASK_COUNT_TOTAL] Configuring XMLAda (Native)..."
-	./configure \
+	PATH=$GPRBUILD_BOOTSTRAP_DIR/bin:$PATH ./configure \
 	    --prefix=$STAGE_BASE_DIR$INSTALL_DIR \
 	    &> $LOGPRE-xmlada-$GPL_YEAR-config.txt
 
@@ -239,13 +275,13 @@ function build_native_xmlada()
 
     if [ ! -f .make ]; then
 	echo "  >> [24/$TASK_COUNT_TOTAL] Building XMLAda (Native)..."
-	make $JOBS &> $LOGPRE-xmlada-$GPL_YEAR-make.txt
+	PATH=$GPRBUILD_BOOTSTRAP_DIR/bin:$PATH make $JOBS &> $LOGPRE-xmlada-$GPL_YEAR-make.txt
 	check_error .make
     fi
 
     if [ ! -f .make-pkg-stage ]; then
 	echo "  >> [25/$TASK_COUNT_TOTAL] Packaging XMLAda (Native)..."
-	make install &> $LOGPRE-xmlada-$GPL_YEAR-pkg.txt
+	PATH=$GPRBUILD_BOOTSTRAP_DIR/bin:$PATH make install &> $LOGPRE-xmlada-$GPL_YEAR-pkg.txt
 	check_error .make-pkg-stage
 
 	if [ ! -f .make-pkg ]; then
@@ -269,6 +305,8 @@ function build_native_xmlada()
 
 function build_native_gprbuild()
 {
+    # git clone --branch free-ada-for-5.1.0 file://`pwd`/../source/gprbuild
+    
     # Build GPRBuild
     # Unpack in build dir, config, install to tmp, package, unpack in install_dir.
     cd $CBD/
@@ -719,14 +757,15 @@ function build_native_florist()
 
 function build_native_adacore()
 {
+    bootstrap_gprbuild
     build_native_xmlada
-    build_native_gprbuild
-    build_native_gnatcoll
-    build_native_asis
-    build_native_gnatmem
-    build_native_aunit
-    build_native_polyorb
-    build_native_florist
+    # build_native_gprbuild
+    # build_native_gnatcoll
+    # build_native_asis
+    # build_native_gnatmem
+    # build_native_aunit
+    # build_native_polyorb
+    # build_native_florist
 
     # Build SPARK
 }
@@ -865,9 +904,10 @@ function build_native_toolchain()
 	    --with-mpfr=$INSTALL_DIR \
 	    --with-mpc=$INSTALL_DIR \
 	    --with-isl=$INSTALL_DIR \
+	    --enable-lto \
 	    $CLOOG_OPTS \
-	    CFLAGS="$EXTRA_NATIVE_CFLAGS" \
 	    $EXTRA_NATIVE_GCC_CONFIGURE_FLAGS \
+	    CFLAGS="$EXTRA_NATIVE_CFLAGS" \
 	    &> $LOGPRE-gcc-configure.txt
 	check_error .config
     fi
@@ -879,7 +919,7 @@ function build_native_toolchain()
 	check_error .make
     fi
 
-    if [ ! -f .make-test ]; then
+    if [ ! -f .make-test ] && [ $GCC_TESTS = "y" ]; then
 	echo "  >> [7-pre/$TASK_COUNT_TOTAL] Checking environment for test tools..."
 
 	check_package_installed "Tcl" tclsh
@@ -892,6 +932,8 @@ function build_native_toolchain()
 	make -k check-gcc &> $LOGPRE-gcc-test.txt
 
 	check_error .make-test
+    else
+	echo "  >> [7-8/$TASK_COUNT_TOTAL] Skipping testing GNAT/GCC (Native)..."
     fi
 
     if [ ! -f .make-pkg-stage ]; then
@@ -916,9 +958,9 @@ function build_native_toolchain()
     fi
 
     build_native_gdb
-    build_fsf_gnat_util
+    build_fsf_gnat_util_bootstrap
     build_native_adacore
-    build_native_other
+#    build_native_other
 
     echo "  (x) Finished Processing GNAT/GCC for $NATIVE_LANGUAGES (Native)"
 

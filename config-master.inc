@@ -205,9 +205,9 @@ export NATIVE_LANGUAGES="c,c++,objc,obj-c++,ada"
 export GCC_RELEASE=y
 
 if [ $GCC_RELEASE == "y" ]; then
-    export GCC_VERSION=4.9.4 # filename version
-    export GCC_SRC_VERSION=4.9.4 # extracted version
-    export GCC_MIRROR=ftp://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-4.9.4
+    export GCC_VERSION=5.1.0 # filename version
+    export GCC_SRC_VERSION=$GCC_VERSION # extracted version, change if different
+    export GCC_MIRROR=ftp://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-$GCC_VERSION
     export GCC_TARBALL=$GCC_MIRROR/gcc-$GCC_VERSION.tar.bz2
 
     export GCC_DIR=$SRC/gcc-$GCC_SRC_VERSION
