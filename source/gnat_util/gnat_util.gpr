@@ -14,22 +14,22 @@ project Gnat_Util is
 
    for Source_Dirs use (".", "gen_src");
 
-   case OS is
-      when "unix" | "Windows_NT" =>
-         for Locally_Removed_Files use
-           ("mlib-tgt-specific-vms-alpha.adb",
-            "mlib-tgt-specific-vms-ia64.adb",
-            "mlib-tgt-vms_common.adb",
-            "mlib-tgt-vms_common.ads");
-      when "avms" =>
-         for Locally_Removed_Files use
-           ("mlib-tgt-specific.adb",
-            "mlib-tgt-specific-vms-ia64.adb");
-      when "ivms" =>
-         for Locally_Removed_Files use
-           ("mlib-tgt-specific.adb",
-            "mlib-tgt-specific-vms-alpha.adb");
-   end case;
+   -- case OS is
+   --    when "unix" | "Windows_NT" =>
+   --       for Locally_Removed_Files use
+   --         ("mlib-tgt-specific-vms-alpha.adb",
+   --          "mlib-tgt-specific-vms-ia64.adb",
+   --          "mlib-tgt-vms_common.adb",
+   --          "mlib-tgt-vms_common.ads");
+   --    when "avms" =>
+   --       for Locally_Removed_Files use
+   --         ("mlib-tgt-specific.adb",
+   --          "mlib-tgt-specific-vms-ia64.adb");
+   --    when "ivms" =>
+   --       for Locally_Removed_Files use
+   --         ("mlib-tgt-specific.adb",
+   --          "mlib-tgt-specific-vms-alpha.adb");
+   -- end case;
 
    for Library_Kind use Gnat_Shared_Type;
 
@@ -71,12 +71,14 @@ project Gnat_Util is
          when "unix" | "Windows_NT" =>
             for Body ("mlib.tgt.specific")
               use "mlib-tgt-specific.adb";
-         when "avms" =>
-            for Body ("mlib.tgt.specific")
-              use "mlib-tgt-specific-vms-alpha.adb";
-         when "ivms" =>
-            for Body ("mlib.tgt.specific")
-              use "mlib-tgt-specific-vms-ia64.adb";
+	 when others =>
+	    null;
+         -- when "avms" =>
+         --    for Body ("mlib.tgt.specific")
+         --      use "mlib-tgt-specific-vms-alpha.adb";
+         -- when "ivms" =>
+         --    for Body ("mlib.tgt.specific")
+         --      use "mlib-tgt-specific-vms-ia64.adb";
       end case;
    end Naming;
 

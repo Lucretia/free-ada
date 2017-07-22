@@ -47,6 +47,7 @@ function build_cross_toolchain()
 		$SRC/binutils-$BINUTILS_SRC_VERSION/configure \
 		--prefix=$INSTALL_DIR \
 		--target=$1 \
+		--enable-targets=all \
 		$2 \
 		--enable-multilib \
 		--disable-nls \

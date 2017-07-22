@@ -2,7 +2,7 @@
 
 ## Who did this?
 
-Copyright (C) 2011-2015 Luke A. Guest & David Rees
+Copyright (C) 2011-2016 Luke A. Guest & David Rees
 
 ## What is this?
 
@@ -65,7 +65,7 @@ The following targets have been built, but any target supported by GCC should bu
 * x86_64-elf
 * mips-elf
 * msp430-elf
-* avr
+* avr - **NOTE** Don't use this as it doesn't match the build from the official avr-ada and it's Duration isn't right.
 * ppc-elf
 
 ## Notes

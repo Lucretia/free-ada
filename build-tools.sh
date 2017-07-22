@@ -8,8 +8,8 @@
 ################################################################################
 #!/bin/bash
 
-VERSION="build-tools.sh (16/06/2014)"
-COPYRIGHT="Copyright (C) 2011-2014 Luke A. Guest, David Rees. All Rights Reserved."
+VERSION="build-tools.sh (03/02/2017)"
+COPYRIGHT="Copyright (C) 2011-2017 Luke A. Guest, David Rees. All Rights Reserved."
 
 usage="\
 $VERSION
@@ -254,8 +254,19 @@ if [ $CLOOG_REQUIRED = "y" ]; then
 fi
 #echo "  NewLib        : " $NEWLIB_VERSION
 echo "  Binutils      : " $BINUTILS_SRC_VERSION
-#echo "  GCC           : " $GCC_VERSION
+
+if [ $GCC_RELEASE == "y" ]; then
+echo "  GCC           : " $GCC_VERSION
+else
 echo "  GCC           :  GitHub"
+fi
+
+if [ $GCC_JIT == "y" ]; then
+    echo "  GCC JIT       :  Enabled"
+else
+    echo "  GCC JIT       :  Disabled"
+fi
+
 echo "  GDB           : " $GDB_VERSION
 echo "  XMLAda        : " $GPL_YEAR
 echo "  GPRBuild      : " $GPL_YEAR

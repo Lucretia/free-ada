@@ -211,18 +211,50 @@ fi
 
 # AdaCore Libraries/Tools ###########################################################
 
-if [ ! -f $XMLADA_VERSION.tar.gz ]; then
-    echo "  >> Downloading $XMLADA_VERSION..."
-    wget -c -O $XMLADA_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$XMLADA_HASH
+if [ $XMLADA_GIT = "y" ]; then
+    echo "  >> Downloading XMLAda..."
+
+    cd $SRC
+
+    if [ ! -d xmlada ]; then
+	git clone $XMLADA_REPO
+    else
+	cd xmlada
+	git pull
+	cd ..
+    fi
+
+    cd $ARC
 else
+    if [ ! -f $XMLADA_VERSION.tar.gz ]; then
+	echo "  >> Downloading $XMLADA_VERSION..."
+	wget -c -O $XMLADA_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$XMLADA_HASH
+    else
 	echo "  (x) Already have $XMLADA_VERSION"
+    fi
 fi
 
-if [ ! -f $GPRBUILD_VERSION.tar.gz ]; then
-    echo "  >> Downloading $GPRBUILD_VERSION..."
-    wget -c -O $GPRBUILD_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$GPRBUILD_HASH
+if [ $GPRBUILD_GIT = "y" ]; then
+    echo "  >> Downloading GPRBuild..."
+
+    cd $SRC
+
+    if [ ! -d gprbuild ]; then
+	git clone $GPRBUILD_REPO
+    else
+	cd gprbuild
+	git pull
+	cd ..
+    fi
+
+    cd $ARC
 else
+    if [ ! -f $GPRBUILD_VERSION.tar.gz ]; then
+	echo "  >> Downloading $GPRBUILD_VERSION..."
+	wget -c -O $GPRBUILD_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$GPRBUILD_HASH
+    else
 	echo "  (x) Already have $GPRBUILD_VERSION"
+    fi
 fi
 
 if [ ! -f $ASIS_VERSION.tar.gz ]; then
@@ -246,11 +278,27 @@ else
 	echo "  (x) Already have $AUNIT_VERSION"
 fi
 
-if [ ! -f $GNATCOLL_VERSION.tar.gz ]; then
-    echo "  >> Downloading $GNATCOLL_VERSION..."
-    wget -c -O $GNATCOLL_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$GNATCOLL_HASH
+if [ $GNATCOLL_GIT = "y" ]; then
+    echo "  >> Downloading GNATColl..."
+
+    cd $SRC
+
+    if [ ! -d gnatcoll ]; then
+	git clone $GNATCOLL_REPO
+    else
+	cd gnatcoll
+	git pull
+	cd ..
+    fi
+
+    cd $ARC
 else
+    if [ ! -f $GNATCOLL_VERSION.tar.gz ]; then
+	echo "  >> Downloading $GNATCOLL_VERSION..."
+	wget -c -O $GNATCOLL_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$GNATCOLL_HASH
+    else
 	echo "  (x) Already have $GNATCOLL_VERSION"
+    fi
 fi
 
 if [ ! -f $POLYORB_VERSION.tar.gz ]; then
@@ -265,6 +313,20 @@ if [ ! -f $FLORIST_VERSION.tar.gz ]; then
     wget -c -O $FLORIST_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$FLORIST_HASH
 else
 	echo "  (x) Already have $FLORIST_VERSION"
+fi
+
+if [ $GPS_GIT = "y" ]; then
+    echo "  >> Downloading GPS..."
+
+    if [ ! -d gps ]; then
+	git clone $GPS_REPO
+    else
+	cd gps
+	git pull
+	cd ..
+    fi
+
+    cd $ARC
 fi
 
 # Other Libraries/Tools ###########################################################
@@ -304,14 +366,16 @@ fi
 
 cd gcc-$GCC_VERSION
 
-if [ "$(ls -A $FILES/gcc-$GCC_VERSION/*)" ] && [ ! -f .patched ]; then
-    echo "  >> Patching gcc-$GCC_VERSION..."
+if [ -d $FILES/gcc-$GCC_VERSION ]; then
+    if [ "$(ls -A $FILES/gcc-$GCC_VERSION/*)" ] && [ ! -f .patched ]; then
+	echo "  >> Patching gcc-$GCC_VERSION..."
 
-    for f in $FILES/gcc-$GCC_VERSION/*; do
-	patch -p1 < $f
-	check_error_exit
-	check_error .patched
-    done
+	for f in $FILES/gcc-$GCC_VERSION/*; do
+	    patch -p1 < $f
+	    check_error_exit
+	    check_error .patched
+	done
+    fi
 fi
 
 cd $SRC
@@ -385,3 +449,31 @@ fi
 # fi
 
 cd $SRC
+
+if [ $GPRBUILD_GIT = "y" ]; then
+    if [ -d gprbuild ] && [ ! -f .patched ]; then
+	cd gprbuild
+
+	exists=`git show-ref refs/heads/$GPRBUILD_GIT_BRANCH`
+
+	if [ -n "$exists" ]; then
+	    # Just make sure this is the right branch.
+	    git co $GPRBUILD_GIT_BRANCH
+	else
+	    # Make the branch and patch it.
+	    echo "  >> Patching GPRBuild for GCC-$GCC_VERSION..."
+	    git co -b $GPRBUILD_GIT_BRANCH $GPRBUILD_GIT_REMOTE_BRANCH
+
+	    for f in $FILES/gprbuild/$GCC_VERSION/*; do
+		#git apply -p 1 $f
+		git am $f
+		check_error_exit
+	    done
+
+	    check_error .patched
+	fi
+
+	cd ..
+    fi
+fi
+

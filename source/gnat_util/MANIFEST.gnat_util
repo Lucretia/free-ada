@@ -49,12 +49,8 @@ makeutl.adb
 makeutl.ads
 mlib-fil.adb
 mlib-fil.ads
-mlib-tgt-specific-vms-alpha.adb
-mlib-tgt-specific-vms-ia64.adb
 mlib-tgt-specific.adb
 mlib-tgt-specific.ads
-mlib-tgt-vms_common.adb
-mlib-tgt-vms_common.ads
 mlib-tgt.adb
 mlib-tgt.ads
 mlib-utl.adb
