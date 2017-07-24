@@ -53,32 +53,34 @@ export DATE=`date +%d%m%Y`
 ################################################################################
 # What OS are we on? e.g. Linux, Darwin, MSYS_*
 # N.B: Don't call is OS because gprbuild.gpr grabs the variable.
+# TODO: Need to get the correct Darwin version!
 ################################################################################
-export LOCAL_OS=`uname -s`
+export OS=`uname -s`
 
 ################################################################################
 # What archtecture is this? e.g. x86_64, i686
 ################################################################################
-export ARCH=`uname -m`
+export CPU=`uname -m`
 
 ################################################################################
 # Find out what platform we are on.
 ################################################################################
 
-case $LOCAL_OS in
+case $OS in
     "Linux")
-	HOST=$ARCH-pc-linux-gnu
-	;;
+        HOST="${CPU}-pc-linux-gnu"
+        ;;
     "Darwin")
-	;;
+        HOST="${CPU}-apple-darwin15"
+        ;;
     "MSYS*")
-	;;
+        ;;
 esac
 
 ################################################################################
 # Is the host machine 64 bit? Used for LD_LIBRARY_PATH, leave blank for 32.
 ################################################################################
-if grep -q 64 <<< $ARCH; then
+if grep -q 64 <<< $CPU; then
     export BITS=64
     export MULTILIB="--enable-multilib"
     export EXTRA_BINUTILS_FLAGS="--enable-64-bit-bfd"
