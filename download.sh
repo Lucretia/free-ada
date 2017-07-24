@@ -7,8 +7,15 @@
 ################################################################################
 #!/bin/bash
 
-VERSION="download.sh (16/06/2014)"
-COPYRIGHT="Copyright (C) 2011-2014 Luke A. Guest, David Rees. All Rights Reserved."
+# Cannot put this into config.inc.
+export TOP=`pwd`
+export INC=$TOP/includes
+
+# Incudes with common function declarations
+source $INC/version.inc
+source $INC/errors.inc
+
+VERSION="download.sh ($VERSION_DATE)"
 
 usage="\
 $VERSION
@@ -31,20 +38,26 @@ Options:
 while test $# -ne 0; do
 
 	case "$1" in
+        # Version
+        --version|-v)
+            echo -e "$VERSION\n\n$COPYRIGHT"
+            exit $?
+            ;;
 
-	# Version
-	--version) echo "$VERSION
-$COPYRIGHT
-"; exit $?;;
+        # Help
+        --help|-h)
+            echo "$usage"
+            exit $?
+            ;;
 
-	# Help
-	--help) echo "$usage"; exit $?;;
+        # Invalid
+        -*)
+            echo "$0: invalid option: $1" >&2
+            exit 1
+            ;;
 
-	# Invalid
-	-*)	echo "$0: invalid option: $1" >&2 ;	exit 1;;
-
-	# Default
-	*) break ;;
+        # Default
+        *) break ;;
 	esac
 
 done
@@ -77,13 +90,6 @@ START
 
 read x
 
-# Cannot put this into config.inc.
-export TOP=`pwd`
-export INC=$TOP/includes
-
-# Incudes with common function declarations
-source $INC/errors.inc
-
 ################################################################################
 # Enforce a personalised configuration
 ################################################################################
@@ -108,7 +114,8 @@ cat << SPARK_ERR
   4) Re-run this script
 
 SPARK_ERR
-	exit 2;
+
+        exit 2;
 	fi
 }
 
@@ -122,221 +129,194 @@ for d in $DIRS; do
 	fi
 done
 
-#cd $TOP/archives
+# Utility functions ############################################################
+
+# $1 - Package macro prefix (in upper case)
+function download_package()
+{
+    local PKG="$1_TARBALL"
+    local PKG_MIRROR="$1_MIRROR"
+    
+    if [ ! -f ${!PKG} ]; then
+        echo "  >> Downloading $${!PKG}..."
+        wget -c ${!PKG_MIRROR}/${!PKG}
+
+        check_error_exit
+    else
+        echo "  (x) Already have ${!PKG}"
+    fi
+}
+
+# $1 - Package macro prefix (in upper case)
+# $2 - Compression letter for tar
+function download_unpack_package()
+{
+    local PKG="$1_TARBALL"
+    local PKG_DIR="$1_DIR"
+    
+    if [ ! -d ${!PKG_DIR} ]; then
+        echo "  >> Unpacking ${!PKG}..."
+        
+        tar -x${2}pf $ARC/${!PKG}
+
+        check_error_exit
+    fi
+}
+
 cd $ARC
 
 # Begin Downloading ############################################################
 
 echo "  >> Downloading archives, this may take quite a while..."
 
-# Binutils #####################################################################
+# Base packages ################################################################
 
-if [ ! -f binutils-$BINUTILS_VERSION.tar.bz2 ]; then
-	echo "  >> Downloading binutils-$BINUTILS_VERSION..."
-	wget -c $BINUTILS_TARBALL
-
-	check_error_exit
-else
-	echo "  (x) Already have binutils-$BINUTILS_VERSION"
-fi
-
-# GDB Tarballs #####################################################################
-
-if [ ! -f gdb-$GDB_VERSION.tar.xz ]; then
-	echo "  >> Downloading gdb-$GDB_VERSION..."
-	wget -c $GDB_TARBALL
-
-	check_error_exit
-else
-	echo "  (x) Already have gdb-$GDB_VERSION"
-fi
-
-# GCC Tarballs #####################################################################
+download_package "BINUTILS"
+download_package "GDB"
 
 if [ $GCC_RELEASE == "y" ]; then
-    if [ ! -f gcc-$GCC_VERSION.tar.bz2 ]; then
-	echo "  >> Downloading gcc-$GCC_VERSION..."
-	wget -c $GCC_TARBALL
-
-	check_error_exit
-    else
-	echo "  (x) Already have gcc-$GCC_VERSION"
-    fi
+    download_package "GCC"
 fi
 
 # Prerequisite Libraries ###########################################################
 
-if [ ! -f gmp-$GMP_VERSION.tar.bz2 ]; then
-	echo "  >> Downloading gmp-$GMP_VERSION..."
-	wget -c $GMP_MIRROR/gmp-$GMP_VERSION.tar.bz2
-	check_error_exit
-else
-	echo "  (x) Already have gmp-$GMP_VERSION"
-fi
-
-if [ ! -f isl-$ISL_VERSION.tar.bz2 ]; then
-	echo "  >> Downloading isl-$ISL_VERSION..."
-	wget -c $ISL_MIRROR/isl-$ISL_VERSION.tar.bz2
-	check_error_exit
-else
-	echo "  (x) Already have isl-$ISL_VERSION"
-fi
+download_package "GMP"
+download_package "MPC"
+download_package "MPFR"
+download_package "ISL"
 
 if [ $CLOOG_REQUIRED = "y" ]; then
-    if [ ! -f cloog-$CLOOG_VERSION.tar.gz ]
-    then
-	echo "  >> cloog-$CLOOG_VERSION.tar.gz..."
-	wget -c $CLOOG_MIRROR/cloog-$CLOOG_VERSION.tar.gz
-	check_error_exit
-    else
-	echo "  (x) Already have cloog-$CLOOG_VERSION.tar.gz"
-    fi
-fi
-
-if [ ! -f mpfr-$MPFR_VERSION.tar.gz ]; then
-	echo "  >> Downloading mpfr-$MPFR_VERSION..."
-	wget -c $MPFR_MIRROR/mpfr-$MPFR_VERSION.tar.gz
-	check_error_exit
-else
-	echo "  (x) Already have mpfr-$MPFR_VERSION"
-fi
-
-if [ ! -f mpc-$MPC_VERSION.tar.gz ]; then
-	echo "  >> Downloading mpc-$MPC_VERSION..."
-	wget -c $MPC_MIRROR/mpc-$MPC_VERSION.tar.gz
-	check_error_exit
-else
-	echo "  (x) Already have mpc-$MPC_VERSION"
+    download_package "CLOOG"
 fi
 
 # AdaCore Libraries/Tools ###########################################################
 
-if [ $XMLADA_GIT = "y" ]; then
-    echo "  >> Downloading XMLAda..."
+#~ if [ $XMLADA_GIT = "y" ]; then
+    #~ echo "  >> Downloading XMLAda..."
 
-    cd $SRC
+    #~ cd $SRC
 
-    if [ ! -d xmlada ]; then
-	git clone $XMLADA_REPO
-    else
-	cd xmlada
-	git pull
-	cd ..
-    fi
+    #~ if [ ! -d xmlada ]; then
+	#~ git clone $XMLADA_REPO
+    #~ else
+	#~ cd xmlada
+	#~ git pull
+	#~ cd ..
+    #~ fi
 
-    cd $ARC
-else
-    if [ ! -f $XMLADA_VERSION.tar.gz ]; then
-	echo "  >> Downloading $XMLADA_VERSION..."
-	wget -c -O $XMLADA_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$XMLADA_HASH
-    else
-	echo "  (x) Already have $XMLADA_VERSION"
-    fi
-fi
+    #~ cd $ARC
+#~ else
+    #~ if [ ! -f $XMLADA_VERSION.tar.gz ]; then
+	#~ echo "  >> Downloading $XMLADA_VERSION..."
+	#~ wget -c -O $XMLADA_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$XMLADA_HASH
+    #~ else
+	#~ echo "  (x) Already have $XMLADA_VERSION"
+    #~ fi
+#~ fi
 
-if [ $GPRBUILD_GIT = "y" ]; then
-    echo "  >> Downloading GPRBuild..."
+#~ if [ $GPRBUILD_GIT = "y" ]; then
+    #~ echo "  >> Downloading GPRBuild..."
 
-    cd $SRC
+    #~ cd $SRC
 
-    if [ ! -d gprbuild ]; then
-	git clone $GPRBUILD_REPO
-    else
-	cd gprbuild
-	git pull
-	cd ..
-    fi
+    #~ if [ ! -d gprbuild ]; then
+	#~ git clone $GPRBUILD_REPO
+    #~ else
+	#~ cd gprbuild
+	#~ git pull
+	#~ cd ..
+    #~ fi
 
-    cd $ARC
-else
-    if [ ! -f $GPRBUILD_VERSION.tar.gz ]; then
-	echo "  >> Downloading $GPRBUILD_VERSION..."
-	wget -c -O $GPRBUILD_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$GPRBUILD_HASH
-    else
-	echo "  (x) Already have $GPRBUILD_VERSION"
-    fi
-fi
+    #~ cd $ARC
+#~ else
+    #~ if [ ! -f $GPRBUILD_VERSION.tar.gz ]; then
+	#~ echo "  >> Downloading $GPRBUILD_VERSION..."
+	#~ wget -c -O $GPRBUILD_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$GPRBUILD_HASH
+    #~ else
+	#~ echo "  (x) Already have $GPRBUILD_VERSION"
+    #~ fi
+#~ fi
 
-if [ ! -f $ASIS_VERSION.tar.gz ]; then
-    echo "  >> Downloading $ASIS_VERSION..."
-    wget -c -O $ASIS_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$ASIS_HASH
-else
-	echo "  (x) Already have $ASIS_VERSION"
-fi
+#~ if [ ! -f $ASIS_VERSION.tar.gz ]; then
+    #~ echo "  >> Downloading $ASIS_VERSION..."
+    #~ wget -c -O $ASIS_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$ASIS_HASH
+#~ else
+	#~ echo "  (x) Already have $ASIS_VERSION"
+#~ fi
 
-if [ ! -f $GNATMEM_VERSION.tar.gz ]; then
-    echo "  >> Downloading $GNATMEM_VERSION..."
-    wget -c -O $GNATMEM_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$GNATMEM_HASH
-else
-	echo "  (x) Already have $GNATMEM_VERSION"
-fi
+#~ if [ ! -f $GNATMEM_VERSION.tar.gz ]; then
+    #~ echo "  >> Downloading $GNATMEM_VERSION..."
+    #~ wget -c -O $GNATMEM_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$GNATMEM_HASH
+#~ else
+	#~ echo "  (x) Already have $GNATMEM_VERSION"
+#~ fi
 
-if [ ! -f $AUNIT_VERSION.tar.gz ]; then
-    echo "  >> Downloading $AUNIT_VERSION..."
-    wget -c -O $AUNIT_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$AUNIT_HASH
-else
-	echo "  (x) Already have $AUNIT_VERSION"
-fi
+#~ if [ ! -f $AUNIT_VERSION.tar.gz ]; then
+    #~ echo "  >> Downloading $AUNIT_VERSION..."
+    #~ wget -c -O $AUNIT_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$AUNIT_HASH
+#~ else
+	#~ echo "  (x) Already have $AUNIT_VERSION"
+#~ fi
 
-if [ $GNATCOLL_GIT = "y" ]; then
-    echo "  >> Downloading GNATColl..."
+#~ if [ $GNATCOLL_GIT = "y" ]; then
+    #~ echo "  >> Downloading GNATColl..."
 
-    cd $SRC
+    #~ cd $SRC
 
-    if [ ! -d gnatcoll ]; then
-	git clone $GNATCOLL_REPO
-    else
-	cd gnatcoll
-	git pull
-	cd ..
-    fi
+    #~ if [ ! -d gnatcoll ]; then
+	#~ git clone $GNATCOLL_REPO
+    #~ else
+	#~ cd gnatcoll
+	#~ git pull
+	#~ cd ..
+    #~ fi
 
-    cd $ARC
-else
-    if [ ! -f $GNATCOLL_VERSION.tar.gz ]; then
-	echo "  >> Downloading $GNATCOLL_VERSION..."
-	wget -c -O $GNATCOLL_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$GNATCOLL_HASH
-    else
-	echo "  (x) Already have $GNATCOLL_VERSION"
-    fi
-fi
+    #~ cd $ARC
+#~ else
+    #~ if [ ! -f $GNATCOLL_VERSION.tar.gz ]; then
+	#~ echo "  >> Downloading $GNATCOLL_VERSION..."
+	#~ wget -c -O $GNATCOLL_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$GNATCOLL_HASH
+    #~ else
+	#~ echo "  (x) Already have $GNATCOLL_VERSION"
+    #~ fi
+#~ fi
 
-if [ ! -f $POLYORB_VERSION.tar.gz ]; then
-    echo "  >> Downloading $POLYORB_VERSION..."
-    wget -c -O $POLYORB_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$POLYORB_HASH
-else
-	echo "  (x) Already have $POLYORB_VERSION"
-fi
+#~ if [ ! -f $POLYORB_VERSION.tar.gz ]; then
+    #~ echo "  >> Downloading $POLYORB_VERSION..."
+    #~ wget -c -O $POLYORB_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$POLYORB_HASH
+#~ else
+	#~ echo "  (x) Already have $POLYORB_VERSION"
+#~ fi
 
-if [ ! -f $FLORIST_VERSION.tar.gz ]; then
-    echo "  >> Downloading $FLORIST_VERSION..."
-    wget -c -O $FLORIST_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$FLORIST_HASH
-else
-	echo "  (x) Already have $FLORIST_VERSION"
-fi
+#~ if [ ! -f $FLORIST_VERSION.tar.gz ]; then
+    #~ echo "  >> Downloading $FLORIST_VERSION..."
+    #~ wget -c -O $FLORIST_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$FLORIST_HASH
+#~ else
+	#~ echo "  (x) Already have $FLORIST_VERSION"
+#~ fi
 
-if [ $GPS_GIT = "y" ]; then
-    echo "  >> Downloading GPS..."
+#~ if [ $GPS_GIT = "y" ]; then
+    #~ echo "  >> Downloading GPS..."
 
-    if [ ! -d gps ]; then
-	git clone $GPS_REPO
-    else
-	cd gps
-	git pull
-	cd ..
-    fi
+    #~ if [ ! -d gps ]; then
+	#~ git clone $GPS_REPO
+    #~ else
+	#~ cd gps
+	#~ git pull
+	#~ cd ..
+    #~ fi
 
-    cd $ARC
-fi
+    #~ cd $ARC
+#~ fi
 
 # Other Libraries/Tools ###########################################################
 
-if [ ! -f matreshka-$MATRESHKA_VERSION.tar.gz ]; then
-    echo "  >> Downloading matreshka-$MATRESHKA_VERSION..."
-    wget -c $MATRESHKA_MIRROR/matreshka-$MATRESHKA_VERSION.tar.gz
-else
-	echo "  (x) Already have matreshka-$MATRESHKA_VERSION"
-fi
+#~ if [ ! -f matreshka-$MATRESHKA_VERSION.tar.gz ]; then
+    #~ echo "  >> Downloading matreshka-$MATRESHKA_VERSION..."
+    #~ wget -c $MATRESHKA_MIRROR/matreshka-$MATRESHKA_VERSION.tar.gz
+#~ else
+	#~ echo "  (x) Already have matreshka-$MATRESHKA_VERSION"
+#~ fi
 
 #################################################################################
 # Unpack the downloaded archives.
@@ -344,53 +324,31 @@ fi
 
 cd $SRC
 
-if [ ! -d binutils-$BINUTILS_SRC_VERSION ]; then
-	echo "  >> Unpacking binutils-$BINUTILS_VERSION.tar.bz2..."
-	tar -xjpf $ARC/binutils-$BINUTILS_VERSION.tar.bz2
-	check_error_exit
-fi
-
-if [ ! -d gdb-$GDB_SRC_VERSION ]; then
-	echo "  >> Unpacking gdb-$GDB_VERSION.tar.xz..."
-	tar -xJpf $ARC/gdb-$GDB_VERSION.tar.xz
-	check_error_exit
-fi
-
-if [ ! -d gcc-$GCC_SRC_VERSION ]; then
-	echo "  >> Unpacking gcc-$GCC_VERSION.tar.bz2..."
-	tar -xjpf $ARC/gcc-$GCC_VERSION.tar.bz2
-	check_error_exit
-fi
+download_unpack_package "BINUTILS" "j"
+download_unpack_package "GSB" "J"
+download_unpack_package "GCC" "j"
 
 # Apply any patches
 
-cd gcc-$GCC_VERSION
+#~ cd gcc-$GCC_VERSION
 
-if [ -d $FILES/gcc-$GCC_VERSION ]; then
-    if [ "$(ls -A $FILES/gcc-$GCC_VERSION/*)" ] && [ ! -f .patched ]; then
-	echo "  >> Patching gcc-$GCC_VERSION..."
+#~ if [ -d $FILES/gcc-$GCC_VERSION ]; then
+    #~ if [ "$(ls -A $FILES/gcc-$GCC_VERSION/*)" ] && [ ! -f .patched ]; then
+        #~ echo "  >> Patching gcc-$GCC_VERSION..."
 
-	for f in $FILES/gcc-$GCC_VERSION/*; do
-	    patch -p1 < $f
-	    check_error_exit
-	    check_error .patched
-	done
-    fi
-fi
+        #~ for f in $FILES/gcc-$GCC_VERSION/*; do
+            #~ patch -p1 < $f
+            #~ check_error_exit
+            #~ check_error .patched
+        #~ done
+    #~ fi
+#~ fi
 
-cd $SRC
+#~ cd $SRC
 
-if [ ! -d gmp-$GMP_VERSION ]; then
-	echo "  >> Unpacking gmp-$GMP_VERSION.tar.bz2..."
-	tar -xjpf $ARC/gmp-$GMP_VERSION.tar.bz2
-	check_error_exit
-fi
-
-if [ ! -d mpfr-$MPFR_VERSION ]; then
-	echo "  >> Unpacking mpfr-$MPFR_VERSION.tar.gz..."
-	tar -xzpf $ARC/mpfr-$MPFR_VERSION.tar.gz
-	check_error_exit
-fi
+download_unpack_package "GMP" "J"
+download_unpack_package "MPC" "z"
+download_unpack_package "MPFR" "J"
 
 cd mpfr-$MPFR_VERSION
 
@@ -412,30 +370,16 @@ fi
 
 cd $SRC
 
-if [ ! -d mpc-$MPC_VERSION ]; then
-	echo "  >> Unpacking mpc-$MPC_VERSION.tar.gz..."
-	tar -xzpf $ARC/mpc-$MPC_VERSION.tar.gz
-	check_error_exit
-fi
-
 # if [ ! -d newlib-$NEWLIB_VERSION ]; then
 # 	echo "  >> Unpacking newlib-$NEWLIB_VERSION.tar.gz..."
 # 	tar -xzpf $ARC/newlib-$NEWLIB_VERSION.tar.gz
 # 	check_error_exit
 # fi
 
-if [ ! -d isl-$ISL_VERSION ]; then
-	echo "  >> Unpacking isl-$ISL_VERSION.tar.bz2..."
-	tar -xjpf $ARC/isl-$ISL_VERSION.tar.bz2
-	check_error_exit
-fi
+download_unpack_package "ISL" "j"
 
 if [ $CLOOG_REQUIRED = "y" ]; then
-    if [ ! -d cloog-$CLOOG_VERSION ]; then
-	echo "  >> Unpacking cloog-$CLOOG_VERSION.tar.gz..."
-	tar -xzpf $ARC/cloog-$CLOOG_VERSION.tar.gz
-	check_error_exit
-    fi
+    download_unpack_package "CLOOG" "z"
 fi
 
 # if [ ! -d gcc ]; then
@@ -448,32 +392,32 @@ fi
 # 	git pull
 # fi
 
-cd $SRC
+#~ cd $SRC
 
-if [ $GPRBUILD_GIT = "y" ]; then
-    if [ -d gprbuild ] && [ ! -f .patched ]; then
-	cd gprbuild
+#~ if [ $GPRBUILD_GIT = "y" ]; then
+    #~ if [ -d gprbuild ] && [ ! -f .patched ]; then
+	#~ cd gprbuild
 
-	exists=`git show-ref refs/heads/$GPRBUILD_GIT_BRANCH`
+	#~ exists=`git show-ref refs/heads/$GPRBUILD_GIT_BRANCH`
 
-	if [ -n "$exists" ]; then
-	    # Just make sure this is the right branch.
-	    git co $GPRBUILD_GIT_BRANCH
-	else
-	    # Make the branch and patch it.
-	    echo "  >> Patching GPRBuild for GCC-$GCC_VERSION..."
-	    git co -b $GPRBUILD_GIT_BRANCH $GPRBUILD_GIT_REMOTE_BRANCH
+	#~ if [ -n "$exists" ]; then
+	    #~ # Just make sure this is the right branch.
+	    #~ git co $GPRBUILD_GIT_BRANCH
+	#~ else
+	    #~ # Make the branch and patch it.
+	    #~ echo "  >> Patching GPRBuild for GCC-$GCC_VERSION..."
+	    #~ git co -b $GPRBUILD_GIT_BRANCH $GPRBUILD_GIT_REMOTE_BRANCH
 
-	    for f in $FILES/gprbuild/$GCC_VERSION/*; do
-		#git apply -p 1 $f
-		git am $f
-		check_error_exit
-	    done
+	    #~ for f in $FILES/gprbuild/$GCC_VERSION/*; do
+		#~ #git apply -p 1 $f
+		#~ git am $f
+		#~ check_error_exit
+	    #~ done
 
-	    check_error .patched
-	fi
+	    #~ check_error .patched
+	#~ fi
 
-	cd ..
-    fi
-fi
+	#~ cd ..
+    #~ fi
+#~ fi
 
