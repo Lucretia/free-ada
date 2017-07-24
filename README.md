@@ -2,7 +2,7 @@
 
 ## Who did this?
 
-Copyright (C) 2011-2016 Luke A. Guest & David Rees
+Copyright (C) 2011-2017 Luke A. Guest with assistance from David Rees
 
 ## What is this?
 
@@ -70,5 +70,5 @@ The following targets have been built, but any target supported by GCC should bu
 
 ## Notes
 
-* This project uses git flow.
+* This project no longer uses git flow.
 * GNATColl requires Python 2 to create documentation, it will not build with Python 3.
