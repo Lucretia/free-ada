@@ -11,7 +11,7 @@
 ################################################################################
 # Project name, can change.
 ################################################################################
-export PROJECT_NAME=free-ada-4.9.4
+export PROJECT_NAME=free-ada
 
 ################################################################################
 # So we don't overwrite an already working toolchain! This is only valid when
@@ -49,33 +49,6 @@ export FILES=$TOP/files
 # Date variable for packaging anything from source control.
 ################################################################################
 export DATE=`date +%d%m%Y`
-
-################################################################################
-# What OS are we on? e.g. Linux, Darwin, MSYS_*
-# N.B: Don't call is OS because gprbuild.gpr grabs the variable.
-# TODO: Need to get the correct Darwin version!
-################################################################################
-export OS=`uname -s`
-
-################################################################################
-# What archtecture is this? e.g. x86_64, i686
-################################################################################
-export CPU=`uname -m`
-
-################################################################################
-# Find out what platform we are on.
-################################################################################
-
-case $OS in
-    "Linux")
-        HOST="${CPU}-pc-linux-gnu"
-        ;;
-    "Darwin")
-        HOST="${CPU}-apple-darwin15"
-        ;;
-    "MSYS*")
-        ;;
-esac
 
 ################################################################################
 # Is the host machine 64 bit? Used for LD_LIBRARY_PATH, leave blank for 32.
@@ -176,15 +149,18 @@ export BINUTILS_SNAPSHOT=n
 
 if [ $BINUTILS_SNAPSHOT == "y" ]; then
     # Snapshot
-    export BINUTILS_VERSION=2.24.51 # filename version
-    BINUTILS_SRC_VERSION=2.24.51 # extracted version
-    BINUTILS_TARBALL=ftp://sourceware.org/pub/binutils/snapshots/binutils-$BINUTILS_VERSION.tar.bz2
+    export BINUTILS_VERSION=2.28.90 # filename version
+    export BINUTILS_SRC_VERSION=2.28.90 # extracted version
+    export BINUTILS_MIRROR=ftp://sourceware.org/pub/binutils/snapshots
+    export BINUTILS_TARBALL=binutils-$BINUTILS_VERSION.tar.bz2
+    export BINUTILS_DIR=binutils-$BINUTILS_SRC_VERSION
 else
     # Release
-    export BINUTILS_VERSION=2.25 # filename version
-    BINUTILS_SRC_VERSION=2.25 # extracted version
-    export BINUTILS_MIRROR=http://ftp.gnu.org/gnu/binutils
-    BINUTILS_TARBALL=$BINUTILS_MIRROR/binutils-$BINUTILS_VERSION.tar.bz2
+    export BINUTILS_VERSION=2.29 # filename version
+    export BINUTILS_SRC_VERSION=2.29 # extracted version
+    export BINUTILS_MIRROR=ftp://sourceware.org/pub/binutils/releases
+    export BINUTILS_TARBALL=binutils-$BINUTILS_VERSION.tar.bz2
+    export BINUTILS_DIR=binutils-$BINUTILS_SRC_VERSION
 fi
 
 export BINUTILS_TARBALL
@@ -193,10 +169,12 @@ export BINUTILS_SRC_VERSION
 ################################################################################
 # GDB ##########################################################################
 ################################################################################
-export GDB_VERSION=7.8.1 # filename version
-export GDB_SRC_VERSION=7.8.1 # extracted version
-export GDB_MIRROR=http://ftp.gnu.org/gnu/gdb
-export GDB_TARBALL=$GDB_MIRROR/gdb-$GDB_VERSION.tar.xz
+export GDB_VERSION=8.0 # filename version
+export GDB_SRC_VERSION=8.0 # extracted version
+export GDB_MIRROR=ftp://www.mirrorservice.org/sites/ftp.gnu.org/gnu/gdb
+#export GDB_MIRROR=http://ftp.gnu.org/gnu/gdb
+export GDB_TARBALL=gdb-$GDB_VERSION.tar.xz
+export GDB_DIR=gdb-$GDB_SRC_VERSION 
 
 ################################################################################
 # GCC ##########################################################################
@@ -207,13 +185,15 @@ export NATIVE_LANGUAGES="c,c++,objc,obj-c++,ada"
 export GCC_RELEASE=y
 
 if [ $GCC_RELEASE == "y" ]; then
-    export GCC_VERSION=5.1.0 # filename version
+    export GCC_VERSION=5.4.0 # filename version
     export GCC_SRC_VERSION=$GCC_VERSION # extracted version, change if different
     export GCC_MIRROR=ftp://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-$GCC_VERSION
-    export GCC_TARBALL=$GCC_MIRROR/gcc-$GCC_VERSION.tar.bz2
+    export GCC_TARBALL=gcc-$GCC_VERSION.tar.bz2
 
     export GCC_DIR=$SRC/gcc-$GCC_SRC_VERSION
 else
+    # WARNING: DON'T USE THIS!!
+
     # Always get GCC from GitHub now.
     #export GCC_REPO=git@github.com:Lucretia/gcc.git
     #export GCC_REPO=https://github.com/gcc-mirror/gcc.git
@@ -227,13 +207,19 @@ fi
 
 # GMP (GNU Multiple Precision Arithmetic Library)
 #export GMP_VERSION=4.3.2
-export GMP_VERSION=5.1.2
+#export GMP_VERSION=5.1.2
+export GMP_VERSION=6.1.2
 export GMP_MIRROR=ftp://ftp.gmplib.org/pub/gmp-$GMP_VERSION
+export GMP_TARBALL=gmp-$GMP_VERSION.tar.xz
+export GMP_DIR=gmp-$GMP_VERSION
 
 # MPC
 #export MPC_VERSION=0.8.1
-export MPC_VERSION=1.0.2
+#export MPC_VERSION=1.0.2
+export MPC_VERSION=1.0.3
 export MPC_MIRROR=http://www.multiprecision.org/mpc/download
+export MPC_TARBALL=mpc-$MPC_VERSION.tar.gz
+export MPC_DIR=mpc-$MPC_VERSION
 
 # MPFR (Multiple Precision Floating Point Computations With Correct Rounding)
 # Warning! Due to the fact that TLS support is now detected automatically, the
@@ -247,17 +233,22 @@ export MPC_MIRROR=http://www.multiprecision.org/mpc/download
 #export MPFR_VERSION=2.4.2
 #export MPFR_MIRROR=http://www.mpfr.org/mpfr-$MPFR_VERSION
 #export MPFR_PATCHES=http://www.mpfr.org/mpfr-$MPFR_VERSION/allpatches
-export MPFR_VERSION=3.1.2
+#export MPFR_VERSION=3.1.2
+export MPFR_VERSION=3.1.5
 export MPFR_MIRROR=http://mpfr.loria.fr/mpfr-current
 export MPFR_PATCHES=http://mpfr.loria.fr/mpfr-current/allpatches
+export MPFR_TARBALL=mpfr-$MPFR_VERSION.tar.xz
+export MPFR_DIR=mpfr-$MPFR_VERSION
 
 # ISL (Dependancy for CLooG)
 # Added support to use the official cloog.org
 # The --with-isl configure option should be used if ISL is not installed in your
 # default library search path.
-export ISL_VERSION=0.12.2
-#export ISL_VERSION=0.14
-export ISL_MIRROR=ftp://gcc.gnu.org/pub/gcc/infrastructure
+export ISL_VERSION=0.16.1
+export ISL_MIRROR=ftp://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/infrastructure/
+#export ISL_MIRROR=ftp://gcc.gnu.org/pub/gcc/infrastructure
+export ISL_TARBALL=isl-$ISL_VERSION.tar.bz2
+export ISL_DIR=isl-$ISL_VERSION
 
 #CLooG (uses isl as polyhedral library)
 # The --with-cloog configure option should be used if CLooG is not installed in
@@ -265,11 +256,15 @@ export ISL_MIRROR=ftp://gcc.gnu.org/pub/gcc/infrastructure
 # not its included copy of ISL which is too old. Use --with-isl=system to direct
 # CLooG to pick up an already installed ISL. CLooG needs to be configured to use
 # GMP internally, use --with-bits=gmp to direct it to do that.
-export CLOOG_REQUIRED=y
+    
+# No longer rquired as per GCC-5.x
+export CLOOG_REQUIRED=n
 
 if [ $CLOOG_REQUIRED = "y" ]; then
     export CLOOG_VERSION=0.18.1
     export CLOOG_MIRROR=ftp://gcc.gnu.org/pub/gcc/infrastructure
+    export CLOOG_TARBALL=cloog-$CLOOG_VERSION.tar.gz
+    export CLOOG_DIR=cloog-$CLOOG_VERSION
 fi
 
 ################################################################################
