@@ -185,10 +185,6 @@ download_package "MPC"
 download_package "MPFR"
 download_package "ISL"
 
-if [ $CLOOG_REQUIRED = "y" ]; then
-    download_package "CLOOG"
-fi
-
 # AdaCore Libraries/Tools ###########################################################
 
 #~ if [ $XMLADA_GIT = "y" ]; then
@@ -377,10 +373,6 @@ cd $SRC
 # fi
 
 download_unpack_package "ISL" "j"
-
-if [ $CLOOG_REQUIRED = "y" ]; then
-    download_unpack_package "CLOOG" "z"
-fi
 
 # if [ ! -d gcc ]; then
 # 	echo "  >> Downloading GCC sources from GitHub, may take a while..."

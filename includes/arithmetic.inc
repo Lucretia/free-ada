@@ -12,15 +12,12 @@
 
 function build_arithmetic_libs()
 {
-	echo "  ( ) Start Processing GMP, MPFR, MPC, ISL, and CLooG"
+	echo "  ( ) Start Processing GMP, MPFR, MPC and ISL"
 
 	# Constants
 	local TASK_COUNT_TOTAL=26
 	VER="native"
 	DIRS="gmp-$GMP_VERSION mpfr-$MPFR_VERSION mpc-$MPC_VERSION isl-$ISL_VERSION"
-	if [ $CLOOG_REQUIRED = "y" ]; then
-	    DIRS+=" cloog-$CLOOG_VERSION"
-	fi
 	LOGPRE=$LOG/native
 	OBD=$BLD/$VER
 
@@ -238,64 +235,9 @@ function build_arithmetic_libs()
 		check_error .make-install
 	fi
 
-	if [ $CLOOG_REQUIRED = "y" ]; then
-	    # Cloog ################################################################
-	    cd $OBD/cloog-$CLOOG_VERSION
-
-#                --with-gmp=system \
-#                --with-isl=system \
-	    if [ ! -f .config ]; then
-		echo "  >> [22/$TASK_COUNT_TOTAL] Configuring CLooG..."
-		$SRC/cloog-$CLOOG_VERSION/configure \
-		--prefix=$INSTALL_DIR \
-		--disable-shared \
-		--with-gmp-prefix=$INSTALL_DIR \
-		--with-isl-prefix=$INSTALL_DIR \
-                --with-bits=gmp \
-		&> $LOGPRE-cloog-$CLOOG_VERSION-configure.txt
-		check_error .config
-	    fi
-
-	    if [ ! -f .make ]; then
-		echo "  >> [23/$TASK_COUNT_TOTAL] Building CLooG..."
-		make $JOBS &> $LOGPRE-cloog-$CLOOG_VERSION-make.txt
-		check_error .make
-	    fi
-
-	    if [ ! -f .make-check ]; then
-		echo "  >> [24/$TASK_COUNT_TOTAL] Logging CLooG Check..."
-		make check &> $LOGPRE-cloog-$CLOOG_VERSION-check.txt
-		check_error .make-check
-	    fi
-
-	    if [ ! -f .make-pkg-stage ]; then
-		echo "  >> [25/$TASK_COUNT_TOTAL] Packaging CLooG..."
-		make DESTDIR=$STAGE_BASE_DIR install &> $LOGPRE-cloog-$CLOOG_VERSION-pkg.txt
-		check_error .make-pkg-stage
-
-		if [ ! -f .make-pkg ]; then
-		    cd $STAGE_DIR
-		    tar -cjpf $PKG/$PROJECT-$HOST-cloog-$CLOOG_VERSION.tbz2 .
-		    check_error $OBD/cloog-$CLOOG_VERSION/.make-pkg
-
-		    cd $OBD/cloog-$CLOOG_VERSION
-		    rm -rf /tmp/opt
-		fi
-	    fi
-
-	    if [ ! -f .make-install ]; then
-		echo "  >> [26/$TASK_COUNT_TOTAL] Installing CLooG..."
-		tar -xjpf $PKG/$PROJECT-$HOST-cloog-$CLOOG_VERSION.tbz2 -C $INSTALL_BASE_DIR
-		check_error .make-install
-	    fi
-	fi
 
 #	export LD_LIBRARY_PATH="$INSTALL_DIR/lib:$LD_LIBRARY_PATH"
 #	export LD_LIBRARY_PATH="$INSTALL_DIR/lib$BITS:$LD_LIBRARY_PATH"
 
-    if [ $CLOOG_REQUIRED = "y" ]; then
-	echo "  (x) Finished Processing GMP, MPFR, MPC, ISL and CLooG"
-    else
-	echo "  (x) Finished Processing GMP, MPFR, MPC and ISL"
-    fi
+    echo "  (x) Finished Processing GMP, MPFR, MPC and ISL"
 }

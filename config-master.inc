@@ -240,8 +240,7 @@ export MPFR_PATCHES=http://mpfr.loria.fr/mpfr-current/allpatches
 export MPFR_TARBALL=mpfr-$MPFR_VERSION.tar.xz
 export MPFR_DIR=mpfr-$MPFR_VERSION
 
-# ISL (Dependancy for CLooG)
-# Added support to use the official cloog.org
+# ISL
 # The --with-isl configure option should be used if ISL is not installed in your
 # default library search path.
 export ISL_VERSION=0.16.1
@@ -249,23 +248,6 @@ export ISL_MIRROR=ftp://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/infra
 #export ISL_MIRROR=ftp://gcc.gnu.org/pub/gcc/infrastructure
 export ISL_TARBALL=isl-$ISL_VERSION.tar.bz2
 export ISL_DIR=isl-$ISL_VERSION
-
-#CLooG (uses isl as polyhedral library)
-# The --with-cloog configure option should be used if CLooG is not installed in
-# your default library search path. CLooG needs to be built against ISL 0.10,
-# not its included copy of ISL which is too old. Use --with-isl=system to direct
-# CLooG to pick up an already installed ISL. CLooG needs to be configured to use
-# GMP internally, use --with-bits=gmp to direct it to do that.
-    
-# No longer rquired as per GCC-5.x
-export CLOOG_REQUIRED=n
-
-if [ $CLOOG_REQUIRED = "y" ]; then
-    export CLOOG_VERSION=0.18.1
-    export CLOOG_MIRROR=ftp://gcc.gnu.org/pub/gcc/infrastructure
-    export CLOOG_TARBALL=cloog-$CLOOG_VERSION.tar.gz
-    export CLOOG_DIR=cloog-$CLOOG_VERSION
-fi
 
 ################################################################################
 # AdaCore GPL components #######################################################
