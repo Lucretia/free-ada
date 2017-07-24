@@ -8,7 +8,7 @@
 ################################################################################
 #!/bin/bash
 
-VERSION="build-tools.sh (03/02/2017)"
+VERSION="build-tools.sh (24/07/2017)"
 COPYRIGHT="Copyright (C) 2011-2017 Luke A. Guest, David Rees. All Rights Reserved."
 
 usage="\
@@ -27,7 +27,7 @@ Options:
 
                       Valid values for TARGET
                       -----------------------
-                       1  - native
+                       1  - ${CPU}-${OS}
                        2  - arm-none-eabi     (Generic boards)
                        3  - i586-elf          (Generic boards)
                        4  - x86_64-elf        (Generic boards)
@@ -56,66 +56,66 @@ target_list="You must enter a target number to build, use -h flag to see list."
 
 case "$1" in
     --help|-h)
-	echo "$usage"
-	exit $?
-	;;
+        echo "$usage"
+        exit $?
+        ;;
 
     --version|-v)
-	echo "$VERSION"
-	echo "$COPYRIGHT"
-	exit $?
+        echo "$VERSION"
+        echo "$COPYRIGHT"
+        exit $?
 	;;
 
     --target|-t)
-	case $2 in
-	    1)
-		# TODO: build_type: native, cross, canadian
-		build_type="native"
-		;;
-	    2)
-		build_type="arm-none-eabi"
-		;;
-	    3)
-		build_type="i586-elf"
-		;;
-	    4)
-		build_type="x86_64-elf"
-		;;
-	    5)
-		build_type="mips-elf"
-		;;
-	    6)
-		build_type="msp430-elf"
-		;;
-	    7)
-		build_type="avr"
-		;;
-	    8)
-		build_type="ppc-elf"
-		;;
-	    18)
-		build_type="i686-pc-linux-gnu"
-		;;
-	    19)
-		;;
-	    *)
-		echo "$target_list"
-		exit 1
-		;;
-	esac
-	;;
+        case $2 in
+            1)
+                # TODO: build_type: native, cross, canadian
+                build_type="native"
+                ;;
+            2)
+                build_type="arm-none-eabi"
+                ;;
+            3)
+                build_type="i586-elf"
+                ;;
+            4)
+                build_type="x86_64-elf"
+                ;;
+            5)
+                build_type="mips-elf"
+                ;;
+            6)
+                build_type="msp430-elf"
+                ;;
+            7)
+                build_type="avr"
+                ;;
+            8)
+                build_type="ppc-elf"
+                ;;
+            18)
+                build_type="i686-pc-linux-gnu"
+                ;;
+            19)
+                ;;
+            *)
+                echo "$target_list"
+                exit 1
+                ;;
+        esac
+        ;;
 
     # Invalid
     -*)
-	echo "$0: invalid option: $1" >&2
-	exit 1
-	;;
+        echo "$0: invalid option: $1" >&2
+        exit 1
+        ;;
 
     # Default
     *)
-	echo "$target_list"
-	exit 1
-	;;
+        echo "$target_list"
+        exit 1
+        ;;
 esac
 
 clear
@@ -157,8 +157,9 @@ export INC=$TOP/includes
 # Incudes with common function declarations
 source $INC/errors.inc
 source $INC/arithmetic.inc
-source $INC/native.inc
-source $INC/bare_metal.inc
+source $INC/bootstrap.inc
+#source $INC/native.inc
+#source $INC/bare_metal.inc
 #source $INC/cross.inc
 
 ################################################################################
@@ -184,22 +185,22 @@ fi
 ################################################################################
 if [ -d $BLD ]; then
     while true; do
-	echo    "  -----------------------------------------------------"
-	echo    "  -- NOTE: Toolchain build directories exist! ---------"
-	echo    "  -----------------------------------------------------"
-	read -p "  (R)emove all build directories, (c)ontinue, or (e)xit script? " builddir
-	case $builddir in
-	    [R]*)
-		rm -Rf $BLD
-		if [ -d $PKG ]; then
-		    rm -Rf $PKG
-		fi
-		break
-		;;
-	    [Cc]*) break;;
-	    [Ee]*) exit;;
-	    *) echo "  Please answer 'R', '[C/c]' or '[E/e]'.";;
-	esac
+        echo    "  -----------------------------------------------------"
+        echo    "  -- NOTE: Toolchain build directories exist! ---------"
+        echo    "  -----------------------------------------------------"
+        read -p "  (R)emove all build directories, (c)ontinue, or (e)xit script? " builddir
+        case $builddir in
+            [R]*)
+                rm -Rf $BLD
+                if [ -d $PKG ]; then
+                    rm -Rf $PKG
+                fi
+                break
+                ;;
+            [Cc]*) break;;
+            [Ee]*) exit;;
+            *) echo "  Please answer 'R', '[C/c]' or '[E/e]'.";;
+        esac
     done
 fi
 
@@ -213,12 +214,12 @@ if [ -d $INSTALL_DIR ]; then
 		echo    "  -- ATTENTION: Toolchain install directories exist! --"
 		echo    "  -----------------------------------------------------"
 		read -p "  (R)emove all install directories, (c)ontinue, or (e)xit? " installdir
-	case $installdir in
-		[R]*) rm -Rf $INSTALL_DIR; break;;
-		[Cc]*) break;;
-		[Ee]*) exit;;
-		*) echo "  Please answer 'R', '[C/c]' or '[E/e]'.";;
-	esac
+        case $installdir in
+            [R]*) rm -Rf $INSTALL_DIR; break;;
+            [Cc]*) break;;
+            [Ee]*) exit;;
+            *) echo "  Please answer 'R', '[C/c]' or '[E/e]'.";;
+        esac
 	done
 fi
 
@@ -468,57 +469,61 @@ TIMEFORMAT=$'  Last Process Took: %2lR';
 # Begin the specified build operation
 case "$build_type" in
     native)
-	{ time {
-		build_arithmetic_libs;
-		build_native_toolchain;
+        { time {
+            if [ ! is_bootstrap_required ]; then
+                echo " >> " 
+            fi
+            
+            build_arithmetic_libs;
+            build_native_toolchain;
 	    } }
 	;;
 
     arm-none-eabi)
-	{ time {
-		build_bare_metal_cross_toolchain arm-none-eabi y y n;
+        { time {
+            build_bare_metal_cross_toolchain arm-none-eabi y y n;
 	    } }
 	;;
 
     i586-elf)
-	{ time {
-		build_bare_metal_cross_toolchain i586-elf n n y;
+        { time {
+            build_bare_metal_cross_toolchain i586-elf n n y;
 	    } }
 	;;
 
     x86_64-elf)
-	{ time {
-		build_bare_metal_cross_toolchain x86_64-elf n n n;
+        { time {
+            build_bare_metal_cross_toolchain x86_64-elf n n n;
 	    } }
 	;;
 
     x86_64-elf)
-	{ time {
-		build_bare_metal_cross_toolchain x86_64-elf n n n;
+        { time {
+            build_bare_metal_cross_toolchain x86_64-elf n n n;
 	    } }
 	;;
 
     mips-elf)
-	{ time {
-		build_bare_metal_cross_toolchain mips-elf n y n;
+        { time {
+            build_bare_metal_cross_toolchain mips-elf n y n;
 	    } }
 	;;
 
     msp430-elf)
-	{ time {
-		build_bare_metal_cross_toolchain msp430-elf n y n;
+        { time {
+            build_bare_metal_cross_toolchain msp430-elf n y n;
 	    } }
 	;;
 
     avr)
-	{ time {
-		build_bare_metal_cross_toolchain avr n y n;
+        { time {
+            build_bare_metal_cross_toolchain avr n y n;
 	    } }
 	;;
 
     ppc-elf)
-	{ time {
-		build_bare_metal_cross_toolchain ppc-elf n y n;
+        { time {
+            build_bare_metal_cross_toolchain ppc-elf n y n;
 	    } }
 	;;
 
