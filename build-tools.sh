@@ -300,9 +300,9 @@ echo "  ISL           : " $ISL_VERSION
 echo "  Binutils      : " $BINUTILS_SRC_VERSION
 
 if [ $GCC_RELEASE == "y" ]; then
-echo "  GCC           : " $GCC_VERSION
+    echo "  GCC           : " $GCC_VERSION
 else
-echo "  GCC           :  GitHub"
+    echo "  GCC           :  GitHub"
 fi
 
 if [ $GCC_JIT == "y" ]; then
