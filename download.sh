@@ -100,6 +100,8 @@ else
 	source ./config.inc
 fi
 
+source $INC/bootstrap.inc
+
 function check_for_spark()
 {
 	if [ ! -f $SPARK_FILE ]; then
@@ -138,7 +140,7 @@ function download_package()
     local PKG_MIRROR="$1_MIRROR"
     
     if [ ! -f ${!PKG} ]; then
-        echo "  >> Downloading $${!PKG}..."
+        echo "  >> Downloading ${!PKG}..."
         wget -c ${!PKG_MIRROR}/${!PKG}
 
         check_error_exit
@@ -170,6 +172,8 @@ cd $ARC
 echo "  >> Downloading archives, this may take quite a while..."
 
 # Base packages ################################################################
+
+bootstrap_download
 
 download_package "BINUTILS"
 download_package "GDB"
@@ -318,6 +322,8 @@ download_package "ISL"
 # Unpack the downloaded archives.
 #################################################################################
 
+bootstrap_install
+
 cd $SRC
 
 download_unpack_package "BINUTILS" "j"
@@ -412,4 +418,5 @@ download_unpack_package "ISL" "j"
 	#~ cd ..
     #~ fi
 #~ fi
+
 
