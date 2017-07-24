@@ -1,15 +1,89 @@
-################################################################################
+########################################################################################################################
 # Filename    # build-tools.sh
 # Purpose     # Batch build toolchain components
 # Description #
 # Copyright   # Copyright (C) 2011-2014 Luke A. Guest, David Rees.
 #             # All Rights Reserved.
 # Depends     # http://gcc.gnu.org/install/prerequisites.html
-################################################################################
+########################################################################################################################
 #!/bin/bash
 
-VERSION="build-tools.sh (24/07/2017)"
-COPYRIGHT="Copyright (C) 2011-2017 Luke A. Guest, David Rees. All Rights Reserved."
+########################################################################################################################
+# Include everything we need here.
+########################################################################################################################
+
+# Cannot put this into config.inc.
+export TOP=`pwd`
+export INC=$TOP/includes
+
+########################################################################################################################
+# Find out what platform we are on using the GCC config.guess script.
+########################################################################################################################
+#export HOST=$($SRC/gcc-$GCC_VERSION/config.guess)
+
+########################################################################################################################
+# What OS are we on? e.g. Linux, Darwin, MSYS_*
+# N.B: Don't call is OS because gprbuild.gpr grabs the variable.
+# TODO: Need to get the correct Darwin version!
+# Cannot rely on GCC config.guess script giving the correct value, gives x86_64-unknown-linux-gnu insteaed of
+# x86_64-pc-linux-gnu!
+########################################################################################################################
+export OS=`uname -s`
+
+########################################################################################################################
+# What archtecture is this? e.g. x86_64, i686
+########################################################################################################################
+export CPU=`uname -m`
+
+########################################################################################################################
+# Find out what platform we are on.
+########################################################################################################################
+case $OS in
+    "Linux")
+        HOST="${CPU}-pc-linux-gnu"
+        ;;
+    "Darwin")
+        HOST="${CPU}-apple-darwin15"
+        ;;
+    "MSYS*")
+        ;;
+esac
+
+# As default, set the build system to the host, i.e. either native or cross build.
+BUILD=$HOST
+
+########################################################################################################################
+# Incudes with common function declarations
+########################################################################################################################
+source $INC/version.inc
+source $INC/errors.inc
+source $INC/arithmetic.inc
+source $INC/bootstrap.inc
+#source $INC/native.inc
+#source $INC/bare_metal.inc
+#source $INC/cross.inc
+
+VERSION="build-tools.sh ($VERSION_DATE)"
+
+########################################################################################################################
+# Enforce a personalised configuration
+########################################################################################################################
+
+if [ ! -f ./config.inc ]; then
+	display_no_config_error
+else
+	source ./config.inc
+fi
+
+########################################################################################################################
+# Check to make sure the source is downloaded.
+########################################################################################################################
+if [ ! -d $SRC ]; then
+    echo "ERROR: ./source directory not present. Execute ./download.sh"
+    exit 1
+fi
+
+########################################################################################################################
 
 usage="\
 $VERSION
@@ -27,7 +101,7 @@ Options:
 
                       Valid values for TARGET
                       -----------------------
-                       1  - ${CPU}-${OS}
+                       1  - ${HOST}           (This platform - native build)
                        2  - arm-none-eabi     (Generic boards)
                        3  - i586-elf          (Generic boards)
                        4  - x86_64-elf        (Generic boards)
@@ -71,9 +145,11 @@ case "$1" in
             1)
                 # TODO: build_type: native, cross, canadian
                 build_type="native"
+                TARGET=$HOST
                 ;;
             2)
                 build_type="arm-none-eabi"
+                TARGET="arm-none-eabi"
                 ;;
             3)
                 build_type="i586-elf"
@@ -150,36 +226,6 @@ read x
 
 #exit
 
-# Cannot put this into config.inc.
-export TOP=`pwd`
-export INC=$TOP/includes
-
-# Incudes with common function declarations
-source $INC/errors.inc
-source $INC/arithmetic.inc
-source $INC/bootstrap.inc
-#source $INC/native.inc
-#source $INC/bare_metal.inc
-#source $INC/cross.inc
-
-################################################################################
-# Enforce a personalised configuration
-################################################################################
-
-if [ ! -f ./config.inc ]; then
-	display_no_config_error
-else
-	source ./config.inc
-fi
-
-################################################################################
-# Check to make sure the source is downloaded.
-################################################################################
-if [ ! -d $SRC ]; then
-    echo "ERROR: ./source directory not present. Execute ./download.sh"
-    exit
-fi
-
 ################################################################################
 # Handle pre-existing build directories
 ################################################################################
@@ -233,8 +279,8 @@ echo "  -----------"
 echo "  Build Type    : " $build_type
 echo "  Multilib      : " $multilib_enabled
 echo "  Host          : " $HOST
-echo "  Build         : "
-echo "  Target        : "
+echo "  Build         : " $BUILD
+echo "  Target        : " $TARGET
 echo "  Source        : " $SRC
 echo "  Build         : " $BLD
 echo "  Log           : " $LOG
@@ -269,21 +315,22 @@ else
 fi
 
 echo "  GDB           : " $GDB_VERSION
-echo "  XMLAda        : " $GPL_YEAR
-echo "  GPRBuild      : " $GPL_YEAR
-echo "  ASIS          : " $GPL_YEAR
-echo "  GNATMem       : " $GPL_YEAR
-echo "  AUnit         : " $GPL_YEAR
-echo "  GNATColl      : " $GPL_YEAR
-echo "  PolyORB       : " $GPL_YEAR
-echo "  Florist       : " $GPL_YEAR
+
+#~ echo "  XMLAda        : " $GPL_YEAR
+#~ echo "  GPRBuild      : " $GPL_YEAR
+#~ echo "  ASIS          : " $GPL_YEAR
+#~ echo "  GNATMem       : " $GPL_YEAR
+#~ echo "  AUnit         : " $GPL_YEAR
+#~ echo "  GNATColl      : " $GPL_YEAR
+#~ echo "  PolyORB       : " $GPL_YEAR
+#~ echo "  Florist       : " $GPL_YEAR
 
 #echo "  ST-Link       :  GitHub"
 
-echo "  Matreshka     : " $MATRESHKA_VERSION
+#~ echo "  Matreshka     : " $MATRESHKA_VERSION
 
-echo "  Other"
-echo "  -----"
+echo "  Other information"
+echo "  -----------------"
 echo "  Parallelism   : " $JOBS
 
 echo "Press ENTER to continue."
@@ -475,7 +522,7 @@ case "$build_type" in
             fi
             
             build_arithmetic_libs;
-            build_native_toolchain;
+            #~ build_native_toolchain;
 	    } }
 	;;
 
