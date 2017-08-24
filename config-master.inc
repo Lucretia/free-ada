@@ -55,14 +55,14 @@ export DATE=`date +%d%m%Y`
 ################################################################################
 if grep -q 64 <<< $CPU; then
     export BITS=64
-    export MULTILIB="--enable-multilib"
-    export EXTRA_BINUTILS_FLAGS="--enable-64-bit-bfd"
-    export multilib_enabled="yes"
+#    export MULTILIB="--enable-multilib"
+#    export EXTRA_BINUTILS_FLAGS="--enable-64-bit-bfd"
+#    export multilib_enabled="yes"
 else
     export BITS=
-    export MULTILIB=""
-    export EXTRA_64_BIT_CONFIGURE=""
-    export multilib_enabled="no"
+#    export MULTILIB=""
+#    export EXTRA_64_BIT_CONFIGURE=""
+#    export multilib_enabled="no"
 fi
 
 ################################################################################

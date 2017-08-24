@@ -281,7 +281,7 @@ echo "  Directories"
 echo "  -----------"
 echo "  Toolchain     : " $(dirname $(command -v gnat))
 echo "  Build Type    : " $build_type
-echo "  Multilib      : " $multilib_enabled
+#echo "  Multilib      : " $multilib_enabled
 echo "  Host          : " $HOST
 echo "  Build         : " $BUILD
 echo "  Target        : " $TARGET
