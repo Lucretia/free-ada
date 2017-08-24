@@ -20,7 +20,7 @@ export PROJECT_NAME=free-ada
 # PROJECT variable.
 # TODO: Put in a check when building cross compilers.
 ################################################################################
-export PROJECT=$PROJECT_NAME-new
+export PROJECT=$PROJECT_NAME-6.4.0
 
 ################################################################################
 # INSTALL_BASE_DIR - This is where tar needs to change directory to.
@@ -98,45 +98,6 @@ export JOBS="-j 4"
 
 # Edit package versions/mirrors as required.
 
-# Bootstrap builds #############################################################
-#
-# These builds consist of two types of build, a normal cross compiler using an
-# existing system root (--sysroot flag) and a host-x-host compiler which is
-# a compiler built to run on that system and produce binaries for that system.
-#
-# See https://gcc.gnu.org/onlinedocs/gccint/Configure-Terms.html
-#
-# The toolchains required to be built to gain a native i686 Linux bootstrap
-# compiler are as follows:
-#
-# e.g. Cross compiler
-#   --build=x86_64-pc-linux-gnu = Built compiler is built on amd64 Linux
-#   --host=x86_64-pc-linux-gnu  = Built compiler runs on amd64 Linux
-#   --target=i686-pc-linux-gnu  = Built compiler builds programs for x86 Linux
-#
-# and e.g. host-x-host
-#   --build=x86_64-pc-linux-gnu = Built compiler is built on amd64 Linux
-#   --host=i686-pc-linux-gnu    = Built compiler runs on x86 Linux
-#   --target=i686-pc-linux-gnu  = Built compiler builds programs for x86 Linux
-#
-# The host-x-host compiler wouldn't need binutils as these should be supplied
-# by the installed OS on which this compiler is to run.
-################################################################################
-
-# For bootstrap builds we are building compilers for full systems
-#SYSROOT_X86_LINUX	=	<point me to>/usr
-#SYSROOT_AMD64_LINUX	=	<point me to>/usr
-#SYSROOT_SPARC_LINUX	=	<point me to>/usr
-#SYSROOT_MIPS_LINUX	=	<point me to>/usr
-#SYSROOT_ARM_LINUX	=	<point me to>/usr
-#SYSROOT_AMD64_WINDOWS	=	<point me to>/usr
-
-# This flag tells the script whether to just build the bootstrap packages
-#INSTALL_BOOTSTRAPS	=	n
-
-# Build this bootstrap statically, no shared libs.
-#STATIC_BOOTSTRAP	=	y
-
 ################################################################################
 # Required tools ###############################################################
 ################################################################################
@@ -183,14 +144,15 @@ export GDB_DIR=gdb-$GDB_SRC_VERSION
 export NATIVE_LANGUAGES="c,c++,objc,obj-c++,ada"
 
 export GCC_RELEASE=y
+export GCC_TESTS=y
 
 if [ $GCC_RELEASE == "y" ]; then
-    export GCC_VERSION=5.4.0 # filename version
+    export GCC_VERSION=6.4.0 # filename version
     export GCC_SRC_VERSION=$GCC_VERSION # extracted version, change if different
     export GCC_MIRROR=ftp://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-$GCC_VERSION
-    export GCC_TARBALL=gcc-$GCC_VERSION.tar.bz2
+    export GCC_TARBALL=gcc-$GCC_VERSION.tar.xz
 
-    export GCC_DIR=$SRC/gcc-$GCC_SRC_VERSION
+    export GCC_DIR=gcc-$GCC_SRC_VERSION
 else
     # WARNING: DON'T USE THIS!!
 
@@ -291,6 +253,62 @@ export AHVEN_DIR=ahven-$AHVEN_VERSION
 #export NEWLIB_MIRROR=ftp://sources.redhat.com/pub/newlib
 #export STLINK_MIRROR=git://github.com/texane/stlink.git
 # export SPARK_FILE=spark-gpl-2011-x86_64-pc-linux-gnu.tar.gz
+
+# Bootstrap builds #############################################################
+#
+# These builds consist of two types of build, a normal cross compiler using an
+# existing system root (--sysroot flag) and a host-x-host compiler which is
+# a compiler built to run on that system and produce binaries for that system.
+#
+# See https://gcc.gnu.org/onlinedocs/gccint/Configure-Terms.html
+#
+# The toolchains required to be built to gain a native i686 Linux bootstrap
+# compiler are as follows:
+#
+# e.g. Cross compiler
+#   --build=x86_64-pc-linux-gnu = Built compiler is built on amd64 Linux
+#   --host=x86_64-pc-linux-gnu  = Built compiler runs on amd64 Linux
+#   --target=i686-pc-linux-gnu  = Built compiler builds programs for x86 Linux
+#
+# and e.g. host-x-host
+#   --build=x86_64-pc-linux-gnu = Built compiler is built on amd64 Linux
+#   --host=i686-pc-linux-gnu    = Built compiler runs on x86 Linux
+#   --target=i686-pc-linux-gnu  = Built compiler builds programs for x86 Linux
+#
+# The host-x-host compiler wouldn't need binutils as these should be supplied
+# by the installed OS on which this compiler is to run.
+################################################################################
+
+# For bootstrap builds we are building compilers for full systems
+#SYSROOT_X86_LINUX	=	<point me to>/usr
+#SYSROOT_AMD64_LINUX	=	<point me to>/usr
+#SYSROOT_SPARC_LINUX	=	<point me to>/usr
+#SYSROOT_MIPS_LINUX	=	<point me to>/usr
+#SYSROOT_ARM_LINUX	=	<point me to>/usr
+#SYSROOT_AMD64_WINDOWS	=	<point me to>/usr
+
+# This flag tells the script whether to just build the bootstrap packages
+#INSTALL_BOOTSTRAPS	=	n
+
+# Build this bootstrap statically, no shared libs.
+#STATIC_BOOTSTRAP	=	y
+
+#BOOTSTRAP_VERSION=$(echo $GCC_VERSION | awk -F \. {'print $1"."$2'})
+#BOOTSTRAP_BASE_DIR=/tmp/free-ada-bootstrap
+#BOOTSTRAP_DIR=$BOOTSTRAP_BASE_DIR/usr
+
+#X86_64_BOOTSTRAP_TARBALL="gnatboot-${BOOTSTRAP_VERSION}-amd64.tar.xz"
+#X86_64_BOOTSTRAP_MIRROR="https://www.dropbox.com/s/8qz551so8xn4t9r/${X86_64_BOOTSTRAP_TARBALL}?dl=0"
+
+BOOTSTRAP_MIRROR="http://mirrors.cdn.adacore.com/art"
+
+X86_64_LINUX_BOOTSTRAP_TARBALL="591c6d80c7a447af2deed1d7"
+X86_64_LINUX_BOOTSTRAP_TARBALL_NAME="gnat-gpl-2017-x86_64-linux-bin.tar.gz"
+X86_64_MACOS_BOOTSTRAP_TARBALL="591c9045c7a447af2deed24e"
+X86_64_MACOS_BOOTSTRAP_TARBALL_NAME="gnat-gpl-2017-x86_64-darwin-bin.tar.gz"
+#X86_64_WINDOWS_BOOTSTRAP_TARBALL=""
+
+BOOTSTRAP_DIR="$HOME/opt/gnat-gpl-2017"
 
 ################################################################################
 # Implementation specific tuning ###############################################
