@@ -46,16 +46,11 @@ function build_arithmetic_libs()
             --prefix=$INSTALL_DIR \
             --disable-shared \
             --enable-cxx \
-            CC=${BS_CC} \
-            CXX=$BS_CXX \
-            AR=$BS_AR \
-            NM=$BS_NM \
-            RANLIB=$BS_RANLIB \
 		&> $LOGPRE/$GMP_DIR-configure.txt
 
         check_error .config
 	fi
-
+    
 	if [ ! -f .make ]; then
 		echo "  >> [3/$TASK_COUNT_TOTAL] Building GMP..."
 
@@ -85,7 +80,7 @@ function build_arithmetic_libs()
 	if [ ! -f .make-pkg-stage ]; then
 		echo "  >> [5/$TASK_COUNT_TOTAL] Packaging GMP..."
 
-        make DESTDIR=$STAGE_BASE_DIR install &> $LOGPRE/$GMP_DIR-pkg.txt
+        make DESTDIR=$STAGE_BASE_DIR install-strip &> $LOGPRE/$GMP_DIR-pkg.txt
 
         check_error .make-pkg-stage
 
@@ -97,6 +92,7 @@ function build_arithmetic_libs()
             check_error $OBD/$GMP_DIR/.make-pkg
 
 		    cd $OBD/$GMP_DIR
+
 		    rm -rf /tmp/opt
 		fi
 	fi
@@ -120,11 +116,6 @@ function build_arithmetic_libs()
             --prefix=$INSTALL_DIR \
             --disable-shared \
             --with-gmp=$INSTALL_DIR \
-            CC=$BS_CC \
-            CXX=$BS_CXX \
-            AR=$BS_AR \
-            NM=$BS_NM \
-            RANLIB=$BS_RANLIB \
 		&> $LOGPRE/$MPFR_DIR-configure.txt
 
         check_error .config
@@ -149,7 +140,7 @@ function build_arithmetic_libs()
 	if [ ! -f .make-pkg-stage ]; then
 		echo "  >> [10/$TASK_COUNT_TOTAL] Packaging MPFR..."
 
-        make DESTDIR=$STAGE_BASE_DIR install &> $LOGPRE/$MPFR_DIR-pkg.txt
+        make DESTDIR=$STAGE_BASE_DIR install-strip &> $LOGPRE/$MPFR_DIR-pkg.txt
 
         check_error .make-pkg-stage
 
@@ -185,11 +176,6 @@ function build_arithmetic_libs()
             --disable-shared \
             --with-mpfr=$INSTALL_DIR \
             --with-gmp=$INSTALL_DIR \
-            CC=$BS_CC \
-            CXX=$BS_CXX \
-            AR=$BS_AR \
-            NM=$BS_NM \
-            RANLIB=$BS_RANLIB \
 		&> $LOGPRE/$MPC_DIR-configure.txt
 
         check_error .config
@@ -214,7 +200,7 @@ function build_arithmetic_libs()
 	if [ ! -f .make-pkg-stage ]; then
 		echo "  >> [15/$TASK_COUNT_TOTAL] Packaging MPC..."
 
-        make DESTDIR=$STAGE_BASE_DIR install &> $LOGPRE/$MPC_DIR-pkg.txt
+        make DESTDIR=$STAGE_BASE_DIR install-strip &> $LOGPRE/$MPC_DIR-pkg.txt
 
         check_error .make-pkg-stage
 
@@ -249,11 +235,6 @@ function build_arithmetic_libs()
             --prefix=$INSTALL_DIR \
             --disable-shared \
             --with-gmp-prefix=$INSTALL_DIR \
-            CC=$BS_CC \
-            CXX=$BS_CXX \
-            AR=$BS_AR \
-            NM=$BS_NM \
-            RANLIB=$BS_RANLIB \
 		&> $LOGPRE/$ISL_DIR-configure.txt
 
         check_error .config
@@ -278,7 +259,7 @@ function build_arithmetic_libs()
 	if [ ! -f .make-pkg-stage ]; then
 		echo "  >> [20/$TASK_COUNT_TOTAL] Packaging ISL..."
 
-        make DESTDIR=$STAGE_BASE_DIR install &> $LOGPRE/$ISL_DIR-pkg.txt
+        make DESTDIR=$STAGE_BASE_DIR install-strip &> $LOGPRE/$ISL_DIR-pkg.txt
 
         check_error .make-pkg-stage
 
