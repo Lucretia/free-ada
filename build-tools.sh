@@ -58,7 +58,6 @@ BUILD=$HOST
 source $INC/version.inc
 source $INC/errors.inc
 source $INC/arithmetic.inc
-source $INC/bootstrap.inc
 #source $INC/native.inc
 #source $INC/bare_metal.inc
 #source $INC/cross.inc
@@ -74,6 +73,10 @@ if [ ! -f ./config.inc ]; then
 else
 	source ./config.inc
 fi
+
+source $INC/bootstrap.inc
+source $INC/binutils.inc
+source $INC/gcc.inc
 
 ########################################################################################################################
 # Check to make sure the source is downloaded.
@@ -148,7 +151,7 @@ case "$1" in
                 TARGET=$HOST
                 ;;
             2)
-                build_type="arm-none-eabi"
+                build_type="cross"
                 TARGET="arm-none-eabi"
                 ;;
             3)
@@ -276,6 +279,7 @@ fi
 cd $TOP
 echo "  Directories"
 echo "  -----------"
+echo "  Toolchain     : " $(dirname $(command -v gnat))
 echo "  Build Type    : " $build_type
 echo "  Multilib      : " $multilib_enabled
 echo "  Host          : " $HOST
@@ -305,11 +309,11 @@ else
     echo "  GCC           :  GitHub"
 fi
 
-if [ $GCC_JIT == "y" ]; then
-    echo "  GCC JIT       :  Enabled"
-else
-    echo "  GCC JIT       :  Disabled"
-fi
+#~ if [ $GCC_JIT == "y" ]; then
+    #~ echo "  GCC JIT       :  Enabled"
+#~ else
+    #~ echo "  GCC JIT       :  Disabled"
+#~ fi
 
 echo "  GDB           : " $GDB_VERSION
 
@@ -509,76 +513,92 @@ if [ ! -d $PKG ]; then
     mkdir -p $PKG
 fi
 
+########################################################################################################################
+# Set the PATH to include the install dir.
+# The script has to get an Ada-aware compiler from somewhere, when the first native toolchain is built, it'll be found
+# in $INSTALL_DIR/bin if the OS doesn't already have one available.
+# If neither of the two have a toolchain, we must use the bootstrap.
+########################################################################################################################
+export PATH=$INSTALL_DIR/bin:$PATH
+export LD_LIBRARY_PATH=$INSTALL_DIR/lib$BITS:$INSTALL_DIR/lib:$LD_LIBRARY_PATH
+
+#echo "PATH - $PATH"
+#echo "LD_LIBRARY_PATH - $LD_LIBRARY_PATH"
+
 TIMEFORMAT=$'  Last Process Took: %2lR';
 # Begin the specified build operation
 case "$build_type" in
     native)
-        { time {
-            if [ ! is_bootstrap_required ]; then
-                echo " >> " 
-            fi
-            
-            build_arithmetic_libs;
-            #~ build_native_toolchain;
-	    } }
+        {
+            time {
+                build_arithmetic_libs
+                binutils $TARGET $BUILD $HOST "--enable-multilib"
+                gcc $TARGET $BUILD $HOST "--enable-multilib"
+                #~ build_native_toolchain;
+            }
+        }
 	;;
 
-    arm-none-eabi)
-        { time {
-            build_bare_metal_cross_toolchain arm-none-eabi y y n;
-	    } }
+    cross)
+        {
+            time {
+                build_arithmetic_libs
+                binutils $TARGET $BUILD $HOST "--enable-multilib --enable-interwork"
+                #build_bare_metal_cross_toolchain arm-none-eabi y y n;
+            }
+        }
 	;;
 
-    i586-elf)
-        { time {
-            build_bare_metal_cross_toolchain i586-elf n n y;
-	    } }
-	;;
+    #~ i586-elf)
+        #~ { time {
+            #~ build_bare_metal_cross_toolchain i586-elf n n y;
+	    #~ } }
+	#~ ;;
 
-    x86_64-elf)
-        { time {
-            build_bare_metal_cross_toolchain x86_64-elf n n n;
-	    } }
-	;;
+    #~ x86_64-elf)
+        #~ { time {
+            #~ build_bare_metal_cross_toolchain x86_64-elf n n n;
+	    #~ } }
+	#~ ;;
 
-    x86_64-elf)
-        { time {
-            build_bare_metal_cross_toolchain x86_64-elf n n n;
-	    } }
-	;;
+    #~ x86_64-elf)
+        #~ { time {
+            #~ build_bare_metal_cross_toolchain x86_64-elf n n n;
+	    #~ } }
+	#~ ;;
 
-    mips-elf)
-        { time {
-            build_bare_metal_cross_toolchain mips-elf n y n;
-	    } }
-	;;
+    #~ mips-elf)
+        #~ { time {
+            #~ build_bare_metal_cross_toolchain mips-elf n y n;
+	    #~ } }
+	#~ ;;
 
-    msp430-elf)
-        { time {
-            build_bare_metal_cross_toolchain msp430-elf n y n;
-	    } }
-	;;
+    #~ msp430-elf)
+        #~ { time {
+            #~ build_bare_metal_cross_toolchain msp430-elf n y n;
+	    #~ } }
+	#~ ;;
 
-    avr)
-        { time {
-            build_bare_metal_cross_toolchain avr n y n;
-	    } }
-	;;
+    #~ avr)
+        #~ { time {
+            #~ build_bare_metal_cross_toolchain avr n y n;
+	    #~ } }
+	#~ ;;
 
-    ppc-elf)
-        { time {
-            build_bare_metal_cross_toolchain ppc-elf n y n;
-	    } }
-	;;
+    #~ ppc-elf)
+        #~ { time {
+            #~ build_bare_metal_cross_toolchain ppc-elf n y n;
+	    #~ } }
+	#~ ;;
 
     *)				# Default
-    	{ time {
-    		build_arithmetic_libs;
-    		build_native_toolchain;
+    	#{ time {
+    		#build_arithmetic_libs;
+    		#build_native_toolchain;
     		#time ( build_cross_toolchain arm-none-eabi --enable-interwork );
     		#build_cross_toolchain i386-elf;
     		#build_cross_toolchain mips-elf;
-    	    } }
+    	#    } }
     	;;
 
 esac
