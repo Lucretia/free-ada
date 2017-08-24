@@ -214,26 +214,26 @@ export ISL_DIR=isl-$ISL_VERSION
 ################################################################################
 # AdaCore GPL components #######################################################
 ################################################################################
-export GPL_YEAR=2014
-export XMLADA_HASH=065e0e6750288d9ecc2f7780d3ed8ef3c86ab991
-export XMLADA_VERSION=xmlada-gpl-$GPL_YEAR-src
-export GPRBUILD_HASH=c9d9271952a829ff1d355a01285a8558f24baf93
-export GPRBUILD_VERSION=gprbuild-gpl-$GPL_YEAR-src
-export ASIS_HASH=51ecea080c3c6760cd024e8b467502de26f3c3f2
-export ASIS_VERSION=asis-gpl-$GPL_YEAR-src
-export GNATMEM_HASH=6de65bb7e300e299711f90396710ace741123656
-export GNATMEM_VERSION=gnatmem-gpl-$GPL_YEAR-src
-export AUNIT_HASH=43f6630248c40941c77be5c06571000925764bbb
-export AUNIT_VERSION=aunit-gpl-$GPL_YEAR-src
-export AUNIT_DIR=aunit-3.7.0w-src
-export GNATCOLL_HASH=0f1572cadf981e4e493497dfbf783889387d52be
-export GNATCOLL_VERSION=gnatcoll-gpl-$GPL_YEAR-src
-export POLYORB_HASH=22f27fec50a9c2b92be2e10aa5027eb49567787c
-export POLYORB_VERSION=polyorb-gpl-$GPL_YEAR-src
-export POLYORB_DIR=polyorb-$GPL_YEAR-src
-export FLORIST_HASH=224f73e1cd4afd1f0f6ca3bd1ad0191aa7f81e05
-export FLORIST_VERSION=florist-gpl-$GPL_YEAR-src
-export FLORIST_DIR=florist-src
+#export GPL_YEAR=2014
+#export XMLADA_HASH=065e0e6750288d9ecc2f7780d3ed8ef3c86ab991
+#export XMLADA_VERSION=xmlada-gpl-$GPL_YEAR-src
+#export GPRBUILD_HASH=c9d9271952a829ff1d355a01285a8558f24baf93
+#export GPRBUILD_VERSION=gprbuild-gpl-$GPL_YEAR-src
+#export ASIS_HASH=51ecea080c3c6760cd024e8b467502de26f3c3f2
+#export ASIS_VERSION=asis-gpl-$GPL_YEAR-src
+#export GNATMEM_HASH=6de65bb7e300e299711f90396710ace741123656
+#export GNATMEM_VERSION=gnatmem-gpl-$GPL_YEAR-src
+#export AUNIT_HASH=43f6630248c40941c77be5c06571000925764bbb
+#export AUNIT_VERSION=aunit-gpl-$GPL_YEAR-src
+#export AUNIT_DIR=aunit-3.7.0w-src
+#export GNATCOLL_HASH=0f1572cadf981e4e493497dfbf783889387d52be
+#export GNATCOLL_VERSION=gnatcoll-gpl-$GPL_YEAR-src
+#export POLYORB_HASH=22f27fec50a9c2b92be2e10aa5027eb49567787c
+#export POLYORB_VERSION=polyorb-gpl-$GPL_YEAR-src
+#export POLYORB_DIR=polyorb-$GPL_YEAR-src
+#export FLORIST_HASH=224f73e1cd4afd1f0f6ca3bd1ad0191aa7f81e05
+#export FLORIST_VERSION=florist-gpl-$GPL_YEAR-src
+#export FLORIST_DIR=florist-src
 
 ################################################################################
 # Additional Options ###########################################################
