@@ -322,13 +322,13 @@ download_package "ISL"
 # Unpack the downloaded archives.
 #################################################################################
 
-bootstrap_install
+#bootstrap_install
 
 cd $SRC
 
 download_unpack_package "BINUTILS" "j"
 download_unpack_package "GSB" "J"
-download_unpack_package "GCC" "j"
+download_unpack_package "GCC" "J"
 
 # Apply any patches
 
