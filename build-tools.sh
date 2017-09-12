@@ -156,6 +156,7 @@ case "$1" in
                 ;;
             2)
                 build_type="cross"
+                variant="bare"
                 TARGET="arm-none-eabi"
                 ;;
             3)
@@ -286,7 +287,13 @@ cd $TOP
 echo "  Directories"
 echo "  -----------"
 echo "  Toolchain     : " $(dirname $(command -v gnat))
-echo "  Build Type    : " $build_type
+
+if [ $variant == "bare" ]; then
+    echo "  Build Type    :  $build_type - bare metal build"
+else
+    echo "  Build Type    : " $build_type
+fi
+
 #echo "  Multilib      : " $multilib_enabled
 echo "  Host          : " $HOST
 echo "  Build         : " $BUILD
