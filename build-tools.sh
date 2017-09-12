@@ -108,13 +108,13 @@ Options:
                       Valid values for TARGET
                       -----------------------
                        1  - ${HOST}           (This platform - native build)
-                       2  - arm-none-eabi     (Generic boards)
-                       3  - i586-elf          (Generic boards)
-                       4  - x86_64-elf        (Generic boards)
+                       2  - arm-none-eabi     (Generic boards - TODO)
+                       3  - i586-elf          (Generic boards - TODO)
+                       4  - x86_64-elf        (Generic boards - TODO)
                        5  - mips-elf          (Generic boards)
-                       6  - msp430-elf        (Generic boards)
-                       7  - avr               (Generic boards)
-                       8  - ppc-elf           (Generic boards)
+                       6  - msp430-elf        (Generic boards - TODO)
+                       7  - avr               (Generic boards - TODO)
+                       8  - ppc-elf           (Generic boards - TODO)
                        9  - ARM Android       (TODO)
                       10  - MIPS Android      (TODO)
                       11  - x86 Android       (TODO)
@@ -124,8 +124,8 @@ Options:
                       15  - iOS               (TODO)
                       16  - i586 Steam        (TODO)
                       17  - AMD64 Steam       (TODO)
-                      18  - i686-pc-linux-gnu (cross)
-                      19  - i686-pc-linux-gnu (host-x-host)
+                      18  - i686-pc-linux-gnu (cross - TODO)
+                      19  - i686-pc-linux-gnu (host-x-host - TODO)
 "
 
 target_list="You must enter a target number to build, use -h flag to see list."
@@ -151,6 +151,7 @@ case "$1" in
             1)
                 # TODO: build_type: native, cross, canadian
                 build_type="native"
+                variant=""
                 TARGET=$HOST
                 ;;
             2)
@@ -164,7 +165,9 @@ case "$1" in
                 build_type="x86_64-elf"
                 ;;
             5)
-                build_type="mips-elf"
+                build_type="cross"
+                variant="bare"
+                TARGET="mips-elf"
                 ;;
             6)
                 build_type="msp430-elf"
@@ -536,7 +539,8 @@ case "$build_type" in
             time {
                 build_arithmetic_libs
                 binutils $HOST $BUILD $TARGET "--enable-multilib"
-                gcc $HOST $BUILD $TARGET "--enable-multilib"
+                gcc $HOST $BUILD $TARGET \
+                    "--enable-multilib --enable-threads=posix --enable-libgomp --with-libffi --enable-libsanitizer"
                 gpr_bootstrap $TARGET
                 xmlada $HOST $BUILD $TARGET
                 gprbuild $HOST $BUILD $TARGET
@@ -548,8 +552,10 @@ case "$build_type" in
     cross)
         {
             time {
-                build_arithmetic_libs
-                binutils $TARGET $BUILD $HOST "--enable-multilib --enable-interwork"
+                binutils $HOST $BUILD $TARGET \
+                    "--enable-multilib --enable-interwork --disable-shared --disable-threads"
+                gcc $HOST $BUILD $TARGET \
+                    "--enable-multilib --enable-interwork --disable-shared --disable-threads --disable-lto --without-headers"
                 #build_bare_metal_cross_toolchain arm-none-eabi y y n;
             }
         }
