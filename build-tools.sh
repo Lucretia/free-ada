@@ -27,8 +27,10 @@ export INC=$TOP/includes
 # TODO: Need to get the correct Darwin version!
 # Cannot rely on GCC config.guess script giving the correct value, gives x86_64-unknown-linux-gnu insteaed of
 # x86_64-pc-linux-gnu!
+#
+# N.B: Do not rename this variable to OS, it conflicts with a variable inside GPRBuild's gpr file.
 ########################################################################################################################
-export OS=`uname -s`
+export THIS_OS=`uname -s`
 
 ########################################################################################################################
 # What archtecture is this? e.g. x86_64, i686
@@ -38,7 +40,7 @@ export CPU=`uname -m`
 ########################################################################################################################
 # Find out what platform we are on.
 ########################################################################################################################
-case $OS in
+case $THIS_OS in
     "Linux")
         HOST="${CPU}-pc-linux-gnu"
         ;;
@@ -77,6 +79,7 @@ fi
 source $INC/bootstrap.inc
 source $INC/binutils.inc
 source $INC/gcc.inc
+source $INC/adacore/base.inc
 
 ########################################################################################################################
 # Check to make sure the source is downloaded.
@@ -532,8 +535,11 @@ case "$build_type" in
         {
             time {
                 build_arithmetic_libs
-                binutils $TARGET $BUILD $HOST "--enable-multilib"
-                gcc $TARGET $BUILD $HOST "--enable-multilib"
+                binutils $HOST $BUILD $TARGET "--enable-multilib"
+                gcc $HOST $BUILD $TARGET "--enable-multilib"
+                gpr_bootstrap $TARGET
+                xmlada $HOST $BUILD $TARGET
+                gprbuild $HOST $BUILD $TARGET
                 #~ build_native_toolchain;
             }
         }
