@@ -150,6 +150,23 @@ function download_package()
 }
 
 # $1 - Package macro prefix (in upper case)
+function download_git_package()
+{
+    local PKG_DIR="$1_DIR"
+    local PKG_MIRROR="$1_MIRROR"
+    
+    if [ ! -d ${!PKG_DIR} ]; then
+        echo "  >> Downloading ${!PKG_DIR}..."
+
+        git clone ${!PKG_MIRROR} ${!PKG_DIR}
+
+        check_error_exit
+    else
+        echo "  (x) Already have ${!PKG_DIR}"
+    fi
+}
+
+# $1 - Package macro prefix (in upper case)
 # $2 - Compression letter for tar
 function download_unpack_package()
 {
@@ -391,6 +408,9 @@ download_unpack_package "ISL" "j"
 # fi
 
 #~ cd $SRC
+
+download_git_package "GPRBUILD"
+download_git_package "XMLADA"
 
 #~ if [ $GPRBUILD_GIT = "y" ]; then
     #~ if [ -d gprbuild ] && [ ! -f .patched ]; then
