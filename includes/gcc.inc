@@ -18,6 +18,24 @@ function gcc()
 	LOGPRE=$LOG/$VER
 	OBD=$BLD/$VER
 
+    case $build_type in
+        "native")
+            MAKEFILE_ALL_TARGET="all"
+            MAKEFILE_INSTALL_TARGET="install-strip install-html"
+            LANGUAGES=$NATIVE_LANGUAGES
+            ;;
+
+        "cross")
+            MAKEFILE_ALL_TARGET="all-gcc"
+            MAKEFILE_INSTALL_TARGET="install-strip-gcc install-target-libgcc"
+
+            # Special variant for bare metal.
+            if [ $variant == "bare" ]; then
+                LANGUAGES="c,ada"
+            fi
+            ;;
+    esac
+
     echo "  >> Creating Directories (if needed)..."
 
     cd $BLD
@@ -38,17 +56,13 @@ function gcc()
             --host=$1\
             $4 \
             --disable-nls \
-            --enable-threads=posix \
             --with-gnu-as \
             --with-gnu-ld \
-            --enable-languages=$NATIVE_LANGUAGES \
+            --enable-languages=$LANGUAGES \
             --with-system-zlib \
             --without-libiconv-prefix \
             --disable-libmudflap \
             --disable-libstdcxx-pch \
-            --enable-libgomp \
-            --with-libffi \
-            --enable-libsanitizer \
             --enable-lto \
             --disable-isl-version-check \
             --disable-ppl-version-check \
@@ -69,39 +83,62 @@ function gcc()
     if [ ! -f .make ]; then
         echo "  >> [2/$TASK_COUNT_TOTAL] Building GCC ($3)..."
         
-        make all $JOBS &> $LOGPRE/$GCC_DIR-make.txt
+        make $MAKEFILE_ALL_TARGET $JOBS &> $LOGPRE/$GCC_DIR-make.txt
 
         check_error .make
     fi
 
-    if [ ! -f .make-test ] && [ $GCC_TESTS = "y" ]; then
-        echo "  >> [3-pre/$TASK_COUNT_TOTAL] Checking environment for test tools..."
+    # Only run the testsuite if this is a native build.
+    case $build_type in
+        "native")
+            if [ ! -f .make-test ] && [ $GCC_TESTS = "y" ]; then
+                echo "  >> [3-pre/$TASK_COUNT_TOTAL] Checking environment for test tools..."
 
-        check_package_installed "Tcl" tclsh
-        check_package_installed "Expect" expect
-        check_package_installed "DejaGNU" runtest
+                check_package_installed "Tcl" tclsh
+                check_package_installed "Expect" expect
+                check_package_installed "DejaGNU" runtest
 
-        echo "  >>   Tcl, Expect and DejaGNU installed..."
+                echo "  >>   Tcl, Expect and DejaGNU installed..."
 
-        echo "  >> [3/$TASK_COUNT_TOTAL] Testing GNAT/GCC ($3)..."
-        make -k check-gcc &> $LOGPRE/$GCC_DIR-test.txt
+                echo "  >> [3/$TASK_COUNT_TOTAL] Testing GNAT/GCC ($3)..."
+                make -k check-gcc &> $LOGPRE/$GCC_DIR-test.txt
 
-        check_error .make-test
-    else
-        echo "  >> [3/$TASK_COUNT_TOTAL] Skipping testing GNAT/GCC ($3)..."
-    fi
+                check_error .make-test
+            else
+                echo "  >> [3/$TASK_COUNT_TOTAL] Skipping testing GNAT/GCC ($3)..."
+            fi
+            ;;
+
+        "cross")
+            if [ ! -f .make-libgcc ]; then
+                echo "  >> [3.1/$TASK_COUNT_TOTAL] Building Cross libgcc ($3)..."
+
+                make $JOBS all-target-libgcc &> $LOGPRE/$GCC_DIR-libgcc-make.txt
+
+                check_error .make-libgcc
+            fi
+
+            if [ ! -f .make-gnattools ]; then
+                echo "  >> [3.2/$TASK_COUNT_TOTAL] Building Cross GNAT tools ($3)..."
+
+                make $JOBS -C gcc cross-gnattools ada.all.cross &> $LOGPRE/$GCC_DIR-gnattools-make.txt
+
+                check_error .make-gnattools
+            fi
+            ;;
+    esac
 
     if [ ! -f .make-pkg-stage ]; then
         echo "  >> [4/$TASK_COUNT_TOTAL] Packaging GCC ($3)..."
         
-        make DESTDIR=$STAGE_BASE_DIR install-strip install-html &> $LOGPRE/$GCC_DIR-pkg.txt
+        make DESTDIR=$STAGE_BASE_DIR $MAKEFILE_INSTALL_TARGET &> $LOGPRE/$GCC_DIR-pkg.txt
         
         check_error .make-pkg-stage
 
         if [ ! -f .make-pkg ]; then
             cd $STAGE_DIR
 
-            tar -cjpf $PKG/$PROJECT-$HOST-$GCC_DIR.tbz2 .
+            tar -cjpf $PKG/$PROJECT-$1_$2_$3-$GCC_DIR.tbz2 .
 
             check_error $OBD/$GCC_DIR/.make-pkg
 
@@ -113,7 +150,7 @@ function gcc()
     if [ ! -f .make-install ]; then
         echo "  >> [5/$TASK_COUNT_TOTAL] GCC GCC ($3)..."
         
-        tar -xjpf $PKG/$PROJECT-$HOST-$GCC_DIR.tbz2 -C $INSTALL_BASE_DIR
+        tar -xjpf $PKG/$PROJECT-$1_$2_$3-$GCC_DIR.tbz2 -C $INSTALL_BASE_DIR
         
         check_error .make-install
     fi
