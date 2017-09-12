@@ -159,6 +159,6 @@ function gcc()
 
     echo -e "\n\tDon't forget to set the paths back to the originals:"
     echo -e "\texport PATH=\$OLD_PATH"
-    echo -e "\texport LD_LIBRARY_PATH=\$OLD_LD_LIBRARY_PATH"
+    echo -e "\texport LD_LIBRARY_PATH=\$OLD_LD_LIBRARY_PATH\n"
 }
 

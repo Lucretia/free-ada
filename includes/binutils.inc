@@ -97,6 +97,6 @@ function binutils()
         check_error .make-install
     fi
 
-    echo "  >> Binutils ($3) Installed"
+    echo -e "  >> Binutils ($3) Installed\n"
 }
 
