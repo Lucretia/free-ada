@@ -236,9 +236,10 @@ export ISL_DIR=isl-$ISL_VERSION
 #export FLORIST_VERSION=florist-gpl-$GPL_YEAR-src
 #export FLORIST_DIR=florist-src
 
-export GPRBUILD_MIRROR=https://github.com/AdaCore/gprbuild.git
+export ADACORE_GITHUB="https://github.com/AdaCore"
+export GPRBUILD_MIRROR="${ADACORE_GITHUB}/gprbuild.git"
 export GPRBUILD_DIR=gprbuild
-export XMLADA_MIRROR=https://github.com/AdaCore/xmlada.git
+export XMLADA_MIRROR="${ADACORE_GITHUB}/xmlada.git"
 export XMLADA_DIR=xmlada
 
 ################################################################################
