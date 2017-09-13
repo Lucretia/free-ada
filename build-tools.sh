@@ -288,7 +288,7 @@ echo "  Directories"
 echo "  -----------"
 echo "  Toolchain     : " $(dirname $(command -v gnat))
 
-if [ $variant == "bare" ]; then
+if [[ $variant == "bare" ]]; then
     echo "  Build Type    :  $build_type - bare metal build"
 else
     echo "  Build Type    : " $build_type
