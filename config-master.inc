@@ -198,8 +198,8 @@ export MPC_DIR=mpc-$MPC_VERSION
 #export MPFR_PATCHES=http://www.mpfr.org/mpfr-$MPFR_VERSION/allpatches
 #export MPFR_VERSION=3.1.2
 export MPFR_VERSION=3.1.5
-export MPFR_MIRROR=http://mpfr.loria.fr/mpfr-current
-export MPFR_PATCHES=http://mpfr.loria.fr/mpfr-current/allpatches
+export MPFR_MIRROR=http://mpfr.loria.fr/mpfr-$MPFR_VERSION
+export MPFR_PATCHES=http://mpfr.loria.fr/mpfr-$MPFR_VERSION/allpatches
 export MPFR_TARBALL=mpfr-$MPFR_VERSION.tar.xz
 export MPFR_DIR=mpfr-$MPFR_VERSION
 
