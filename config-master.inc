@@ -213,6 +213,14 @@ export ISL_TARBALL=isl-$ISL_VERSION.tar.bz2
 export ISL_DIR=isl-$ISL_VERSION
 
 ################################################################################
+# Python
+################################################################################
+export PYTHON_VERSION=2.7.14
+export PYTHON_MIRROR=https://www.python.org/ftp/python/$PYTHON_VERSION/
+export PYTHON_TARBALL=Python-$PYTHON_VERSION.tar.xz
+export PYTHON_DIR=Python-$PYTHON_VERSION
+
+################################################################################
 # AdaCore GPL components #######################################################
 ################################################################################
 #export GPL_YEAR=2014

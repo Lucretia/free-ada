@@ -79,6 +79,7 @@ fi
 source $INC/bootstrap.inc
 source $INC/binutils.inc
 source $INC/gcc.inc
+source $INC/python.inc
 source $INC/adacore/base.inc
 
 ########################################################################################################################
@@ -348,6 +349,8 @@ fi
 
 echo "  GDB           : " $GDB_VERSION
 
+echo "  Python        : " $PYTHON_VERSION
+
 #~ echo "  XMLAda        : " $GPL_YEAR
 #~ echo "  GPRBuild      : " $GPL_YEAR
 #~ echo "  ASIS          : " $GPL_YEAR
@@ -554,6 +557,7 @@ case "$build_type" in
                 binutils $HOST $BUILD $TARGET "--enable-multilib"
                 gcc $HOST $BUILD $TARGET \
                     "--enable-multilib --enable-threads=posix --enable-libgomp --with-libffi --enable-libsanitizer"
+                python $HOST $BUILD $TARGET
                 gpr_bootstrap $TARGET
                 xmlada $HOST $BUILD $TARGET
                 gprbuild $HOST $BUILD $TARGET

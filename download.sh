@@ -205,6 +205,7 @@ download_package "GMP"
 download_package "MPC"
 download_package "MPFR"
 download_package "ISL"
+download_package "PYTHON"
 
 # AdaCore Libraries/Tools ###########################################################
 
@@ -396,6 +397,8 @@ cd $SRC
 # fi
 
 download_unpack_package "ISL" "j"
+
+download_unpack_package "PYTHON" "J"
 
 # if [ ! -d gcc ]; then
 # 	echo "  >> Downloading GCC sources from GitHub, may take a while..."
