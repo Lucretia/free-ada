@@ -107,26 +107,27 @@ Options:
 
                       Valid values for TARGET
                       -----------------------
-                       1  - ${HOST}           (This platform - native build)
-                       2  - arm-none-eabi     (Generic boards - TODO)
-                       3  - i586-elf          (Generic boards - TODO)
-                       4  - x86_64-elf        (Generic boards - TODO)
-                       5  - mips-elf          (Generic boards)
-                       6  - msp430-elf        (Generic boards - TODO)
-                       7  - avr               (Generic boards - TODO)
-                       8  - ppc-elf           (Generic boards - TODO)
-                       9  - ARM Android       (TODO)
-                      10  - MIPS Android      (TODO)
-                      11  - x86 Android       (TODO)
-                      12  - Win32             (TODO)
-                      13  - Win64             (TODO)
-                      14  - Mac OS X          (TODO)
-                      15  - iOS               (TODO)
-                      16  - i586 Steam        (TODO)
-                      17  - AMD64 Steam       (TODO)
-                      18  - i686-pc-linux-gnu (cross - TODO)
-                      19  - i686-pc-linux-gnu (host-x-host - TODO)
-"
+                       1  - ${HOST}                (This platform - native build)
+                       2  - arm-none-eabi          (Generic boards)
+                       3  - aarch64-unknown-elf    (Generic boards)
+                       4  - mips-elf               (Generic boards)"
+#                       4  - i586-elf          (Generic boards - TODO)
+#                       5  - x86_64-elf        (Generic boards - TODO)
+#                       7  - msp430-elf        (Generic boards - TODO)
+#                       8  - avr               (Generic boards - TODO)
+#                       9  - ppc-elf           (Generic boards - TODO)
+#                      10  - ARM Android       (TODO)
+#                      11  - MIPS Android      (TODO)
+#                      12  - x86 Android       (TODO)
+#                      13  - Win32             (TODO)
+#                      14  - Win64             (TODO)
+#                      15  - Mac OS X          (TODO)
+#                      16  - iOS               (TODO)
+#                      17  - i586 Steam        (TODO)
+#                      18  - AMD64 Steam       (TODO)
+#                      19  - i686-pc-linux-gnu (cross - TODO)
+#                      20  - i686-pc-linux-gnu (host-x-host - TODO)
+
 
 target_list="You must enter a target number to build, use -h flag to see list."
 
@@ -160,30 +161,35 @@ case "$1" in
                 TARGET="arm-none-eabi"
                 ;;
             3)
-                build_type="i586-elf"
+                build_type="cross"
+                variant="bare"
+                TARGET="aarch64-unknown-elf"
                 ;;
             4)
-                build_type="x86_64-elf"
-                ;;
-            5)
                 build_type="cross"
                 variant="bare"
                 TARGET="mips-elf"
                 ;;
-            6)
-                build_type="msp430-elf"
-                ;;
-            7)
-                build_type="avr"
-                ;;
-            8)
-                build_type="ppc-elf"
-                ;;
-            18)
-                build_type="i686-pc-linux-gnu"
-                ;;
-            19)
-                ;;
+#            3)
+#                build_type="i586-elf"
+#                ;;
+#            4)
+#                build_type="x86_64-elf"
+#                ;;
+#            6)
+#                build_type="msp430-elf"
+#                ;;
+#            7)
+#                build_type="avr"
+#                ;;
+#            8)
+#                build_type="ppc-elf"
+#                ;;
+#            18)
+#                build_type="i686-pc-linux-gnu"
+#                ;;
+#            19)
+#                ;;
             *)
                 echo "$target_list"
                 exit 1
@@ -278,6 +284,18 @@ if [ -d $INSTALL_DIR ]; then
         esac
 	done
 fi
+
+########################################################################################################################
+# Set the PATH to include the install dir.
+# The script has to get an Ada-aware compiler from somewhere, when the first native toolchain is built, it'll be found
+# in $INSTALL_DIR/bin if the OS doesn't already have one available.
+# If neither of the two have a toolchain, we must use the bootstrap.
+########################################################################################################################
+export PATH=$INSTALL_DIR/bin:$PATH
+export LD_LIBRARY_PATH=$INSTALL_DIR/lib$BITS:$INSTALL_DIR/lib:$LD_LIBRARY_PATH
+
+#echo "PATH - $PATH"
+#echo "LD_LIBRARY_PATH - $LD_LIBRARY_PATH"
 
 ################################################################################
 # Display some build configuration details
@@ -525,18 +543,6 @@ fi
 if [ ! -d $PKG ]; then
     mkdir -p $PKG
 fi
-
-########################################################################################################################
-# Set the PATH to include the install dir.
-# The script has to get an Ada-aware compiler from somewhere, when the first native toolchain is built, it'll be found
-# in $INSTALL_DIR/bin if the OS doesn't already have one available.
-# If neither of the two have a toolchain, we must use the bootstrap.
-########################################################################################################################
-export PATH=$INSTALL_DIR/bin:$PATH
-export LD_LIBRARY_PATH=$INSTALL_DIR/lib$BITS:$INSTALL_DIR/lib:$LD_LIBRARY_PATH
-
-#echo "PATH - $PATH"
-#echo "LD_LIBRARY_PATH - $LD_LIBRARY_PATH"
 
 TIMEFORMAT=$'  Last Process Took: %2lR';
 # Begin the specified build operation

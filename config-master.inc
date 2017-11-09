@@ -237,10 +237,32 @@ export ISL_DIR=isl-$ISL_VERSION
 #export FLORIST_DIR=florist-src
 
 export ADACORE_GITHUB="https://github.com/AdaCore"
+
 export GPRBUILD_MIRROR="${ADACORE_GITHUB}/gprbuild.git"
 export GPRBUILD_DIR=gprbuild
+
 export XMLADA_MIRROR="${ADACORE_GITHUB}/xmlada.git"
 export XMLADA_DIR=xmlada
+
+# For GPS
+export GNATCOLL_MIRROR="${ADACORE_GITHUB}/gnatcoll.git"
+export GNATCOLL_DIR=gnatcoll
+
+export GTKADA_MIRROR="${ADACORE_GITHUB}/gtkada.git"
+export GTKADA_DIR=gtkada
+
+export LANGKIT_MIRROR="${ADACORE_GITHUB}/langkit.git"
+export LANGKIT_DIR=langkit
+
+export LIBADALANG_MIRROR="${ADACORE_GITHUB}/libadalang.git"
+export LIBADALANG_DIR=libadalang
+
+export GPS_MIRROR="${ADACORE_GITHUB}/gps.git"
+export GPS_DIR=gps
+
+# For Spark
+#export _MIRROR="${ADACORE_GITHUB}/"
+#export _DIR=
 
 ################################################################################
 # Additional Options ###########################################################

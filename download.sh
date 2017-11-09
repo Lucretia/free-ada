@@ -411,6 +411,11 @@ download_unpack_package "ISL" "j"
 
 download_git_package "GPRBUILD"
 download_git_package "XMLADA"
+download_git_package "GNATCOLL"
+download_git_package "GTKADA"
+download_git_package "LANGKIT"
+download_git_package "LIBADALANG"
+download_git_package "GPS"
 
 #~ if [ $GPRBUILD_GIT = "y" ]; then
     #~ if [ -d gprbuild ] && [ ! -f .patched ]; then
