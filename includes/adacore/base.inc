@@ -150,7 +150,7 @@ function gprbuild()
     if [ ! -f .make ]; then
         echo "  >> [2/$TASK_COUNT_TOTAL] Building GPRBuild ($3)..."
         
-        make LIBRARY_TYPE=relocatable -f $MAKEFILE all &> $LOGPRE/$GPRBUILD_DIR-make.txt
+        make LIBRARY_TYPE=relocatable -f $MAKEFILE all libgpr.build &> $LOGPRE/$GPRBUILD_DIR-make.txt
 
         check_error .make
     fi
@@ -158,7 +158,7 @@ function gprbuild()
     if [ ! -f .make-pkg-stage ]; then
         echo "  >> [3/$TASK_COUNT_TOTAL] Packaging GPRBuild ($3)..."
         
-        make -f $MAKEFILE install &> $LOGPRE/$GPRBUILD_DIR-pkg.txt
+        make -f $MAKEFILE install libgpr.install &> $LOGPRE/$GPRBUILD_DIR-pkg.txt
         
         rm $STAGE_BASE_DIR$INSTALL_DIR/doinstall
 
