@@ -253,7 +253,10 @@ export XMLADA_MIRROR="${ADACORE_GITHUB}/xmlada.git"
 export XMLADA_DIR=xmlada
 
 # For GPS
-export GNATCOLL_MIRROR="${ADACORE_GITHUB}/gnatcoll.git"
+# Temporary Git location as the official one is not on available at the moment.
+#export GNATCOLL_MIRROR="https://github.com/codelabs-ch/gnatcoll.git"
+export GNATCOLL_MIRROR="https://github.com/Lucretia/gnatcoll.git"
+#export GNATCOLL_MIRROR="${ADACORE_GITHUB}/gnatcoll.git"
 export GNATCOLL_DIR=gnatcoll
 
 export GTKADA_MIRROR="${ADACORE_GITHUB}/gtkada.git"

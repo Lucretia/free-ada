@@ -114,7 +114,7 @@ function xmlada()
 function gprbuild()
 {
 	local TASK_COUNT_TOTAL=4
- 	VER="$build_type/$1"
+ 	VER="$build_type/$3"
 	DIRS="$GPRBUILD_DIR"
 	LOGPRE=$LOG/$VER
 	OBD=$BLD/$VER
@@ -185,4 +185,87 @@ function gprbuild()
     fi
 
     echo "  >> GPRBuild bootstrap ($3) Installed"
+}
+
+# $1 - Host triple
+# $2 - Build triple
+# $3 - Target triple
+function gnatcoll()
+{
+	local TASK_COUNT_TOTAL=5
+ 	VER="$build_type/$3"
+	DIRS="$GNATCOLL_DIR"
+	LOGPRE=$LOG/$VER
+	OBD=$BLD/$VER
+
+    # TODO: Another broken configure script requires cloning this into the build dir.
+    
+    echo "  >> Creating Directories (if needed)..."
+
+    cd $BLD
+    for d in $DIRS; do
+        if [ ! -d $VER/$d ]; then
+            mkdir -p $VER/$d
+        fi
+    done
+
+    cd $OBD
+    
+    if [ ! -f .gnatcoll-cloned ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Cloning GNATColl due to broken configure script ($3)..."
+
+        git clone $SRC/$GNATCOLL_DIR
+
+        check_error .gnatcoll-cloned 
+    fi
+
+    cd $OBD/$GNATCOLL_DIR
+
+    if [ ! -f .config ]; then
+        echo "  >> [2/$TASK_COUNT_TOTAL] Configuring GNATColl ($3)..."
+
+        ./configure \
+            --prefix=$STAGE_BASE_DIR$INSTALL_DIR \
+            --with-python=$INSTALL_DIR/bin --with-python-exec=python2.7 \
+            &> $LOGPRE/$GNATCOLL_DIR-config.txt
+
+        check_error .config
+    fi
+
+    if [ ! -f .make ]; then
+        echo "  >> [3/$TASK_COUNT_TOTAL] Building GNATColl ($3)..."
+
+        make $JOBS &> $LOGPRE/$GNATCOLL_DIR-make.txt
+
+        check_error .make
+    fi
+
+    if [ ! -f .make-pkg-stage ]; then
+        echo "  >> [4/$TASK_COUNT_TOTAL] Packaging GNATColl ($3)..."
+
+        make  install &> $LOGPRE/$GNATCOLL_DIR-pkg.txt
+
+        check_error .make-pkg-stage
+
+        if [ ! -f .make-pkg ]; then
+            cd $STAGE_DIR
+
+            tar -cjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DIR.tbz2 .
+
+            check_error $OBD/$GNATCOLL_DIR/.make-pkg
+
+            cd $OBD/$GNATCOLL_DIR
+            rm -rf /tmp/opt
+        fi
+    fi
+
+    if [ ! -f .make-install ]; then
+        echo "  >> [5/$TASK_COUNT_TOTAL] Installing GNATColl ($3)..."
+
+        tar -xjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DIR.tbz2 -C $INSTALL_BASE_DIR
+
+        check_error .make-install
+    fi
+
+    echo "  >> GNATColl ($3) Installed"
 }
