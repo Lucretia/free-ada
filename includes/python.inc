@@ -32,7 +32,8 @@ function python()
 
         $SRC/$PYTHON_DIR/configure \
             --prefix=$STAGE_BASE_DIR$INSTALL_DIR \
-            --without-pymalloc &> $LOGPRE/$PYTHON_DIR-config.txt
+            --without-pymalloc \
+            --enable-shared &> $LOGPRE/$PYTHON_DIR-config.txt
 
         check_error .config
     fi
