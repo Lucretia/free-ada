@@ -396,6 +396,14 @@ cd $SRC
 # 	check_error_exit
 # fi
 
+cd $GCC_DIR
+if [ ! -f .patched ]; then
+    cd gcc/ada
+    patch -p0 < $FILES/$GCC_DIR/finalization_size.patch
+fi
+cd $SRC
+
+
 download_unpack_package "ISL" "j"
 
 download_unpack_package "PYTHON" "J"
