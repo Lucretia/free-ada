@@ -345,7 +345,7 @@ download_package "PYTHON"
 cd $SRC
 
 download_unpack_package "BINUTILS" "j"
-download_unpack_package "GSB" "J"
+download_unpack_package "GDB" "J"
 download_unpack_package "GCC" "J"
 
 # Apply any patches
