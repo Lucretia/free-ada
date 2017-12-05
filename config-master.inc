@@ -131,8 +131,8 @@ export BINUTILS_SRC_VERSION
 ################################################################################
 # GDB ##########################################################################
 ################################################################################
-export GDB_VERSION=8.0 # filename version
-export GDB_SRC_VERSION=8.0 # extracted version
+export GDB_VERSION=8.0.1 # filename version
+export GDB_SRC_VERSION=8.0.1 # extracted version
 export GDB_MIRROR=ftp://www.mirrorservice.org/sites/ftp.gnu.org/gnu/gdb
 #export GDB_MIRROR=http://ftp.gnu.org/gnu/gdb
 export GDB_TARBALL=gdb-$GDB_VERSION.tar.xz
