@@ -78,6 +78,7 @@ fi
 
 source $INC/bootstrap.inc
 source $INC/binutils.inc
+source $INC/gdb.inc
 source $INC/gcc.inc
 source $INC/python.inc
 source $INC/adacore/base.inc
@@ -555,6 +556,7 @@ case "$build_type" in
             time {
                 build_arithmetic_libs
                 binutils $HOST $BUILD $TARGET "--enable-multilib"
+                gdb $HOST $BUILD $TARGET
                 gcc $HOST $BUILD $TARGET \
                     "--enable-multilib --enable-threads=posix --enable-libgomp --with-libffi --enable-libsanitizer"
                 python $HOST $BUILD $TARGET
