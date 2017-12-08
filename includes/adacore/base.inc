@@ -211,12 +211,20 @@ function gnatcoll()
 
     cd $OBD
     
-    if [ ! -f .gnatcoll-cloned ]; then
-        echo "  >> [1/$TASK_COUNT_TOTAL] Cloning GNATColl due to broken configure script ($3)..."
+#    if [ ! -f .gnatcoll-cloned ]; then
+#        echo "  >> [1/$TASK_COUNT_TOTAL] Cloning GNATColl due to broken configure script ($3)..."
+#
+#        git clone $SRC/$GNATCOLL_DIR
+#
+#        check_error .gnatcoll-cloned 
+#    fi
+    
+    if [ ! -f .gnatcoll-copied ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Copying GNATColl due to broken configure script ($3)..."
 
-        git clone $SRC/$GNATCOLL_DIR
+        cp -Ra $SRC/$GNATCOLL_DIR .
 
-        check_error .gnatcoll-cloned 
+        check_error .gnatcoll-copied
     fi
 
     cd $OBD/$GNATCOLL_DIR

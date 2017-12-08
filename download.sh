@@ -167,6 +167,24 @@ function download_git_package()
 }
 
 # $1 - Package macro prefix (in upper case)
+function download_adacore_cdn_package()
+{
+    local PKG="$1_TARBALL"
+    local HASH="$1_HASH"
+    local PKG_MIRROR="$1_MIRROR"
+    
+    if [ ! -f ${!PKG} ]; then
+        echo "  >> Downloading ${!PKG}..."
+
+        wget -c ${!PKG_MIRROR}/${!HASH} -O ${!PKG}
+
+        check_error_exit
+    else
+        echo "  (x) Already have ${!PKG}"
+    fi
+}
+
+# $1 - Package macro prefix (in upper case)
 # $2 - Compression letter for tar
 function download_unpack_package()
 {
@@ -206,6 +224,7 @@ download_package "MPC"
 download_package "MPFR"
 download_package "ISL"
 download_package "PYTHON"
+download_adacore_cdn_package "GNATCOLL"
 
 # AdaCore Libraries/Tools ###########################################################
 
@@ -410,6 +429,8 @@ download_unpack_package "ISL" "j"
 
 download_unpack_package "PYTHON" "J"
 
+download_unpack_package "GNATCOLL" "z"
+
 # if [ ! -d gcc ]; then
 # 	echo "  >> Downloading GCC sources from GitHub, may take a while..."
 # 	git clone $GCC_REPO gcc
@@ -424,7 +445,7 @@ download_unpack_package "PYTHON" "J"
 
 download_git_package "GPRBUILD"
 download_git_package "XMLADA"
-download_git_package "GNATCOLL"
+#download_git_package "GNATCOLL"
 download_git_package "GTKADA"
 download_git_package "LANGKIT"
 download_git_package "LIBADALANG"

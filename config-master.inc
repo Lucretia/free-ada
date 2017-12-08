@@ -223,7 +223,7 @@ export PYTHON_DIR=Python-$PYTHON_VERSION
 ################################################################################
 # AdaCore GPL components #######################################################
 ################################################################################
-#export GPL_YEAR=2014
+export GPL_YEAR=2017
 #export XMLADA_HASH=065e0e6750288d9ecc2f7780d3ed8ef3c86ab991
 #export XMLADA_VERSION=xmlada-gpl-$GPL_YEAR-src
 #export GPRBUILD_HASH=c9d9271952a829ff1d355a01285a8558f24baf93
@@ -235,8 +235,6 @@ export PYTHON_DIR=Python-$PYTHON_VERSION
 #export AUNIT_HASH=43f6630248c40941c77be5c06571000925764bbb
 #export AUNIT_VERSION=aunit-gpl-$GPL_YEAR-src
 #export AUNIT_DIR=aunit-3.7.0w-src
-#export GNATCOLL_HASH=0f1572cadf981e4e493497dfbf783889387d52be
-#export GNATCOLL_VERSION=gnatcoll-gpl-$GPL_YEAR-src
 #export POLYORB_HASH=22f27fec50a9c2b92be2e10aa5027eb49567787c
 #export POLYORB_VERSION=polyorb-gpl-$GPL_YEAR-src
 #export POLYORB_DIR=polyorb-$GPL_YEAR-src
@@ -244,6 +242,7 @@ export PYTHON_DIR=Python-$PYTHON_VERSION
 #export FLORIST_VERSION=florist-gpl-$GPL_YEAR-src
 #export FLORIST_DIR=florist-src
 
+export ADACORE_DOWNLOAD_MIRROR="http://mirrors.cdn.adacore.com/art/"
 export ADACORE_GITHUB="https://github.com/AdaCore"
 
 export GPRBUILD_MIRROR="${ADACORE_GITHUB}/gprbuild.git"
@@ -255,9 +254,17 @@ export XMLADA_DIR=xmlada
 # For GPS
 # Temporary Git location as the official one is not on available at the moment.
 #export GNATCOLL_MIRROR="https://github.com/codelabs-ch/gnatcoll.git"
-export GNATCOLL_MIRROR="https://github.com/Lucretia/gnatcoll.git"
+#export GNATCOLL_MIRROR="https://github.com/Lucretia/gnatcoll.git"
 #export GNATCOLL_MIRROR="${ADACORE_GITHUB}/gnatcoll.git"
-export GNATCOLL_DIR=gnatcoll
+
+export GNATCOLL_HASH=5a15c79cc7a4479a23674c66
+export GNATCOLL_VERSION_PREFIX=gnatcoll-gpl-${GPL_YEAR}-src
+export GNATCOLL_VERSION=${GNATCOLL_VERSION_PREFIX}-m1
+
+export GNATCOLL_MIRROR="${ADACORE_DOWNLOAD_MIRROR}"
+export GNATCOLL_TARBALL="${GNATCOLL_VERSION}.tar.gz"
+export GNATCOLL_DIR=${GNATCOLL_VERSION_PREFIX}
+
 
 export GTKADA_MIRROR="${ADACORE_GITHUB}/gtkada.git"
 export GTKADA_DIR=gtkada
