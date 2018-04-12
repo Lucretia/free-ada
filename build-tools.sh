@@ -565,6 +565,7 @@ case "$build_type" in
                 gprbuild $HOST $BUILD $TARGET
                 gnatcoll $HOST $BUILD $TARGET
                 gnat_util $HOST $BUILD $TARGET
+                asis $HOST $BUILD $TARGET
                 #~ build_native_toolchain;
             }
         }

@@ -375,3 +375,87 @@ function gnat_util()
     echo "  >> GNAT_Util ($3) Installed"
 }
 
+
+# $1 - Host triple
+# $2 - Build triple
+# $3 - Target triple
+function asis()
+{
+	local TASK_COUNT_TOTAL=5
+ 	VER="$build_type/$3"
+	DIRS="$ASIS_DIR"
+	LOGPRE=$LOG/$VER
+	OBD=$BLD/$VER
+
+    echo "  >> Creating Directories (if needed)..."
+
+    cd $BLD
+    for d in $DIRS; do
+        if [ ! -d $VER/$d ]; then
+            mkdir -p $VER/$d
+        fi
+    done
+
+    cd $OBD/
+
+    if [ ! -f .asis-copied ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Copying ASIS (${ASIS_GPL_YEAR}) sources ($3)..."
+
+        cp -Ra $SRC/$ASIS_DIR/* $ASIS_DIR/
+
+        check_error .asis-copied
+    fi
+
+    cd $OBD/$ASIS_DIR
+
+    if [ ! -f .patched ]; then
+	echo "  >> [2/$TASK_COUNT_TOTAL] Patching ASIS (${ASIS_GPL_YEAR}) sources ($3)..."
+
+	for f in $(cat $FILES/asis_${ASIS_GPL_YEAR}/MANIFEST); do
+	    echo "    >> Applying $f..."
+
+	    patch -p1 < $FILES/asis_${ASIS_GPL_YEAR}/$f;
+	done
+
+	check_error .patched
+    fi
+
+    if [ ! -f .make ]; then
+	echo "  >> [3/$TASK_COUNT_TOTAL] Building ASIS (${ASIS_GPL_YEAR}) ($3)..."
+
+	# WARNING! This will not pass the parallel option to gprbuild.
+	make all tools &> $LOGPRE/$ASIS_DIR-make.txt
+
+	check_error .make
+    fi
+
+    if [ ! -f .make-pkg-stage ]; then
+    	echo "  >> [4/$TASK_COUNT_TOTAL] Packaging ASIS (${ASIS_GPL_YEAR}) ($3)..."
+
+    	make install install-tools prefix=$STAGE_BASE_DIR$INSTALL_DIR &> $LOGPRE/$ASIS_DIR-pkg.txt
+
+    	check_error .make-pkg-stage
+
+        if [ ! -f .make-pkg ]; then
+            cd $STAGE_DIR
+
+            tar -cjpf $PKG/$PROJECT-$1_$2_$3-$ASIS_DIR.tbz2 .
+
+            check_error $OBD/$ASIS_DIR/.make-pkg
+
+            cd $OBD/$ASIS_DIR
+            rm -rf /tmp/opt
+        fi
+    fi
+
+    if [ ! -f .make-install ]; then
+        echo "  >> [5/$TASK_COUNT_TOTAL] Installing ASIS (${ASIS_GPL_YEAR}) ($3)..."
+
+        tar -xjpf $PKG/$PROJECT-$1_$2_$3-$ASIS_DIR.tbz2 -C $INSTALL_BASE_DIR
+
+        check_error .make-install
+    fi
+
+    echo "  >> ASIS (${ASIS_GPL_YEAR}) ($3) Installed"
+}
+

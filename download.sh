@@ -225,6 +225,7 @@ download_package "MPFR"
 download_package "ISL"
 download_package "PYTHON"
 download_adacore_cdn_package "GNATCOLL"
+download_adacore_cdn_package "ASIS"
 
 # AdaCore Libraries/Tools ###########################################################
 
@@ -430,6 +431,8 @@ download_unpack_package "ISL" "j"
 download_unpack_package "PYTHON" "J"
 
 download_unpack_package "GNATCOLL" "z"
+download_unpack_package "ASIS" "z"
+
 
 # if [ ! -d gcc ]; then
 # 	echo "  >> Downloading GCC sources from GitHub, may take a while..."
