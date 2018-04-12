@@ -564,6 +564,7 @@ case "$build_type" in
                 xmlada $HOST $BUILD $TARGET
                 gprbuild $HOST $BUILD $TARGET
                 gnatcoll $HOST $BUILD $TARGET
+                gnat_util $HOST $BUILD $TARGET
                 #~ build_native_toolchain;
             }
         }

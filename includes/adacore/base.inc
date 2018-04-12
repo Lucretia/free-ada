@@ -277,3 +277,101 @@ function gnatcoll()
 
     echo "  >> GNATColl ($3) Installed"
 }
+
+################################################################################
+# This function builds a version of libgnat_util using AdaCore's GPL'd
+# makefiles, but uses the source from the FSF GNAT we are using. The source has
+# to match the compiler.
+#
+# This library is used by the other AdaCore tools.
+#
+# This is only used in 2016 tools, from 2017, it's gone.
+################################################################################
+# TODO: Cross builds!
+# $1 - Host triple
+# $2 - Build triple
+# $3 - Target triple
+function gnat_util()
+{
+	local TASK_COUNT_TOTAL=5
+ 	VER="$build_type/$3"
+	DIRS="$GNAT_UTIL_DIR"
+	LOGPRE=$LOG/$VER
+	OBD=$BLD/$VER
+
+    echo "  >> Creating Directories (if needed)..."
+
+    cd $BLD
+    for d in $DIRS; do
+        if [ ! -d $VER/$d ]; then
+            mkdir -p $VER/$d
+        fi
+    done
+
+    cd $OBD/
+
+    if [ ! -f .gnat_util-copied ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Copying GNAT_Util sources ($3)..."
+
+        cp -Ra $SRC/$GNAT_UTIL_DIR/* $GNAT_UTIL_DIR/
+
+        check_error .gnat_util-copied
+    fi
+
+    cd $OBD/$GNAT_UTIL_DIR
+
+    if [ ! -f .sources-copied ]; then
+	echo "  >> [2/$TASK_COUNT_TOTAL] Copying FSF GCC sources for GNAT_Util ($3)..."
+
+	for file in $(cat $SRC/$GNAT_UTIL_DIR/MANIFEST.gnat_util); do cp $SRC/$GCC_DIR/gcc/ada/"$file" .; done
+
+	check_error .sources-copied
+    fi
+
+    if [ ! -f .gen-sources-copied ]; then
+	echo "  >> [3/$TASK_COUNT_TOTAL] Copying FSF GCC generated sources for GNAT_Util ($3)..."
+
+	cp $OBD/$GCC_DIR/gcc/ada/sdefault.adb .
+
+	check_error .gen-sources-copied
+    fi
+
+    if [ ! -f .make ]; then
+	echo "  >> [4/$TASK_COUNT_TOTAL] Building GNAT_Util ($3)..."
+
+	# WARNING! This will not build in parallel mode.
+	make -f Makefile ENABLE_SHARED=yes &> $LOGPRE/$GNAT_UTIL_DIR-make.txt
+
+	check_error .make
+    fi
+
+    if [ ! -f .make-pkg-stage ]; then
+    	echo "  >> [5/$TASK_COUNT_TOTAL] Packaging GNAT_Util ($3)..."
+
+    	make -f Makefile install prefix=$STAGE_BASE_DIR$INSTALL_DIR ENABLE_SHARED=yes &> $LOGPRE/$GNAT_UTIL_DIR-pkg.txt
+
+    	check_error .make-pkg-stage
+
+        if [ ! -f .make-pkg ]; then
+            cd $STAGE_DIR
+
+            tar -cjpf $PKG/$PROJECT-$1_$2_$3-$GNAT_UTIL_DIR.tbz2 .
+
+            check_error $OBD/$GNAT_UTIL_DIR/.make-pkg
+
+            cd $OBD/$GNAT_UTIL_DIR
+            rm -rf /tmp/opt
+        fi
+    fi
+
+    if [ ! -f .make-install ]; then
+        echo "  >> [6/$TASK_COUNT_TOTAL] Installing GNAT_Util ($3)..."
+
+        tar -xjpf $PKG/$PROJECT-$1_$2_$3-$GNAT_UTIL_DIR.tbz2 -C $INSTALL_BASE_DIR
+
+        check_error .make-install
+    fi
+
+    echo "  >> GNAT_Util ($3) Installed"
+}
+
