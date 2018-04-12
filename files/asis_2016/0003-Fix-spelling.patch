@@ -1,0 +1,42 @@
+From b960b39b8fc028f0c3f63b6d8a0671a918e3de12 Mon Sep 17 00:00:00 2001
+From: "Luke A. Guest" <laguest@archeia.com>
+Date: Thu, 12 Apr 2018 19:03:14 +0100
+Subject: [PATCH 3/4] Fix spelling.
+
+---
+ asis/a4g-ee_cache.adb          | 4 ++--
+ tools/gnatpp/gnatpp-output.adb | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/asis/a4g-ee_cache.adb b/asis/a4g-ee_cache.adb
+index 4e4eeb5..87f789d 100644
+--- a/asis/a4g-ee_cache.adb
++++ b/asis/a4g-ee_cache.adb
+@@ -325,9 +325,9 @@ package body A4G.EE_Cache is
+       Average_Hash_Chain := Average_Hash_Chain / Hash_Entries;
+ 
+       Write_Line ("Number of Hash table entries         :" & Hash_Entries'Img);
+-      Write_Line ("Max hash chain lenght                :" &
++      Write_Line ("Max hash chain length                :" &
+                   Max_Hash_Chain'Img);
+-      Write_Line ("Average hash chain lenght            :" &
++      Write_Line ("Average hash chain length            :" &
+                   Average_Hash_Chain'Img);
+ 
+    end Print_EE_Cache_Summary_Info;
+diff --git a/tools/gnatpp/gnatpp-output.adb b/tools/gnatpp/gnatpp-output.adb
+index c9c2580..e371372 100644
+--- a/tools/gnatpp/gnatpp-output.adb
++++ b/tools/gnatpp/gnatpp-output.adb
+@@ -138,7 +138,7 @@ package body GNATPP.Output is
+       Info (" --pp-off=xxx - Use ""--xxx"" as the comment string to disable");
+       Info ("                pretty printing instead of the default " &
+               """--!pp off""");
+-      Info (" --pp-on=xxx - Use ""--xxx"" as the comment string to reenable");
++      Info (" --pp-on=xxx - Use ""--xxx"" as the comment string to re-enable");
+       Info ("                pretty printing instead of the default " &
+               """--!pp on""");
+ 
+-- 
+2.17.0
+

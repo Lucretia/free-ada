@@ -1,0 +1,367 @@
+From 526a60f821822d0b03eb88346a4927fc2a70069a Mon Sep 17 00:00:00 2001
+From: "Luke A. Guest" <laguest@archeia.com>
+Date: Thu, 12 Apr 2018 18:57:06 +0100
+Subject: [PATCH 1/4] Change Name_Find to Name_Find_Str.
+
+---
+ tools/gnat2xml/gnat2xml-xml2gnat.adb          |  4 +-
+ tools/gnat2xml/gnat2xml-xml2tree.adb          | 22 +++----
+ tools/tool_utils/ada_trees-asis_to_tree.adb   | 16 ++---
+ tools/tool_utils/ada_trees-asis_to_tree.ads   |  4 +-
+ .../ada_trees-formatting-tree_to_ada.adb      | 66 +++++++++----------
+ tools/tool_utils/ada_trees-formatting.adb     |  2 +-
+ tools/tool_utils/ada_trees-rep_clauses.adb    |  2 +-
+ tools/tool_utils/ada_trees-scanner.adb        |  6 +-
+ tools/tool_utils/ada_trees.adb                |  8 +--
+ tools/tool_utils/asis_ul-string_utilities.ads |  2 +-
+ 10 files changed, 66 insertions(+), 66 deletions(-)
+
+diff --git a/tools/gnat2xml/gnat2xml-xml2gnat.adb b/tools/gnat2xml/gnat2xml-xml2gnat.adb
+index 297e9cc..7254004 100644
+--- a/tools/gnat2xml/gnat2xml-xml2gnat.adb
++++ b/tools/gnat2xml/gnat2xml-xml2gnat.adb
+@@ -52,7 +52,7 @@ procedure Gnat2xml.Xml2gnat is
+ 
+    Verbose_Mode : Boolean renames ASIS_UL.Options.Verbose_Mode;
+ 
+-   Output_Dir : Name_Id := Name_Find (Current_Directory);
++   Output_Dir : Name_Id := Name_Find_Str (Current_Directory);
+    --  Default is current directory; can be overridden by --output-dir=dir
+    --  switch. Output goes in subdirectories of Output_Dir.
+ 
+@@ -172,7 +172,7 @@ procedure Gnat2xml.Xml2gnat is
+ 
+             elsif Has_Prefix (Argument (X), Prefix => "--output-dir=") then
+                Output_Dir :=
+-                 Name_Find
++                 Name_Find_Str
+                    (Full_Name
+                       (Strip_Prefix
+                          (Argument (X),
+diff --git a/tools/gnat2xml/gnat2xml-xml2tree.adb b/tools/gnat2xml/gnat2xml-xml2tree.adb
+index 92a4f90..bf86a08 100644
+--- a/tools/gnat2xml/gnat2xml-xml2tree.adb
++++ b/tools/gnat2xml/gnat2xml-xml2tree.adb
+@@ -290,42 +290,42 @@ package body Gnat2xml.Xml2tree is
+                Result.Unit_Origin := Unit_Origins'Value (Val);
+ 
+             elsif Nm = "unit_full_name" then
+-               Result.Unit_Full_Name := Name_Find (Val);
++               Result.Unit_Full_Name := Name_Find_Str (Val);
+ 
+             elsif Nm = "def_name" then
+-               Result.Def_Name := Name_Find (Val);
++               Result.Def_Name := Name_Find_Str (Val);
+ 
+             elsif Nm = "source_file" then
+-               Result.Source_File := Name_Find (Val);
++               Result.Source_File := Name_Find_Str (Val);
+ 
+             elsif Nm = "def" then
+-               Result.Def := Name_Find (Val);
++               Result.Def := Name_Find_Str (Val);
+ 
+             elsif Nm = "type" then
+                if Kind in Def_Names then
+-                  Result.Decl_Type := Name_Find (Val);
++                  Result.Decl_Type := Name_Find_Str (Val);
+ 
+                else
+-                  Result.Expr_Type := Name_Find (Val);
++                  Result.Expr_Type := Name_Find_Str (Val);
+                end if;
+ 
+             elsif Nm = "ref_name" then
+-               Result.Ref_Name := Name_Find (Val);
++               Result.Ref_Name := Name_Find_Str (Val);
+ 
+             elsif Nm = "ref" then
+-               Result.Ref := Name_Find (Val);
++               Result.Ref := Name_Find_Str (Val);
+ 
+             elsif Nm = "lit_val" then
+-               Result.Lit_Val := Name_Find (Val);
++               Result.Lit_Val := Name_Find_Str (Val);
+ 
+             elsif Nm = "pragma_name" then
+-               Result.Pragma_Name := Name_Find (Val);
++               Result.Pragma_Name := Name_Find_Str (Val);
+ 
+             elsif Nm = "mode" then
+                Result.Mode := Asis.Mode_Kinds'Value (Val);
+ 
+             elsif Nm = "text" then
+-               Result.Text := Name_Find (Val);
++               Result.Text := Name_Find_Str (Val);
+ 
+             elsif Nm = "checks" then
+                null; -- Ignore checks attribute for now
+diff --git a/tools/tool_utils/ada_trees-asis_to_tree.adb b/tools/tool_utils/ada_trees-asis_to_tree.adb
+index 520934a..b8e604b 100644
+--- a/tools/tool_utils/ada_trees-asis_to_tree.adb
++++ b/tools/tool_utils/ada_trees-asis_to_tree.adb
+@@ -76,15 +76,15 @@ package body Ada_Trees.Asis_To_Tree is
+ 
+    function Ref_Value (Ref_Id : Asis.Name) return String;
+    function Ref_Value (Ref_Id : Asis.Name) return Name_Id is
+-     (Name_Find (Ref_Value (Ref_Id)));
++     (Name_Find_Str (Ref_Value (Ref_Id)));
+ 
+    function Ref_Name_Value (Ref_Id : Asis.Name) return String;
+    function Ref_Name_Value (Ref_Id : Asis.Name) return Name_Id is
+-     (Name_Find (Ref_Name_Value (Ref_Id)));
++     (Name_Find_Str (Ref_Name_Value (Ref_Id)));
+ 
+    function Type_Value (Elem : Asis.Element) return String;
+    function Type_Value (Elem : Asis.Element) return Name_Id is
+-     (Name_Find (Type_Value (Elem)));
++     (Name_Find_Str (Type_Value (Elem)));
+ 
+    procedure Set_Usage_Name_Attrs
+      (Q      : Structural_Queries;
+@@ -637,7 +637,7 @@ package body Ada_Trees.Asis_To_Tree is
+                        A_Real_Literal        |
+                        A_String_Literal      =>
+                         Result.Lit_Val :=
+-                          Name_Find (To_UTF8 (Value_Image (Element)));
++                          Name_Find_Str (To_UTF8 (Value_Image (Element)));
+ 
+                      when others =>
+                         null;
+@@ -647,7 +647,7 @@ package body Ada_Trees.Asis_To_Tree is
+                   pragma Assert
+                     (Asis.Elements.Pragma_Name_Image (Element) /= "");
+                   Result.Pragma_Name :=
+-                    Name_Find
++                    Name_Find_Str
+                       (To_UTF8 (Asis.Elements.Pragma_Name_Image (Element)));
+ 
+                when A_Parameter_Specification | A_Formal_Object_Declaration =>
+@@ -849,9 +849,9 @@ package body Ada_Trees.Asis_To_Tree is
+            Unit_Kind      => Unit_Kind (The_Unit),
+            Unit_Class     => Unit_Class (The_Unit),
+            Unit_Origin    => Unit_Origin (The_Unit),
+-           Unit_Full_Name => Name_Find (To_UTF8 (Unit_Full_Name (The_Unit))),
+-           Def_Name       => Name_Find (Name),
+-           Source_File    => Name_Find (Src),
++           Unit_Full_Name => Name_Find_Str (To_UTF8 (Unit_Full_Name (The_Unit))),
++           Def_Name       => Name_Find_Str (Name),
++           Source_File    => Name_Find_Str (Src),
+ 
+            Subtrees =>
+              (1 =>
+diff --git a/tools/tool_utils/ada_trees-asis_to_tree.ads b/tools/tool_utils/ada_trees-asis_to_tree.ads
+index 827e851..a5d7ccf 100644
+--- a/tools/tool_utils/ada_trees-asis_to_tree.ads
++++ b/tools/tool_utils/ada_trees-asis_to_tree.ads
+@@ -46,10 +46,10 @@ package Ada_Trees.Asis_To_Tree is
+ 
+    function Def_Value (Def_Id : Defining_Name) return String;
+    function Def_Value (Def_Id : Defining_Name) return Name_Id is
+-     (Name_Find (Def_Value (Def_Id)));
++     (Name_Find_Str (Def_Value (Def_Id)));
+ 
+    function Def_Name_Value (Def_Id : Defining_Name) return String;
+    function Def_Name_Value (Def_Id : Defining_Name) return Name_Id is
+-     (Name_Find (Def_Name_Value (Def_Id)));
++     (Name_Find_Str (Def_Name_Value (Def_Id)));
+ 
+ end Ada_Trees.Asis_To_Tree;
+diff --git a/tools/tool_utils/ada_trees-formatting-tree_to_ada.adb b/tools/tool_utils/ada_trees-formatting-tree_to_ada.adb
+index 976a6b7..bf6c2f7 100644
+--- a/tools/tool_utils/ada_trees-formatting-tree_to_ada.adb
++++ b/tools/tool_utils/ada_trees-formatting-tree_to_ada.adb
+@@ -134,36 +134,36 @@ is
+ 
+    --  Miscellaneous useful Name_Ids:
+ 
+-   Name_Empty : constant Name_Id := Name_Find ("");
+-
+-   Name_Semicolon : constant Name_Id := Name_Find (";");
+-   Name_L_Paren   : constant Name_Id := Name_Find ("(");
+-   Name_R_Paren   : constant Name_Id := Name_Find (")");
+-   Name_Colon     : constant Name_Id := Name_Find (":");
+-   Name_Assign    : constant Name_Id := Name_Find (":=");
+-   Name_Bang      : constant Name_Id := Name_Find ("!");
+-   Name_Bar       : constant Name_Id := Name_Find ("|");
+-   Name_Arrow     : constant Name_Id := Name_Find ("=>");
+-   Name_Dot       : constant Name_Id := Name_Find (".");
+-
+-   Name_And_Then : constant Name_Id := Name_Find ("and then");
+-   Name_Or_Else  : constant Name_Id := Name_Find ("or else");
+-
+-   Name_Q_And : constant Name_Id := Name_Find ("""and""");
+-   Name_Q_Or  : constant Name_Id := Name_Find ("""or""");
+-   Name_Q_Xor : constant Name_Id := Name_Find ("""xor""");
+-   Name_Q_Mod : constant Name_Id := Name_Find ("""mod""");
+-   Name_Q_Rem : constant Name_Id := Name_Find ("""rem""");
+-   Name_Q_Abs : constant Name_Id := Name_Find ("""abs""");
+-   Name_Q_Not : constant Name_Id := Name_Find ("""not""");
+-
+-   Name_Depends : constant Name_Id := Name_Find ("Depends");
++   Name_Empty : constant Name_Id := Name_Find_Str ("");
++
++   Name_Semicolon : constant Name_Id := Name_Find_Str (";");
++   Name_L_Paren   : constant Name_Id := Name_Find_Str ("(");
++   Name_R_Paren   : constant Name_Id := Name_Find_Str (")");
++   Name_Colon     : constant Name_Id := Name_Find_Str (":");
++   Name_Assign    : constant Name_Id := Name_Find_Str (":=");
++   Name_Bang      : constant Name_Id := Name_Find_Str ("!");
++   Name_Bar       : constant Name_Id := Name_Find_Str ("|");
++   Name_Arrow     : constant Name_Id := Name_Find_Str ("=>");
++   Name_Dot       : constant Name_Id := Name_Find_Str (".");
++
++   Name_And_Then : constant Name_Id := Name_Find_Str ("and then");
++   Name_Or_Else  : constant Name_Id := Name_Find_Str ("or else");
++
++   Name_Q_And : constant Name_Id := Name_Find_Str ("""and""");
++   Name_Q_Or  : constant Name_Id := Name_Find_Str ("""or""");
++   Name_Q_Xor : constant Name_Id := Name_Find_Str ("""xor""");
++   Name_Q_Mod : constant Name_Id := Name_Find_Str ("""mod""");
++   Name_Q_Rem : constant Name_Id := Name_Find_Str ("""rem""");
++   Name_Q_Abs : constant Name_Id := Name_Find_Str ("""abs""");
++   Name_Q_Not : constant Name_Id := Name_Find_Str ("""not""");
++
++   Name_Depends : constant Name_Id := Name_Find_Str ("Depends");
+ 
+    Name_Tab_Insertion_Point : constant Name_Id :=
+-     Name_Find ("tab insertion point");
+-   Name_Tab_In_Out : constant Name_Id := Name_Find ("tab in out");
+-   Name_Dot_Dot : constant Name_Id := Name_Find ("..");
+-   Name_R_Sq : constant Name_Id := Name_Find ("]");
++     Name_Find_Str ("tab insertion point");
++   Name_Tab_In_Out : constant Name_Id := Name_Find_Str ("tab in out");
++   Name_Dot_Dot : constant Name_Id := Name_Find_Str ("..");
++   Name_R_Sq : constant Name_Id := Name_Find_Str ("]");
+ 
+    Op_Sym_Table : constant array (Positive range <>) of Name_Id :=
+      (Name_Q_And,
+@@ -540,7 +540,7 @@ is
+             Indentation => Cur_Indentation,
+             Length      => <>,
+             Kind        => Not_An_Element,
+-            Template    => Name_Find ("Insert_Comments_And_Blank_Lines"),
++            Template    => Name_Find_Str ("Insert_Comments_And_Blank_Lines"),
+             UID         => Next_Line_Break_Unique_Id));
+       Next_Line_Break_Unique_Id := Next_Line_Break_Unique_Id + 1;
+       pragma Assert (Char_At (Out_Buf, M) = NL);
+@@ -2245,7 +2245,7 @@ is
+                Affects_Comments => False,
+                Level    => 0,
+                Kind     => Tree.Kind,
+-               Template => Name_Find ("Maybe_Blank_Line"));
++               Template => Name_Find_Str ("Maybe_Blank_Line"));
+          end if;
+       end Maybe_Blank_Line;
+ 
+@@ -2703,7 +2703,7 @@ is
+                        Q_Op_Sym (2 .. Q_Op_Sym'Last - 1);
+                   --  Strip off quotes
+                   begin
+-                     Result.Ref := Name_Find (Un_Q);
++                     Result.Ref := Name_Find_Str (Un_Q);
+                   end;
+ 
+                when An_And_Then_Short_Circuit =>
+@@ -3340,8 +3340,8 @@ is
+             if P.Kind = An_Implementation_Defined_Attribute then
+                A := P.Subtrees (2).Ref_Name;
+                if
+-                 (A = Name_Find ("Elab_Spec")
+-                  or else A = Name_Find ("Elab_Body"))
++                 (A = Name_Find_Str ("Elab_Spec")
++                  or else A = Name_Find_Str ("Elab_Body"))
+                  and then P.Subtrees (1) = Tree_Stack (N)
+                then
+                   Elab_Spec_Seen := True;
+diff --git a/tools/tool_utils/ada_trees-formatting.adb b/tools/tool_utils/ada_trees-formatting.adb
+index 83f9584..be6bd2f 100644
+--- a/tools/tool_utils/ada_trees-formatting.adb
++++ b/tools/tool_utils/ada_trees-formatting.adb
+@@ -805,7 +805,7 @@ package body Ada_Trees.Formatting is
+       --  line all come from the same tree; other tabs in the line are ignored.
+       --  Parent is used across lines to ensure that all lines within a
+       --  paragraph to be aligned together all come from the same parent tree.
+-      Token : Name_Id := Name_Find ("");
++      Token : Name_Id := Name_Find_Str ("");
+       --  This is some text associated with the Tab. Usually, it is the text of
+       --  the token that follows the Tab in the template.
+       Mark : Marker;
+diff --git a/tools/tool_utils/ada_trees-rep_clauses.adb b/tools/tool_utils/ada_trees-rep_clauses.adb
+index 8ff6d8d..a7d45b7 100644
+--- a/tools/tool_utils/ada_trees-rep_clauses.adb
++++ b/tools/tool_utils/ada_trees-rep_clauses.adb
+@@ -35,7 +35,7 @@ package body Ada_Trees.Rep_Clauses is
+ 
+    package DD renames Asis.Data_Decomposition;
+ 
+-   function "+" (S : String) return Name_Id renames Name_Find;
++   function "+" (S : String) return Name_Id renames Name_Find_Str;
+    function Nil return Asis.Text.Span is (Asis.Text.Nil_Span);
+ 
+    --  The following Do_... procedures are called by Append_Rep_Clauses (except
+diff --git a/tools/tool_utils/ada_trees-scanner.adb b/tools/tool_utils/ada_trees-scanner.adb
+index 11f9064..bdf0417 100644
+--- a/tools/tool_utils/ada_trees-scanner.adb
++++ b/tools/tool_utils/ada_trees-scanner.adb
+@@ -66,9 +66,9 @@ package body Ada_Trees.Scanner is
+          then
+            Char_At (Input, Last_Position (Input)) = NL);
+ 
+-      Name_Empty   : constant Name_Id := Name_Find ("");
+-      Name_R_Paren : constant Name_Id := Name_Find (")");
+-      Name_Tick    : constant Name_Id := Name_Find ("'");
++      Name_Empty   : constant Name_Id := Name_Find_Str ("");
++      Name_R_Paren : constant Name_Id := Name_Find_Str (")");
++      Name_Tick    : constant Name_Id := Name_Find_Str ("'");
+       Name_NL      : constant Name_Id := W_Name_Find ((1 => NL));
+ 
+       Cur_Line, Cur_Col : Positive := 1;
+diff --git a/tools/tool_utils/ada_trees.adb b/tools/tool_utils/ada_trees.adb
+index 81baf6c..9b64660 100644
+--- a/tools/tool_utils/ada_trees.adb
++++ b/tools/tool_utils/ada_trees.adb
+@@ -497,11 +497,11 @@ package body Ada_Trees is
+             pragma Assert (Has_Prefix (Def, Prefix => "ada://task_body"));
+             declare
+                Type_Def : constant Name_Id :=
+-                 Name_Find
++                 Name_Find_Str
+                    ("ada://task_type" &
+                     Strip_Prefix (Def, Prefix => "ada://task_body"));
+                Obj_Def : constant Name_Id :=
+-                 Name_Find
++                 Name_Find_Str
+                    ("ada://single_task" &
+                     Strip_Prefix (Def, Prefix => "ada://task_body"));
+             begin
+@@ -528,11 +528,11 @@ package body Ada_Trees is
+             pragma Assert (Has_Prefix (Def, Prefix => "ada://protected_body"));
+             declare
+                Type_Def : constant Name_Id :=
+-                 Name_Find
++                 Name_Find_Str
+                    ("ada://protected_type" &
+                     Strip_Prefix (Def, Prefix => "ada://protected_body"));
+                Obj_Def : constant Name_Id :=
+-                 Name_Find
++                 Name_Find_Str
+                    ("ada://single_protected" &
+                     Strip_Prefix (Def, Prefix => "ada://protected_body"));
+             begin
+diff --git a/tools/tool_utils/asis_ul-string_utilities.ads b/tools/tool_utils/asis_ul-string_utilities.ads
+index a9ecf5a..4584d3a 100644
+--- a/tools/tool_utils/asis_ul-string_utilities.ads
++++ b/tools/tool_utils/asis_ul-string_utilities.ads
+@@ -143,7 +143,7 @@ package ASIS_UL.String_Utilities is
+    function W_Name_Find
+      (S    : W_Str)
+       return Namet.Name_Id is
+-     (Namet.Name_Find (To_UTF8 (S)));
++     (Namet.Name_Find_Str (To_UTF8 (S)));
+    --  Wrapper for Namet.Name_Find
+ 
+    function Get_Name_String
+-- 
+2.17.0
+

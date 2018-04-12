@@ -1,0 +1,53 @@
+From d148e12f300cbe6cb711fe8d5fa85b03ea53367d Mon Sep 17 00:00:00 2001
+From: "Luke A. Guest" <laguest@archeia.com>
+Date: Thu, 12 Apr 2018 19:01:05 +0100
+Subject: [PATCH 2/4] Remove strong version check.
+
+---
+ tools/gnatcheck/asis_ul-source_table-gnatcheck_processing.adb | 2 +-
+ tools/gnatstub/gnatstub-sampler-prepare_context.adb           | 2 +-
+ tools/tool_utils/asis_ul-source_table-processing.adb          | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/tools/gnatcheck/asis_ul-source_table-gnatcheck_processing.adb b/tools/gnatcheck/asis_ul-source_table-gnatcheck_processing.adb
+index 1ba1a4e..52107f6 100644
+--- a/tools/gnatcheck/asis_ul-source_table-gnatcheck_processing.adb
++++ b/tools/gnatcheck/asis_ul-source_table-gnatcheck_processing.adb
+@@ -575,7 +575,7 @@ package body ASIS_UL.Source_Table.Gnatcheck_Processing is
+       pragma Assert (not Incremental_Mode);
+ 
+       if not Nothing_To_Do then
+-         Asis.Implementation.Initialize ("-k -asis05 -ws -sv");
++         Asis.Implementation.Initialize ("-k -asis05 -ws");
+ 
+          Process_Sources_From_Table (Only_Bodies => True);
+          Process_Sources_From_Table (Only_Bodies => False);
+diff --git a/tools/gnatstub/gnatstub-sampler-prepare_context.adb b/tools/gnatstub/gnatstub-sampler-prepare_context.adb
+index d87afb2..34d2852 100644
+--- a/tools/gnatstub/gnatstub-sampler-prepare_context.adb
++++ b/tools/gnatstub/gnatstub-sampler-prepare_context.adb
+@@ -60,7 +60,7 @@ begin
+       Tree_Exists := True;
+    end if;
+ 
+-   Asis.Implementation.Initialize ("-ws -sv");
++   Asis.Implementation.Initialize ("-ws");
+ 
+    Associate
+      (My_Context,
+diff --git a/tools/tool_utils/asis_ul-source_table-processing.adb b/tools/tool_utils/asis_ul-source_table-processing.adb
+index 036d33e..1998c57 100644
+--- a/tools/tool_utils/asis_ul-source_table-processing.adb
++++ b/tools/tool_utils/asis_ul-source_table-processing.adb
+@@ -400,7 +400,7 @@ package body ASIS_UL.Source_Table.Processing is
+       Add_Needed_Sources : Boolean := Mimic_gcc)
+    is
+    begin
+-      Asis.Implementation.Initialize ("-k -ws -asis05 -sv");
++      Asis.Implementation.Initialize ("-k -ws -asis05");
+ 
+       if True then -- Can we get rid of Only_Bodies????
+          Process_Sources_From_Table
+-- 
+2.17.0
+
