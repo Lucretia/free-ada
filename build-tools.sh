@@ -57,9 +57,9 @@ BUILD=$HOST
 ########################################################################################################################
 # Incudes with common function declarations
 ########################################################################################################################
-source $INC/version.inc
-source $INC/errors.inc
-source $INC/arithmetic.inc
+source $INC/version.inc.sh
+source $INC/errors.inc.sh
+source $INC/arithmetic.inc.sh
 #source $INC/native.inc
 #source $INC/bare_metal.inc
 #source $INC/cross.inc
@@ -73,15 +73,15 @@ VERSION="build-tools.sh ($VERSION_DATE)"
 if [ ! -f ./config.inc ]; then
 	display_no_config_error
 else
-	source ./config.inc
+	source ./config.inc.sh
 fi
 
-source $INC/bootstrap.inc
-source $INC/binutils.inc
-source $INC/gdb.inc
-source $INC/gcc.inc
-source $INC/python.inc
-source $INC/adacore/base.inc
+source $INC/bootstrap.inc.sh
+source $INC/binutils.inc.sh
+source $INC/gdb.inc.sh
+source $INC/gcc.inc.sh
+source $INC/python.inc.sh
+source $INC/adacore/base.inc.sh
 
 ########################################################################################################################
 # Check to make sure the source is downloaded.
