@@ -131,8 +131,8 @@ export BINUTILS_SRC_VERSION
 ################################################################################
 # GDB ##########################################################################
 ################################################################################
-export GDB_VERSION=8.0.1 # filename version
-export GDB_SRC_VERSION=8.0.1 # extracted version
+export GDB_VERSION=8.1 # filename version
+export GDB_SRC_VERSION=8.1 # extracted version
 export GDB_MIRROR=ftp://www.mirrorservice.org/sites/ftp.gnu.org/gnu/gdb
 #export GDB_MIRROR=http://ftp.gnu.org/gnu/gdb
 export GDB_TARBALL=gdb-$GDB_VERSION.tar.xz
@@ -197,7 +197,7 @@ export MPC_DIR=mpc-$MPC_VERSION
 #export MPFR_MIRROR=http://www.mpfr.org/mpfr-$MPFR_VERSION
 #export MPFR_PATCHES=http://www.mpfr.org/mpfr-$MPFR_VERSION/allpatches
 #export MPFR_VERSION=3.1.2
-export MPFR_VERSION=3.1.6
+export MPFR_VERSION=3.1.5
 export MPFR_MIRROR=http://mpfr.loria.fr/mpfr-current
 export MPFR_PATCHES=http://mpfr.loria.fr/mpfr-current/allpatches
 export MPFR_TARBALL=mpfr-$MPFR_VERSION.tar.xz
