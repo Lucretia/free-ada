@@ -56,7 +56,7 @@ function gdb()
             --with-mpfr=$INSTALL_DIR \
             --with-mpc=$INSTALL_DIR \
             --with-isl=$INSTALL_DIR \
-            --with-python=/home/laguest/opt/free-ada-6.4.0/bin/python$PYVER \
+            --with-python=${INSTALL_DIR}/bin/python${PYVER} \
             &> $LOGPRE/$GDB_DIR-config.txt
 
 
