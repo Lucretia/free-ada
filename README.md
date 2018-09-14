@@ -2,7 +2,7 @@
 
 ## Who did this?
 
-Copyright (C) 2011-2017 Luke A. Guest with assistance from David Rees
+Copyright (C) 2011-2018 Luke A. Guest with assistance from David Rees
 
 ## What is this?
 
@@ -53,6 +53,12 @@ To get a native toolchain, use the following instructions:
 
 If you leave everything as default, you will have a bunch of archives in a packages directory and the toolchain installed
 to ```$HOME/opt/free-ada-new
+
+### Gentoo
+
+```bash
+$ emerge -av dev-util/dejagnu dev-tcltk/expect dev-lang/tcl
+```
 
 ### Bare metal cross compilers
 
