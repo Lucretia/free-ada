@@ -12,7 +12,7 @@
 # Include everything we need here.
 ########################################################################################################################
 
-# Cannot put this into config.inc.
+# Cannot put this into config.inc.sh.
 export TOP=`pwd`
 export INC=$TOP/includes
 
@@ -70,7 +70,7 @@ VERSION="build-tools.sh ($VERSION_DATE)"
 # Enforce a personalised configuration
 ########################################################################################################################
 
-if [ ! -f ./config.inc ]; then
+if [ ! -f ./config.inc.sh ]; then
 	display_no_config_error
 else
 	source ./config.inc.sh
@@ -561,6 +561,7 @@ case "$build_type" in
                 python $HOST $BUILD $TARGET
                 gdb $HOST $BUILD $TARGET
                 gpr_bootstrap $TARGET
+                exit 0
                 xmlada $HOST $BUILD $TARGET
                 gprbuild $HOST $BUILD $TARGET
                 gnatcoll $HOST $BUILD $TARGET
