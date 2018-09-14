@@ -34,25 +34,29 @@ The following other tools/libraries are built:
 
 * Matreshka
 
-To find out what versions are built, see the config-master.inc file.
+To find out what versions are built, see the ```config-master.inc.sh``` file.
 
 ## Help
 
 Get help with the scripts and what can be built so far:
 
+```bash
   ./build-tools.sh -h
+```
 
 ## Building instructions
 
 To get a native toolchain, use the following instructions:
 
-  cp config-master.inc config.inc
-  <modify config.inc as required>
+```bash
+  cp config-master.inc.sh config.inc.sh
+  # modify config.inc as required
   ./download.sh
   ./build-tools.sh -t 1
+```
 
 If you leave everything as default, you will have a bunch of archives in a packages directory and the toolchain installed
-to ```$HOME/opt/free-ada-new
+to ```$HOME/opt/free-ada-new```
 
 ### Gentoo
 
