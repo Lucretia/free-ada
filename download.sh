@@ -2,18 +2,18 @@
 # Filename    # download.sh
 # Purpose     # Downloads the source required to build the toolchains
 # Description #
-# Copyright   # Copyright (C) 2011-2014 Luke A. Guest, David Rees.
+# Copyright   # Copyright (C) 2011-2018 Luke A. Guest, David Rees.
 #             # All Rights Reserved.
 ################################################################################
 #!/bin/bash
 
-# Cannot put this into config.inc.
+# Cannot put this into config.inc.sh.
 export TOP=`pwd`
 export INC=$TOP/includes
 
 # Incudes with common function declarations
-source $INC/version.inc
-source $INC/errors.inc
+source $INC/version.inc.sh
+source $INC/errors.inc.sh
 
 VERSION="download.sh ($VERSION_DATE)"
 
@@ -94,13 +94,13 @@ read x
 # Enforce a personalised configuration
 ################################################################################
 
-if [ ! -f ./config.inc ]; then
+if [ ! -f ./config.inc.sh ]; then
 	display_no_config_error
 else
-	source ./config.inc
+	source ./config.inc.sh
 fi
 
-source $INC/bootstrap.inc
+source $INC/bootstrap.inc.sh
 
 function check_for_spark()
 {
@@ -419,9 +419,13 @@ cd $SRC
 cd $GCC_DIR
 if [ ! -f .patched ]; then
     cd gcc/ada
-    patch -p0 < $FILES/$GCC_DIR/finalization_size.patch
 
-    check_error .patched
+    # Make sure there is a directory of patches.
+    if [ -d $FILES/$GCC_DIR ]; then
+        patch -p0 < $FILES/$GCC_DIR/finalization_size.patch
+
+        check_error .patched
+    fi
 fi
 cd $SRC
 
