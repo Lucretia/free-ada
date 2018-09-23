@@ -20,7 +20,7 @@ export PROJECT_NAME=free-ada
 # PROJECT variable.
 # TODO: Put in a check when building cross compilers.
 ################################################################################
-export PROJECT=$PROJECT_NAME-6.4.0
+export PROJECT=$PROJECT_NAME-7.3.0
 
 ################################################################################
 # INSTALL_BASE_DIR - This is where tar needs to change directory to.
@@ -118,8 +118,8 @@ if [ $BINUTILS_SNAPSHOT == "y" ]; then
     export BINUTILS_DIR=binutils-$BINUTILS_SRC_VERSION
 else
     # Release
-    export BINUTILS_VERSION=2.29 # filename version
-    export BINUTILS_SRC_VERSION=2.29 # extracted version
+    export BINUTILS_VERSION=2.31.1 # filename version
+    export BINUTILS_SRC_VERSION=2.31.1 # extracted version
     export BINUTILS_MIRROR=ftp://sourceware.org/pub/binutils/releases
     export BINUTILS_TARBALL=binutils-$BINUTILS_VERSION.tar.bz2
     export BINUTILS_DIR=binutils-$BINUTILS_SRC_VERSION
@@ -145,10 +145,10 @@ export GDB_DIR=gdb-$GDB_SRC_VERSION
 export NATIVE_LANGUAGES="c,c++,objc,obj-c++,ada"
 
 export GCC_RELEASE=y
-export GCC_TESTS=y
+export GCC_TESTS=n
 
 if [ $GCC_RELEASE == "y" ]; then
-    export GCC_VERSION=6.4.0 # filename version
+    export GCC_VERSION=7.3.0 # filename version
     export GCC_SRC_VERSION=$GCC_VERSION # extracted version, change if different
     export GCC_MIRROR=ftp://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-$GCC_VERSION
     export GCC_TARBALL=gcc-$GCC_VERSION.tar.xz
@@ -223,11 +223,9 @@ export PYTHON_DIR=Python-$PYTHON_VERSION
 ################################################################################
 # AdaCore GPL components #######################################################
 ################################################################################
-export GPL_YEAR=2017
+export GPL_YEAR=2018
 #export XMLADA_HASH=065e0e6750288d9ecc2f7780d3ed8ef3c86ab991
 #export XMLADA_VERSION=xmlada-gpl-$GPL_YEAR-src
-#export GPRBUILD_HASH=c9d9271952a829ff1d355a01285a8558f24baf93
-#export GPRBUILD_VERSION=gprbuild-gpl-$GPL_YEAR-src
 #export ASIS_HASH=51ecea080c3c6760cd024e8b467502de26f3c3f2
 #export ASIS_VERSION=asis-gpl-$GPL_YEAR-src
 #export GNATMEM_HASH=6de65bb7e300e299711f90396710ace741123656
@@ -245,11 +243,21 @@ export GPL_YEAR=2017
 export ADACORE_DOWNLOAD_MIRROR="http://mirrors.cdn.adacore.com/art/"
 export ADACORE_GITHUB="https://github.com/AdaCore"
 
-export GPRBUILD_MIRROR="${ADACORE_GITHUB}/gprbuild.git"
-export GPRBUILD_DIR=gprbuild
+export GPRBUILD_HASH=5b0819dfc7a447df26c27a68
+export GPRBUILD_VERSION_PREFIX=gprbuild-gpl-${GPL_YEAR}-src
+export GPRBUILD_VERSION=${GPRBUILD_VERSION_PREFIX}
 
-export XMLADA_MIRROR="${ADACORE_GITHUB}/xmlada.git"
-export XMLADA_DIR=xmlada
+export GPRBUILD_MIRROR="${ADACORE_DOWNLOAD_MIRROR}"
+export GPRBUILD_TARBALL="${GPRBUILD_VERSION}-20180524.tar.gz"
+export GPRBUILD_DIR=${GPRBUILD_VERSION_PREFIX}
+
+export XMLADA_HASH=5b0819dec7a447df26c27a40
+export XMLADA_VERSION_PREFIX=xmlada-gpl-${GPL_YEAR}-src
+export XMLADA_VERSION=${XMLADA_VERSION_PREFIX}
+
+export XMLADA_MIRROR="${ADACORE_DOWNLOAD_MIRROR}"
+export XMLADA_TARBALL="${XMLADA_VERSION}-20180524.tar.gz"
+export XMLADA_DIR=${XMLADA_VERSION_PREFIX}
 
 # For GPS
 # Temporary Git location as the official one is not on available at the moment.
