@@ -2,10 +2,14 @@
 # Filename    # python.inc
 # Purpose     # Python 2.7
 # Description # Required by AdaCore's packages.
-# Copyright   # Copyright (C) 2011-2017 Luke A. Guest, David Rees.
+# Copyright   # Copyright (C) 2011-2018 Luke A. Guest, David Rees.
 #             # All Rights Reserved.
 ########################################################################################################################
 
+# $1 - Host triple
+# $2 - Build triple
+# $3 - Target triple
+# $4 - Configure options
 function python()
 {
 	local TASK_COUNT_TOTAL=4
@@ -60,7 +64,7 @@ function python()
         if [ ! -f .make-pkg ]; then
             cd $STAGE_DIR
 
-            tar -cjpf $PKG/$PROJECT-$1_$2_$3-$PYTHON_DIR.tbz2 .
+            tar -cjpf $PKG/$PROJECT-$1-$PYTHON_DIR.tbz2 .
 
             check_error $OBD/$PYTHON_DIR/.make-pkg
 
@@ -72,7 +76,7 @@ function python()
     if [ ! -f .make-install ]; then
         echo "  >> [4/$TASK_COUNT_TOTAL] Installing Python ($3)..."
         
-        tar -xjpf $PKG/$PROJECT-$1_$2_$3-$PYTHON_DIR.tbz2 -C $INSTALL_BASE_DIR
+        tar -xjpf $PKG/$PROJECT-$1-$PYTHON_DIR.tbz2 -C $INSTALL_BASE_DIR
         
         check_error .make-install
     fi

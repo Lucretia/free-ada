@@ -86,7 +86,7 @@ function gdb()
         if [ ! -f .make-pkg ]; then
             cd $STAGE_DIR
 
-            tar -cjpf $PKG/$PROJECT-$1_$2_$3-$GDB_DIR.tbz2 .
+            tar -cjpf $PKG/$PROJECT-$1-$GDB_DIR.tbz2 .
 
             check_error $OBD/$GDB_DIR/.make-pkg
 
@@ -98,7 +98,7 @@ function gdb()
     if [ ! -f .make-install ]; then
         echo "  >> [4/$TASK_COUNT_TOTAL] Installing GDB ($3)..."
         
-        tar -xjpf $PKG/$PROJECT-$1_$2_$3-$GDB_DIR.tbz2 -C $INSTALL_BASE_DIR
+        tar -xjpf $PKG/$PROJECT-$1-$GDB_DIR.tbz2 -C $INSTALL_BASE_DIR
         
         check_error .make-install
     fi

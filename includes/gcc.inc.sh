@@ -138,7 +138,7 @@ function gcc()
         if [ ! -f .make-pkg ]; then
             cd $STAGE_DIR
 
-            tar -cjpf $PKG/$PROJECT-$1_$2_$3-$GCC_DIR.tbz2 .
+            tar -cjpf $PKG/$PROJECT-$1-$GCC_DIR.tbz2 .
 
             check_error $OBD/$GCC_DIR/.make-pkg
 
@@ -150,7 +150,7 @@ function gcc()
     if [ ! -f .make-install ]; then
         echo "  >> [5/$TASK_COUNT_TOTAL] GCC GCC ($3)..."
         
-        tar -xjpf $PKG/$PROJECT-$1_$2_$3-$GCC_DIR.tbz2 -C $INSTALL_BASE_DIR
+        tar -xjpf $PKG/$PROJECT-$1-$GCC_DIR.tbz2 -C $INSTALL_BASE_DIR
         
         check_error .make-install
     fi
