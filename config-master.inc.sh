@@ -250,6 +250,7 @@ export GPRBUILD_VERSION=${GPRBUILD_VERSION_PREFIX}
 export GPRBUILD_MIRROR="${ADACORE_DOWNLOAD_MIRROR}"
 export GPRBUILD_TARBALL="${GPRBUILD_VERSION}-20180524.tar.gz"
 export GPRBUILD_DIR=${GPRBUILD_VERSION_PREFIX}
+export GPRBUILD_PATCHES="${FILES}/gprbuild/relocatable-build.patch ${FILES}/gprbuild/expose-cargs-and-largs-makefile.patch"
 
 export XMLADA_HASH=5b0819dec7a447df26c27a40
 export XMLADA_VERSION_PREFIX=xmlada-gpl-${GPL_YEAR}-src

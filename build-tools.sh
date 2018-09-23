@@ -294,7 +294,7 @@ fi
 # If neither of the two have a toolchain, we must use the bootstrap.
 ########################################################################################################################
 export PATH=$INSTALL_DIR/bin:$PATH
-export LD_LIBRARY_PATH=$INSTALL_DIR/lib$BITS:$INSTALL_DIR/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$INSTALL_DIR/lib$BITS:$INSTALL_DIR/lib:$($INSTALL_DIR/bin/gnatls -v | grep adalib | xargs):$LD_LIBRARY_PATH
 
 #echo "PATH - $PATH"
 #echo "LD_LIBRARY_PATH - $LD_LIBRARY_PATH"
@@ -562,8 +562,8 @@ case "$build_type" in
                 gdb $HOST $BUILD $TARGET
                 gpr_bootstrap $HOST
                 xmlada $HOST $BUILD $TARGET
-                exit 0
                 gprbuild $HOST $BUILD $TARGET
+                exit 0
                 gnatcoll $HOST $BUILD $TARGET
                 gnat_util $HOST $BUILD $TARGET
                 asis $HOST $BUILD $TARGET

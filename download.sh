@@ -200,6 +200,30 @@ function download_unpack_package()
     fi
 }
 
+# $1 - Package macro prefix (in upper case)
+function apply_patches()
+{
+    local PATCHES="$1_PATCHES"
+    local PKG_DIR="$1_DIR"
+    local PKG_NAME="$(echo $1 | tr [:upper:] [:lower:])"
+
+    pushd ${!PKG_DIR} &>/dev/null
+
+    for p in ${!PATCHES}; do
+        local PATCH_NAME="$(basename ${p})"
+
+        if [ ! -f .patched-${PATCH_NAME} ]; then
+            echo "  >> Applying ${PATCH_NAME} to ${PKG_NAME}..."
+
+            patch -Np1 < ${p} &>/dev/null
+
+            check_error .patched-${PATCH_NAME}
+        fi
+    done
+
+    popd &>/dev/null
+}
+
 cd $ARC
 
 # Begin Downloading ############################################################
@@ -311,6 +335,8 @@ download_unpack_package "ISL" "j"
 download_unpack_package "PYTHON" "J"
 
 download_unpack_package "GPRBUILD" "z"
+apply_patches "GPRBUILD"
+
 download_unpack_package "XMLADA" "z"
 # download_unpack_package "GNATCOLL" "z"
 # download_unpack_package "ASIS" "z"

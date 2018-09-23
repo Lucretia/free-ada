@@ -141,13 +141,15 @@ function gprbuild()
     if [ ! -f .config ]; then
         echo "  >> [1/$TASK_COUNT_TOTAL] Configuring GPRBuild ($3)..."
 
-        make \
-            prefix=$STAGE_BASE_DIR$INSTALL_DIR \
+        # Taken from Arch.
+        # Make using a single job (-j1) to avoid the same file being compiled at the same time.
+        make -f $MAKEFILE \
+            -j1 \
+            prefix=$INSTALL_DIR \
             SOURCE_DIR=$SRC/$GPRBUILD_DIR \
-            PROCESSORS=$JOBS_NUM \
-            LIBRARY_TYPE=relocatable \
+            ENABLE_SHARED="yes" \
+            BUILD=production \
             TARGET=$3 \
-            -f $MAKEFILE \
             setup &> $LOGPRE/$GPRBUILD_DIR-config.txt
 
         check_error .config
@@ -156,7 +158,11 @@ function gprbuild()
     if [ ! -f .make ]; then
         echo "  >> [2/$TASK_COUNT_TOTAL] Building GPRBuild ($3)..."
         
-        make LIBRARY_TYPE=relocatable -f $MAKEFILE all libgpr.build &> $LOGPRE/$GPRBUILD_DIR-make.txt
+        make -f $MAKEFILE \
+            -j1 \
+            BUILD=production \
+            GPRBUILD_OPTIONS=-R \
+            all libgpr.build &> $LOGPRE/$GPRBUILD_DIR-make.txt
 
         check_error .make
     fi
@@ -164,8 +170,13 @@ function gprbuild()
     if [ ! -f .make-pkg-stage ]; then
         echo "  >> [3/$TASK_COUNT_TOTAL] Packaging GPRBuild ($3)..."
         
-        make -f $MAKEFILE install libgpr.install &> $LOGPRE/$GPRBUILD_DIR-pkg.txt
-        
+        LD_LIBRARY_PATH=$(pwd)/gpr/lib/production/relocatable:$LD_LIBRARY_PATH \
+            make -f $MAKEFILE \
+                prefix=$STAGE_BASE_DIR$INSTALL_DIR \
+                -j1 \
+                BUILD=production \
+                install libgpr.install &> $LOGPRE/$GPRBUILD_DIR-pkg.txt
+
         rm $STAGE_BASE_DIR$INSTALL_DIR/doinstall
 
         check_error .make-pkg-stage
@@ -173,7 +184,7 @@ function gprbuild()
         if [ ! -f .make-pkg ]; then
             cd $STAGE_DIR
 
-            tar -cjpf $PKG/$PROJECT-$1_$2_$3-$GPRBUILD_DIR.tbz2 .
+            tar -cjpf $PKG/$PROJECT-$1-$GPRBUILD_DIR.tbz2 .
 
             check_error $OBD/$GPRBUILD_DIR/.make-pkg
 
@@ -185,7 +196,7 @@ function gprbuild()
     if [ ! -f .make-install ]; then
         echo "  >> [4/$TASK_COUNT_TOTAL] Installing GPRBuild ($3)..."
         
-        tar -xjpf $PKG/$PROJECT-$1_$2_$3-$GPRBUILD_DIR.tbz2 -C $INSTALL_BASE_DIR
+        tar -xjpf $PKG/$PROJECT-$1-$GPRBUILD_DIR.tbz2 -C $INSTALL_BASE_DIR
         
         check_error .make-install
     fi
