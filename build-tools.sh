@@ -560,7 +560,7 @@ case "$build_type" in
                     "--enable-multilib --enable-threads=posix --enable-libgomp --with-libffi --enable-libsanitizer"
                 python $HOST $BUILD $TARGET
                 gdb $HOST $BUILD $TARGET
-                gpr_bootstrap $TARGET
+                gpr_bootstrap $HOST
                 exit 0
                 xmlada $HOST $BUILD $TARGET
                 gprbuild $HOST $BUILD $TARGET

@@ -6,7 +6,7 @@
 #             # All Rights Reserved.
 ########################################################################################################################
 
-# $1 - Target triple
+# $1 - Host triple
 function gpr_bootstrap()
 {
 	local TASK_COUNT_TOTAL=1
