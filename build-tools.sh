@@ -561,8 +561,8 @@ case "$build_type" in
                 python $HOST $BUILD $TARGET
                 gdb $HOST $BUILD $TARGET
                 gpr_bootstrap $HOST
-                exit 0
                 xmlada $HOST $BUILD $TARGET
+                exit 0
                 gprbuild $HOST $BUILD $TARGET
                 gnatcoll $HOST $BUILD $TARGET
                 gnat_util $HOST $BUILD $TARGET

@@ -42,7 +42,7 @@ function gpr_bootstrap()
 # $3 - Target triple
 function xmlada()
 {
-	local TASK_COUNT_TOTAL=4
+	local TASK_COUNT_TOTAL=5
  	VER="$build_type/$3"
 	#DIRS="$XMLADA_DIR"
 	LOGPRE=$LOG/$VER
@@ -50,18 +50,24 @@ function xmlada()
 
     echo "  >> Creating Directories (if needed)..."
 
-    cd $BLD
-    if [ ! -d $VER/$XMLADA_DIR ]; then
-        git clone $SRC/$XMLADA_DIR $VER/$XMLADA_DIR
+    cd $OBD
+
+    if [ ! -f .xmlada-copied ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Copying XMLAda due to broken configure script ($3)..."
+
+        cp -Ra $SRC/$XMLADA_DIR .
+
+        check_error .xmlada-copied
     fi
 
     cd $OBD/$XMLADA_DIR
 
     if [ ! -f .config ]; then
-        echo "  >> [1/$TASK_COUNT_TOTAL] Configuring XMLAda ($3)..."
+        echo "  >> [2/$TASK_COUNT_TOTAL] Configuring XMLAda ($3)..."
         # Hack around the prefix as xmlada doesn't support DESTDIR.
         ./configure \
             --prefix=$STAGE_BASE_DIR$INSTALL_DIR \
+            --enable-shared \
             --target=$3 \
             --build=$2\
             --host=$1\
@@ -71,7 +77,7 @@ function xmlada()
     fi
 
     if [ ! -f .make ]; then
-        echo "  >> [2/$TASK_COUNT_TOTAL] Building XMLAda ($3)..."
+        echo "  >> [3/$TASK_COUNT_TOTAL] Building XMLAda ($3)..."
         
         make all $JOBS &> $LOGPRE/$XMLADA_DIR-make.txt
 
@@ -79,7 +85,7 @@ function xmlada()
     fi
 
     if [ ! -f .make-pkg-stage ]; then
-        echo "  >> [3/$TASK_COUNT_TOTAL] Packaging XMLAda ($3)..."
+        echo "  >> [4/$TASK_COUNT_TOTAL] Packaging XMLAda ($3)..."
         
         make install &> $LOGPRE/$XMLADA_DIR-pkg.txt
 
@@ -88,7 +94,7 @@ function xmlada()
         if [ ! -f .make-pkg ]; then
             cd $STAGE_DIR
 
-            tar -cjpf $PKG/$PROJECT-$1_$2_$3-$XMLADA_DIR.tbz2 .
+            tar -cjpf $PKG/$PROJECT-$1-$XMLADA_DIR.tbz2 .
 
             check_error $OBD/$XMLADA_DIR/.make-pkg
 
@@ -98,9 +104,9 @@ function xmlada()
     fi
 
     if [ ! -f .make-install ]; then
-        echo "  >> [4/$TASK_COUNT_TOTAL] Installing XMLAda (Native)..."
+        echo "  >> [5/$TASK_COUNT_TOTAL] Installing XMLAda (Native)..."
 
-        tar -xjpf $PKG/$PROJECT-$1_$2_$3-$XMLADA_DIR.tbz2 -C $INSTALL_BASE_DIR
+        tar -xjpf $PKG/$PROJECT-$1-$XMLADA_DIR.tbz2 -C $INSTALL_BASE_DIR
 
         check_error .make-install
     fi
