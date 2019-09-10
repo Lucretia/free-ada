@@ -20,7 +20,7 @@ export PROJECT_NAME=free-ada
 # PROJECT variable.
 # TODO: Put in a check when building cross compilers.
 ################################################################################
-export PROJECT=$PROJECT_NAME-7.3.0
+export PROJECT=$PROJECT_NAME-8.3.0
 
 ################################################################################
 # INSTALL_BASE_DIR - This is where tar needs to change directory to.
@@ -118,8 +118,8 @@ if [ $BINUTILS_SNAPSHOT == "y" ]; then
     export BINUTILS_DIR=binutils-$BINUTILS_SRC_VERSION
 else
     # Release
-    export BINUTILS_VERSION=2.31.1 # filename version
-    export BINUTILS_SRC_VERSION=2.31.1 # extracted version
+    export BINUTILS_VERSION=2.32 # filename version
+    export BINUTILS_SRC_VERSION=2.32 # extracted version
     export BINUTILS_MIRROR=ftp://sourceware.org/pub/binutils/releases
     export BINUTILS_TARBALL=binutils-$BINUTILS_VERSION.tar.bz2
     export BINUTILS_DIR=binutils-$BINUTILS_SRC_VERSION
@@ -131,8 +131,8 @@ export BINUTILS_SRC_VERSION
 ################################################################################
 # GDB ##########################################################################
 ################################################################################
-export GDB_VERSION=8.1 # filename version
-export GDB_SRC_VERSION=8.1 # extracted version
+export GDB_VERSION=8.3 # filename version
+export GDB_SRC_VERSION=8.3 # extracted version
 export GDB_MIRROR=ftp://www.mirrorservice.org/sites/ftp.gnu.org/gnu/gdb
 #export GDB_MIRROR=http://ftp.gnu.org/gnu/gdb
 export GDB_TARBALL=gdb-$GDB_VERSION.tar.xz
@@ -148,7 +148,7 @@ export GCC_RELEASE=y
 export GCC_TESTS=n
 
 if [ $GCC_RELEASE == "y" ]; then
-    export GCC_VERSION=7.3.0 # filename version
+    export GCC_VERSION=8.3.0 # filename version
     export GCC_SRC_VERSION=$GCC_VERSION # extracted version, change if different
     export GCC_MIRROR=ftp://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-$GCC_VERSION
     export GCC_TARBALL=gcc-$GCC_VERSION.tar.xz
