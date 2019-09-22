@@ -18,7 +18,7 @@ GCC is a bitch to build and worse still are AdaCore's GPL'd (extra) projects. Ha
 * FSF GCC
 * Binutils
 * GDB
-* libgnat_util (using the FSF sources)
+* ~~libgnat_util (using the FSF sources)~~
 
 The following are AdaCore GPL-2018 versions:
 
