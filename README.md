@@ -20,21 +20,25 @@ GCC is a bitch to build and worse still are AdaCore's GPL'd (extra) projects. Ha
 * GDB
 * libgnat_util (using the FSF sources)
 
-The following are AdaCore GPL-2014 versions:
+The following are AdaCore GPL-2018 versions:
 
 * XML/Ada
 * GPRBuild
-* GNATMem
-* GNATColl
-* ASIS (with tools)
-* PolyORB
-* Florist
+* ~~GNATMem~~
+* ~~GNATColl~~
+* ~~ASIS (with tools)~~
+* ~~PolyORB~~
+* ~~Florist~~
 
-The following other tools/libraries are built:
+~~The following other tools/libraries are built:~~
 
-* Matreshka
+* ~~Matreshka~~
 
 To find out what versions are built, see the ```config-master.inc.sh``` file.
+
+## Package manager
+
+You can try [Alire](https://github.com/mosteo/alire) to handle the installation of Ada packages.
 
 ## Help
 
