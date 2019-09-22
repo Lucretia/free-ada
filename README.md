@@ -2,7 +2,7 @@
 
 ## Who did this?
 
-Copyright (C) 2011-2018 Luke A. Guest with assistance from David Rees
+Copyright (C) 2011-2019 Luke A. Guest with assistance from David Rees
 
 ## What is this?
 
