@@ -294,10 +294,11 @@ fi
 # If neither of the two have a toolchain, we must use the bootstrap.
 ########################################################################################################################
 export PATH=$INSTALL_DIR/bin:$PATH
-export LD_LIBRARY_PATH=$INSTALL_DIR/lib$BITS:$INSTALL_DIR/lib:$($INSTALL_DIR/bin/gnatls -v | grep adalib | xargs):$LD_LIBRARY_PATH
+# export LD_LIBRARY_PATH=$INSTALL_DIR/lib$BITS:$INSTALL_DIR/lib:$($INSTALL_DIR/bin/gnatls -v | grep adalib | xargs):$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$INSTALL_DIR/lib$BITS:$INSTALL_DIR/lib:$LD_LIBRARY_PATH
 
-#echo "PATH - $PATH"
-#echo "LD_LIBRARY_PATH - $LD_LIBRARY_PATH"
+echo "PATH - $PATH"
+echo "LD_LIBRARY_PATH - $LD_LIBRARY_PATH"
 
 ################################################################################
 # Display some build configuration details
@@ -558,6 +559,10 @@ case "$build_type" in
                 binutils $HOST $BUILD $TARGET "--enable-multilib"
                 gcc $HOST $BUILD $TARGET \
                     "--enable-multilib --enable-threads=posix --enable-libgomp --with-libffi --enable-libsanitizer"
+
+                # Add this here, caused a warning before.
+                export LD_LIBRARY_PATH=$($INSTALL_DIR/bin/gnatls -v | grep adalib | xargs):$LD_LIBRARY_PATH
+
                 python $HOST $BUILD $TARGET
                 gdb $HOST $BUILD $TARGET
                 gpr_bootstrap $HOST
