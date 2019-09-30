@@ -20,7 +20,7 @@ export PROJECT_NAME=free-ada
 # PROJECT variable.
 # TODO: Put in a check when building cross compilers.
 ################################################################################
-export PROJECT=$PROJECT_NAME-8.3.0
+export PROJECT=$PROJECT_NAME-9.2.0
 
 ################################################################################
 # INSTALL_BASE_DIR - This is where tar needs to change directory to.
@@ -148,7 +148,7 @@ export GCC_RELEASE=y
 export GCC_TESTS=n
 
 if [ $GCC_RELEASE == "y" ]; then
-    export GCC_VERSION=8.3.0 # filename version
+    export GCC_VERSION=9.2.0 # filename version
     export GCC_SRC_VERSION=$GCC_VERSION # extracted version, change if different
     export GCC_MIRROR=ftp://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-$GCC_VERSION
     export GCC_TARBALL=gcc-$GCC_VERSION.tar.xz
@@ -243,22 +243,32 @@ export GPL_YEAR=2018
 export ADACORE_DOWNLOAD_MIRROR="http://mirrors.cdn.adacore.com/art/"
 export ADACORE_GITHUB="https://github.com/AdaCore"
 
-export GPRBUILD_HASH=5b0819dfc7a447df26c27a68
-export GPRBUILD_VERSION_PREFIX=gprbuild-gpl-${GPL_YEAR}-src
-export GPRBUILD_VERSION=${GPRBUILD_VERSION_PREFIX}
+export GPRBUILD_DIR="gprbuild"
+export GPRBUILD_GIT="${ADACORE_GITHUB}/gprbuild.git"
+export GPRBUILD_BRANCH="master"
+export GPRBUILD_COMMIT="16a707aaae111fdcec59ce5337cecfd463ff566a"
 
-export GPRBUILD_MIRROR="${ADACORE_DOWNLOAD_MIRROR}"
-export GPRBUILD_TARBALL="${GPRBUILD_VERSION}-20180524.tar.gz"
-export GPRBUILD_DIR=${GPRBUILD_VERSION_PREFIX}
-export GPRBUILD_PATCHES="${FILES}/gprbuild/relocatable-build.patch ${FILES}/gprbuild/expose-cargs-and-largs-makefile.patch"
+# export GPRBUILD_HASH=5b0819dfc7a447df26c27a68
+# export GPRBUILD_VERSION_PREFIX=gprbuild-gpl-${GPL_YEAR}-src
+# export GPRBUILD_VERSION=${GPRBUILD_VERSION_PREFIX}
 
-export XMLADA_HASH=5b0819dec7a447df26c27a40
-export XMLADA_VERSION_PREFIX=xmlada-gpl-${GPL_YEAR}-src
-export XMLADA_VERSION=${XMLADA_VERSION_PREFIX}
+# export GPRBUILD_MIRROR="${ADACORE_DOWNLOAD_MIRROR}"
+# export GPRBUILD_TARBALL="${GPRBUILD_VERSION}-20180524.tar.gz"
+# export GPRBUILD_DIR=${GPRBUILD_VERSION_PREFIX}
+# export GPRBUILD_PATCHES="${FILES}/gprbuild/relocatable-build.patch ${FILES}/gprbuild/expose-cargs-and-largs-makefile.patch"
 
-export XMLADA_MIRROR="${ADACORE_DOWNLOAD_MIRROR}"
-export XMLADA_TARBALL="${XMLADA_VERSION}-20180524.tar.gz"
-export XMLADA_DIR=${XMLADA_VERSION_PREFIX}
+export XMLADA_DIR="xmlada"
+export XMLADA_GIT="${ADACORE_GITHUB}/xmlada.git"
+export XMLADA_BRANCH="master"
+export XMLADA_COMMIT="ecf9daa2841e2f95998e90047a48d4bc6b2c986a"
+
+# export XMLADA_HASH=5b0819dec7a447df26c27a40
+# export XMLADA_VERSION_PREFIX=xmlada-gpl-${GPL_YEAR}-src
+# export XMLADA_VERSION=${XMLADA_VERSION_PREFIX}
+
+# export XMLADA_MIRROR="${ADACORE_DOWNLOAD_MIRROR}"
+# export XMLADA_TARBALL="${XMLADA_VERSION}-20180524.tar.gz"
+# export XMLADA_DIR=${XMLADA_VERSION_PREFIX}
 
 # For GPS
 # Temporary Git location as the official one is not on available at the moment.
