@@ -86,3 +86,4 @@ The following targets have been built, but any target supported by GCC should bu
 
 * This project no longer uses git flow.
 * GNATColl requires Python 2 to create documentation, it will not build with Python 3.
+* If you want to build the new [GNAT-LLVM](https://github.com/AdaCore/gnat-llvm) compiler, you need the gcc-9.x branch.
