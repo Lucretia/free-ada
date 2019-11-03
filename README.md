@@ -25,7 +25,7 @@ The following are AdaCore GPL-2018 versions:
 * XML/Ada
 * GPRBuild
 * ~~GNATMem~~
-* ~~GNATColl~~
+* GNATColl
 * ~~ASIS (with tools)~~
 * ~~PolyORB~~
 * ~~Florist~~
