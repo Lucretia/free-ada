@@ -568,8 +568,8 @@ case "$build_type" in
                 gpr_bootstrap $HOST
                 xmlada $HOST $BUILD $TARGET
                 gprbuild $HOST $BUILD $TARGET
+                gnatcoll-core $HOST $BUILD $TARGET
                 exit 0
-                gnatcoll $HOST $BUILD $TARGET
                 gnat_util $HOST $BUILD $TARGET
                 asis $HOST $BUILD $TARGET
                 #~ build_native_toolchain;
