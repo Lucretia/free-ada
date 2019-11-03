@@ -260,19 +260,10 @@ export XMLADA_MIRROR="${ADACORE_DOWNLOAD_MIRROR}"
 export XMLADA_TARBALL="${XMLADA_VERSION}-20180524.tar.gz"
 export XMLADA_DIR=${XMLADA_VERSION_PREFIX}
 
-# For GPS
-# Temporary Git location as the official one is not on available at the moment.
-#export GNATCOLL_MIRROR="https://github.com/codelabs-ch/gnatcoll.git"
-#export GNATCOLL_MIRROR="https://github.com/Lucretia/gnatcoll.git"
-#export GNATCOLL_MIRROR="${ADACORE_GITHUB}/gnatcoll.git"
-
-export GNATCOLL_HASH=5a15c79cc7a4479a23674c66
-export GNATCOLL_VERSION_PREFIX=gnatcoll-gpl-${GPL_YEAR}-src
-export GNATCOLL_VERSION=${GNATCOLL_VERSION_PREFIX}-m1
-
-export GNATCOLL_MIRROR="${ADACORE_DOWNLOAD_MIRROR}"
-export GNATCOLL_TARBALL="${GNATCOLL_VERSION}.tar.gz"
-export GNATCOLL_DIR=${GNATCOLL_VERSION_PREFIX}
+export GNATCOLL_CORE_DIR="gnatcoll-core"
+export GNATCOLL_CORE_GIT="${ADACORE_GITHUB}/gnatcoll-core.git"
+export GNATCOLL_CORE_BRANCH="master"
+export GNATCOLL_CORE_COMMIT="a37f206f1a1b65354e71b2f3a08fb96effe0a023"
 
 export GNAT_UTIL_DIR=gnat_util
 

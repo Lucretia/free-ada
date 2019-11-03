@@ -153,12 +153,20 @@ function download_package()
 function download_git_package()
 {
     local PKG_DIR="$1_DIR"
-    local PKG_MIRROR="$1_MIRROR"
+    local PKG_GIT="$1_GIT"
+    local PKG_BRANCH="$1_BRANCH"
+    local PKG_COMMIT="$1_COMMIT"
     
     if [ ! -d ${!PKG_DIR} ]; then
         echo "  >> Downloading ${!PKG_DIR}..."
 
-        git clone ${!PKG_MIRROR} ${!PKG_DIR}
+        git clone -b ${!PKG_BRANCH} ${!PKG_GIT} ${!PKG_DIR}
+
+        if [ ! -z ${!PKG_COMMIT} ]; then
+            cd ${!PKG_DIR}
+            git checkout ${!PKG_COMMIT}
+            cd ..
+        fi
 
         check_error_exit
     else
@@ -356,7 +364,7 @@ download_unpack_package "XMLADA" "z"
 
 # download_git_package "GPRBUILD"
 # download_git_package "XMLADA"
-#download_git_package "GNATCOLL"
+download_git_package "GNATCOLL_CORE"
 # download_git_package "GTKADA"
 # download_git_package "LANGKIT"
 # download_git_package "LIBADALANG"
