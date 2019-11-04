@@ -819,7 +819,7 @@ function gnatcoll_db_postgres2ada()
     if [ ! -f .make-postgres2ada ]; then
         echo "  >> [1/$TASK_COUNT_TOTAL] Building GNATColl-DB - Postgres2Ada ($3)..."
 
-        gnatcoll_build_component "" "gnatcoll_db2ada/gnatcoll_postgres2ada.gpr" "-largs -ldl" "${GNATCOLL_DB_DIR}-postgres2ada"
+        gnatcoll_build_component "" "gnatcoll_db2ada/gnatcoll_postgres2ada.gpr" "-ldl" "${GNATCOLL_DB_DIR}-postgres2ada"
 
         check_error .make-postgres2ada
     fi
