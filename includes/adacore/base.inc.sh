@@ -959,7 +959,6 @@ function gnatcoll_db_gnatinspect()
     echo "  >> GNATColl-DB - GNATInspect ($3) Installed"
 }
 
-
 ################################################################################
 # This function builds a version of libgnat_util using AdaCore's GPL'd
 # makefiles, but uses the source from the FSF GNAT we are using. The source has
