@@ -35,7 +35,7 @@ function python()
         echo "  >> [1/$TASK_COUNT_TOTAL] Configuring Python ($3)..."
 
         $SRC/$PYTHON_DIR/configure \
-            --prefix=$STAGE_BASE_DIR$INSTALL_DIR \
+            --prefix=$INSTALL_DIR \
             --without-pymalloc \
             --enable-shared &> $LOGPRE/$PYTHON_DIR-config.txt
 
@@ -55,7 +55,7 @@ function python()
     if [ ! -f .make-pkg-stage ]; then
         echo "  >> [3/$TASK_COUNT_TOTAL] Packaging Python ($3)..."
         
-        make altinstall &> $LOGPRE/$PYTHON_DIR-pkg.txt
+        make DESTDIR=$STAGE_BASE_DIR altinstall &> $LOGPRE/$PYTHON_DIR-pkg.txt
         
         strip $STAGE_BASE_DIR$INSTALL_DIR/bin/python2.7
 
