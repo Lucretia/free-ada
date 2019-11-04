@@ -570,6 +570,15 @@ case "$build_type" in
                 build_gprbuild $HOST $BUILD $TARGET
                 gnatcoll_core $HOST $BUILD $TARGET
                 gnatcoll_bindings $HOST $BUILD $TARGET
+                gnatcoll_db
+                gnatcoll_db_sql $HOST $BUILD $TARGET
+                gnatcoll_db_sqlite $HOST $BUILD $TARGET
+                gnatcoll_db_postgres $HOST $BUILD $TARGET
+                gnatcoll_db_db2ada $HOST $BUILD $TARGET
+                gnatcoll_db_sqlite2ada $HOST $BUILD $TARGET
+                gnatcoll_db_postgres2ada $HOST $BUILD $TARGET
+                gnatcoll_db_xref $HOST $BUILD $TARGET
+                gnatcoll_db_gnatinspect $HOST $BUILD $TARGET
                 exit 0
                 gnat_util $HOST $BUILD $TARGET
                 asis $HOST $BUILD $TARGET
