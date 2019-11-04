@@ -117,7 +117,7 @@ function xmlada()
 # $1 - Host triple
 # $2 - Build triple
 # $3 - Target triple
-function gprbuild()
+function build_gprbuild()
 {
 	local TASK_COUNT_TOTAL=4
  	VER="$build_type/$3"
@@ -207,7 +207,7 @@ function gprbuild()
 # $1 - Host triple
 # $2 - Build triple
 # $3 - Target triple
-function gnatcoll-core()
+function gnatcoll_core()
 {
 	local TASK_COUNT_TOTAL=4
  	VER="$build_type/$3"
@@ -215,8 +215,6 @@ function gnatcoll-core()
 	LOGPRE=$LOG/$VER
 	OBD=$BLD/$VER
 
-    # TODO: Another broken configure script requires cloning this into the build dir.
-    
     echo "  >> Creating Directories (if needed)..."
 
     cd $BLD
@@ -273,6 +271,262 @@ function gnatcoll-core()
     fi
 
     echo "  >> GNATColl-Core ($3) Installed"
+}
+
+# TODO: Look into installing all versions, but they overwrite the ali files, where there is a difference, i.e. extra -fPIC flag.
+
+# $1 - Env vars
+# $2 - GPR file
+# $3 - Linker flags
+# $4 - Name
+function gnatcoll_build_component()
+{
+    if [ ! -z ${3} ]; then
+        GNATCOLL_LINKER_FLAGS="-largs ${3}"
+    else
+        GNATCOLL_LINKER_FLAGS=""
+    fi
+
+    # declare -a BUILD_TYPES="static static-pic relocatable"
+    declare -a BUILD_TYPES="relocatable"
+
+    for gc_type in ${BUILD_TYPES[@]}; do
+        gprbuild -P ${2} -XBUILD=PROD -XLIBRARY_TYPE=${gc_type} -p ${GNATCOLL_LINKER_FLAGS} &> ${LOGPRE}/${4}-${gc_type}-make.txt
+    done
+}
+
+# $1 - Prefix
+# $2 - GPR file
+# $3 - Name
+function gnatcoll_install_component()
+{
+    # declare -a BUILD_TYPES="static static-pic relocatable"
+    declare -a BUILD_TYPES="relocatable"
+
+    for gc_type in ${BUILD_TYPES[@]}; do
+        gprinstall -f --prefix=${1} -P ${2} -XBUILD=PROD -XLIBRARY_TYPE=${gc_type} -p &> ${LOGPRE}/${3}-${gc_type}-pkg.txt
+    done
+}
+
+# TODO - Add host / build /target
+# $1 - Host triple
+# $2 - Build triple
+# $3 - Target triple
+function gnatcoll_bindings()
+{
+	local TASK_COUNT_TOTAL=4
+ 	VER="$build_type/$3"
+	LOGPRE=$LOG/$VER
+	OBD=$BLD/$VER
+
+    # TODO: Another broken configure script requires copying this into the build dir.
+    cd $OBD
+
+    if [ ! -f .gnatcoll-bindings-copied ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Copying GNATColl-Bindings due to broken GPR file ($3)..."
+
+        cp -Ra $SRC/$GNATCOLL_BINDINGS_DIR .
+
+        check_error .gnatcoll-bindings-copied
+    fi
+
+    cd $OBD/$GNATCOLL_BINDINGS_DIR
+
+    # The make stage
+    echo "  >> [2/$TASK_COUNT_TOTAL] Building GNATColl-Bindings ($3)..."
+
+    if [ ${GNATCOLL_BINDINGS_GMP} == "y" ]; then
+        if [ ! -f .make-gmp ]; then
+            echo "  >> [2.1/$TASK_COUNT_TOTAL] Building GNATColl-Bindings - GMP ($3)..."
+
+            gnatcoll_build_component "" "gmp/gnatcoll_gmp.gpr" "" "${GNATCOLL_BINDINGS_DIR}-gmp"
+
+            check_error .make-gmp
+        fi
+    fi
+
+    if [ ${GNATCOLL_BINDINGS_ICONV} == "y" ]; then
+        if [ ! -f .make-iconv ]; then
+            echo "  >> [2.2/$TASK_COUNT_TOTAL] Building GNATColl-Bindings - IConv ($3)..."
+
+            gnatcoll_build_component "" "iconv/gnatcoll_iconv.gpr" "" "${GNATCOLL_BINDINGS_DIR}-iconv"
+
+            check_error .make-iconv
+        fi
+    fi
+
+    if [ ${GNATCOLL_BINDINGS_LZMA} == "y" ]; then
+        if [ ! -f .make-lzma ]; then
+            echo "  >> [2.3/$TASK_COUNT_TOTAL] Building GNATColl-Bindings - LZMA ($3)..."
+
+            gnatcoll_build_component "" "lzma/gnatcoll_lzma.gpr" "" "${GNATCOLL_BINDINGS_DIR}-lzma"
+
+            check_error .make-lzma
+        fi
+    fi
+
+    if [ ${GNATCOLL_BINDINGS_OMP} == "y" ]; then
+        if [ ! -f .make-omp ]; then
+            echo "  >> [2.4/$TASK_COUNT_TOTAL] Building GNATColl-Bindings - OMP ($3)..."
+
+            gnatcoll_build_component "" "omp/gnatcoll_omp.gpr" "" "${GNATCOLL_BINDINGS_DIR}-omp"
+
+            check_error .make-omp
+        fi
+    fi
+
+    if [ ${GNATCOLL_BINDINGS_PYTHON} == "y" ]; then
+        if [ ! -f .make-python ]; then
+            echo "  >> [2.5/$TASK_COUNT_TOTAL] Building GNATColl-Bindings - Python ($3)..."
+
+            export GNATCOLL_PYTHON_CFLAGS=$(python2.7-config --includes)
+            export Python_Libs="-L$(python2.7-config --prefix)/lib $(python2.7-config --libs)"
+
+            gnatcoll_build_component \
+                "" "python/gnatcoll_python.gpr" "" "${GNATCOLL_BINDINGS_DIR}-python"
+
+            check_error .make-python
+
+            unset GNATCOLL_PYTHON_CFLAGS
+            unset Python_Libs
+        fi
+    fi
+
+    if [ ${GNATCOLL_BINDINGS_READLINE} == "y" ]; then
+        if [ ! -f .make-readline ]; then
+            echo "  >> [2.6/$TASK_COUNT_TOTAL] Building GNATColl-Bindings - Readline ($3)..."
+
+            gnatcoll_build_component "" "readline/gnatcoll_readline.gpr" "" "${GNATCOLL_BINDINGS_DIR}-readline"
+
+            check_error .make-readline
+        fi
+    fi
+
+    if [ ${GNATCOLL_BINDINGS_SYSLOG} == "y" ]; then
+        if [ ! -f .make-syslog ]; then
+            echo "  >> [2.7/$TASK_COUNT_TOTAL] Building GNATColl-Bindings - SysLog ($3)..."
+
+            gnatcoll_build_component "" "syslog/gnatcoll_syslog.gpr" "" "${GNATCOLL_BINDINGS_DIR}-syslog"
+
+            check_error .make-syslog
+        fi
+    fi
+
+    if [ ${GNATCOLL_BINDINGS_ZLIB} == "y" ]; then
+        if [ ! -f .make-zlib ]; then
+            echo "  >> [2.8/$TASK_COUNT_TOTAL] Building GNATColl-Bindings - ZLib ($3)..."
+
+            gnatcoll_build_component "" "zlib/gnatcoll_zlib.gpr" "" "${GNATCOLL_BINDINGS_DIR}-zlib"
+
+            check_error .make-zlib
+        fi
+    fi
+
+    # Staging area.
+    echo "  >> [3/$TASK_COUNT_TOTAL] Packaging GNATColl-Bindings ($3)..."
+
+    make -f $SRC/$GNATCOLL_BINDINGS_DIR/Makefile install &> $LOGPRE/$GNATCOLL_BINDINGS_DIR-pkg.txt
+
+    if [ ${GNATCOLL_BINDINGS_GMP} == "y" ]; then
+        if [ ! -f .make-pkg-stage-gmp ]; then
+            echo "  >> [2.1/$TASK_COUNT_TOTAL] Packaging GNATColl-Bindings - GMP ($3)..."
+
+            gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "gmp/gnatcoll_gmp.gpr" "${GNATCOLL_BINDINGS_DIR}-gmp"
+
+            check_error .make-pkg-stage-gmp
+        fi
+    fi
+
+    if [ ${GNATCOLL_BINDINGS_ICONV} == "y" ]; then
+        if [ ! -f .make-pkg-stage-iconv ]; then
+            echo "  >> [2.2/$TASK_COUNT_TOTAL] Packaging GNATColl-Bindings - IConv ($3)..."
+
+            gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "iconv/gnatcoll_iconv.gpr" "${GNATCOLL_BINDINGS_DIR}-iconv"
+
+            check_error .make-pkg-stage-iconv
+        fi
+    fi
+
+    if [ ${GNATCOLL_BINDINGS_LZMA} == "y" ]; then
+        if [ ! -f .make-pkg-stage-lzma ]; then
+            echo "  >> [2.3/$TASK_COUNT_TOTAL] Packaging GNATColl-Bindings - LZMA ($3)..."
+
+            gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "lzma/gnatcoll_lzma.gpr" "${GNATCOLL_BINDINGS_DIR}-lzma"
+
+            check_error .make-pkg-stage-lzma
+        fi
+    fi
+
+    if [ ${GNATCOLL_BINDINGS_OMP} == "y" ]; then
+        if [ ! -f .make-pkg-stage-omp ]; then
+            echo "  >> [2.4/$TASK_COUNT_TOTAL] Packaging GNATColl-Bindings - OMP ($3)..."
+
+            gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "omp/gnatcoll_omp.gpr" "${GNATCOLL_BINDINGS_DIR}-omp"
+
+            check_error .make-pkg-stage-omp
+        fi
+    fi
+
+    if [ ${GNATCOLL_BINDINGS_PYTHON} == "y" ]; then
+        if [ ! -f .make-pkg-stage-python ]; then
+            echo "  >> [2.5/$TASK_COUNT_TOTAL] Packaging GNATColl-Bindings - Python ($3)..."
+
+            gnatcoll_build_component "$STAGE_BASE_DIR$INSTALL_DIR" "python/gnatcoll_python.gpr" "${GNATCOLL_BINDINGS_DIR}-python"
+
+            check_error .make-pkg-stage-python
+        fi
+    fi
+
+    if [ ${GNATCOLL_BINDINGS_READLINE} == "y" ]; then
+        if [ ! -f .make-pkg-stage-readline ]; then
+            echo "  >> [2.6/$TASK_COUNT_TOTAL] Packaging GNATColl-Bindings - Readline ($3)..."
+
+            gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "readline/gnatcoll_readline.gpr" "${GNATCOLL_BINDINGS_DIR}-readline"
+
+            check_error .make-pkg-stage-readline
+        fi
+    fi
+
+    if [ ${GNATCOLL_BINDINGS_SYSLOG} == "y" ]; then
+        if [ ! -f .make-pkg-stage-syslog ]; then
+            echo "  >> [2.7/$TASK_COUNT_TOTAL] Packaging GNATColl-Bindings - SysLog ($3)..."
+
+            gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "syslog/gnatcoll_syslog.gpr" "${GNATCOLL_BINDINGS_DIR}-syslog"
+
+            check_error .make-pkg-stage-syslog
+        fi
+    fi
+
+    if [ ${GNATCOLL_BINDINGS_ZLIB} == "y" ]; then
+        if [ ! -f .make-pkg-stage-zlib ]; then
+            echo "  >> [2.8/$TASK_COUNT_TOTAL] Packaging GNATColl-Bindings - ZLib ($3)..."
+
+            gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "zlib/gnatcoll_zlib.gpr" "${GNATCOLL_BINDINGS_DIR}-zlib"
+
+            check_error .make-pkg-stage-zlib
+        fi
+    fi
+
+    # if [ ! -f .make-pkg ]; then
+        cd $STAGE_DIR
+
+        tar -cjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_BINDINGS_DIR.tbz2 .
+
+        check_error $OBD/$GNATCOLL_BINDINGS_DIR/.make-pkg
+
+        cd $OBD/$GNATCOLL_BINDINGS_DIR
+        rm -rf /tmp/opt
+    # fi
+
+    if [ ! -f .make-install ]; then
+        echo "  >> [4/$TASK_COUNT_TOTAL] Installing GNATColl-Bindings ($3)..."
+
+        tar -xjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_BINDINGS_DIR.tbz2 -C $INSTALL_BASE_DIR
+
+        check_error .make-install
+    fi
+
+    echo "  >> GNATColl-Bindings ($3) Installed"
 }
 
 ################################################################################
