@@ -273,7 +273,7 @@ export XMLADA_COMMIT="ecf9daa2841e2f95998e90047a48d4bc6b2c986a"
 export GNATCOLL_CORE_DIR="gnatcoll-core"
 export GNATCOLL_CORE_GIT="${ADACORE_GITHUB}/gnatcoll-core.git"
 export GNATCOLL_CORE_BRANCH="master"
-export GNATCOLL_CORE_COMMIT="a37f206f1a1b65354e71b2f3a08fb96effe0a023"
+export GNATCOLL_CORE_COMMIT="9203fe1b1a3efc7d3841828bafb4763f02e261a2"
 
 export GNATCOLL_BINDINGS_DIR="gnatcoll-bindings"
 export GNATCOLL_BINDINGS_GIT="${ADACORE_GITHUB}/gnatcoll-bindings.git"
