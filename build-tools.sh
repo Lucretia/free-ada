@@ -567,8 +567,9 @@ case "$build_type" in
                 gdb $HOST $BUILD $TARGET
                 gpr_bootstrap $HOST
                 xmlada $HOST $BUILD $TARGET
-                gprbuild $HOST $BUILD $TARGET
-                gnatcoll-core $HOST $BUILD $TARGET
+                build_gprbuild $HOST $BUILD $TARGET
+                gnatcoll_core $HOST $BUILD $TARGET
+                gnatcoll_bindings $HOST $BUILD $TARGET
                 exit 0
                 gnat_util $HOST $BUILD $TARGET
                 asis $HOST $BUILD $TARGET
