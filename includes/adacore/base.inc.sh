@@ -425,8 +425,6 @@ function gnatcoll_bindings()
     # Staging area.
     echo "  >> [3/$TASK_COUNT_TOTAL] Packaging GNATColl-Bindings ($3)..."
 
-    make -f $SRC/$GNATCOLL_BINDINGS_DIR/Makefile install &> $LOGPRE/$GNATCOLL_BINDINGS_DIR-pkg.txt
-
     if [ ${GNATCOLL_BINDINGS_GMP} == "y" ]; then
         if [ ! -f .make-pkg-stage-gmp ]; then
             echo "  >> [2.1/$TASK_COUNT_TOTAL] Packaging GNATColl-Bindings - GMP ($3)..."
