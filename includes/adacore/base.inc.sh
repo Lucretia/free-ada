@@ -505,7 +505,7 @@ function gnatcoll_bindings()
         fi
     fi
 
-    # if [ ! -f .make-pkg ]; then
+    if [ ! -f .make-pkg ]; then
         cd $STAGE_DIR
 
         tar -cjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_BINDINGS_DIR.tbz2 .
@@ -514,7 +514,7 @@ function gnatcoll_bindings()
 
         cd $OBD/$GNATCOLL_BINDINGS_DIR
         rm -rf /tmp/opt
-    # fi
+    fi
 
     if [ ! -f .make-install ]; then
         echo "  >> [4/$TASK_COUNT_TOTAL] Installing GNATColl-Bindings ($3)..."
