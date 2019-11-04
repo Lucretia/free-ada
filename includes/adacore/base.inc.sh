@@ -527,6 +527,439 @@ function gnatcoll_bindings()
     echo "  >> GNATColl-Bindings ($3) Installed"
 }
 
+function gnatcoll_db()
+{
+	local TASK_COUNT_TOTAL=1
+
+    # TODO: Another broken configure script requires copying this into the build dir.
+    cd $OBD
+
+    if [ ! -f .gnatcoll-db-copied ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Copying GNATColl-DB due to broken GPR file..."
+
+        cp -Ra $SRC/$GNATCOLL_DB_DIR .
+
+        check_error .gnatcoll-db-copied
+    fi
+}
+
+# $1 - Host triple
+# $2 - Build triple
+# $3 - Target triple
+function gnatcoll_db_sql()
+{
+	local TASK_COUNT_TOTAL=3
+ 	VER="$build_type/$3"
+	LOGPRE=$LOG/$VER
+	OBD=$BLD/$VER
+
+    cd $OBD/$GNATCOLL_DB_DIR
+
+    # The make stage
+    if [ ! -f .make-sql ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Building GNATColl-DB - SQL ($3)..."
+
+        gnatcoll_build_component "" "sql/gnatcoll_sql.gpr" "" "${GNATCOLL_DB_DIR}-sql"
+
+        check_error .make-sql
+    fi
+
+    # Staging area.
+    if [ ! -f .make-pkg-stage-sql ]; then
+        echo "  >> [2/$TASK_COUNT_TOTAL] Packaging GNATColl-DB - SQL ($3)..."
+
+        gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "sql/gnatcoll_sql.gpr" "${GNATCOLL_DB_DIR}-sql"
+
+        check_error .make-pkg-stage-sql
+
+        if [ ! -f .make-pkg-sql ]; then
+            cd $STAGE_DIR
+
+            tar -cjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-sql.tbz2 .
+
+            check_error $OBD/$GNATCOLL_DB_DIR/.make-pkg-sql
+
+            cd $OBD/$GNATCOLL_DB_DIR
+            rm -rf /tmp/opt
+        fi
+    fi
+
+    if [ ! -f .make-install-sql ]; then
+        echo "  >> [3/$TASK_COUNT_TOTAL] Installing GNATColl-DB - SQL ($3)..."
+
+        tar -xjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-sql.tbz2 -C $INSTALL_BASE_DIR
+
+        check_error .make-install-sql
+    fi
+
+    echo "  >> GNATColl-DB - SQL ($3) Installed"
+}
+
+# $1 - Host triple
+# $2 - Build triple
+# $3 - Target triple
+function gnatcoll_db_sqlite()
+{
+	local TASK_COUNT_TOTAL=3
+ 	VER="$build_type/$3"
+	LOGPRE=$LOG/$VER
+	OBD=$BLD/$VER
+
+    cd $OBD/$GNATCOLL_DB_DIR
+
+    # The make stage
+    if [ ! -f .make-sqlite ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Building GNATColl-DB - SQLite ($3)..."
+
+        gnatcoll_build_component "" "sqlite/gnatcoll_sqlite.gpr" "" "${GNATCOLL_DB_DIR}-sqlite"
+
+        check_error .make-sqlite
+    fi
+
+    # Staging area.
+    if [ ! -f .make-pkg-stage-sqlite ]; then
+        echo "  >> [2/$TASK_COUNT_TOTAL] Packaging GNATColl-DB - SQLite ($3)..."
+
+        gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "sqlite/gnatcoll_sqlite.gpr" "${GNATCOLL_DB_DIR}-sqlite"
+
+        check_error .make-pkg-stage-sqlite
+
+        if [ ! -f .make-pkg-sqlite ]; then
+            cd $STAGE_DIR
+
+            tar -cjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-sqlite.tbz2 .
+
+            check_error $OBD/$GNATCOLL_DB_DIR/.make-pkg-sqlite
+
+            cd $OBD/$GNATCOLL_DB_DIR
+            rm -rf /tmp/opt
+        fi
+    fi
+
+    if [ ! -f .make-install-sqlite ]; then
+        echo "  >> [3/$TASK_COUNT_TOTAL] Installing GNATColl-DB - SQLite ($3)..."
+
+        tar -xjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-sqlite.tbz2 -C $INSTALL_BASE_DIR
+
+        check_error .make-install-sqlite
+    fi
+
+    echo "  >> GNATColl-DB - SQLite ($3) Installed"
+}
+
+# $1 - Host triple
+# $2 - Build triple
+# $3 - Target triple
+function gnatcoll_db_postgres()
+{
+	local TASK_COUNT_TOTAL=3
+ 	VER="$build_type/$3"
+	LOGPRE=$LOG/$VER
+	OBD=$BLD/$VER
+
+    cd $OBD/$GNATCOLL_DB_DIR
+
+    # The make stage
+    if [ ! -f .make-postgres ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Building GNATColl-DB - Postgres ($3)..."
+
+        gnatcoll_build_component "" "postgres/gnatcoll_postgres.gpr" "" "${GNATCOLL_DB_DIR}-postgres"
+
+        check_error .make-postgres
+    fi
+
+    # Staging area.
+    if [ ! -f .make-pkg-stage-postgres ]; then
+        echo "  >> [2/$TASK_COUNT_TOTAL] Packaging GNATColl-DB - Postgres ($3)..."
+
+        gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "postgres/gnatcoll_postgres.gpr" "${GNATCOLL_DB_DIR}-postgres"
+
+        check_error .make-pkg-stage-postgres
+
+        if [ ! -f .make-pkg-postgres ]; then
+            cd $STAGE_DIR
+
+            tar -cjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-postgres.tbz2 .
+
+            check_error $OBD/$GNATCOLL_DB_DIR/.make-pkg-postgres
+
+            cd $OBD/$GNATCOLL_DB_DIR
+            rm -rf /tmp/opt
+        fi
+    fi
+
+    if [ ! -f .make-install-postgres ]; then
+        echo "  >> [3/$TASK_COUNT_TOTAL] Installing GNATColl-DB - Postgres ($3)..."
+
+        tar -xjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-postgres.tbz2 -C $INSTALL_BASE_DIR
+
+        check_error .make-install-postgres
+    fi
+
+    echo "  >> GNATColl-DB - Postgres ($3) Installed"
+}
+
+# $1 - Host triple
+# $2 - Build triple
+# $3 - Target triple
+function gnatcoll_db_db2ada()
+{
+	local TASK_COUNT_TOTAL=3
+ 	VER="$build_type/$3"
+	LOGPRE=$LOG/$VER
+	OBD=$BLD/$VER
+
+    cd $OBD/$GNATCOLL_DB_DIR
+
+    # The make stage
+    if [ ! -f .make-db2ada ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Building GNATColl-DB - DB2Ada ($3)..."
+
+        gnatcoll_build_component "" "gnatcoll_db2ada/gnatcoll_db2ada.gpr" "-ldl" "${GNATCOLL_DB_DIR}-db2ada"
+
+        check_error .make-db2ada
+    fi
+
+    # Staging area.
+    if [ ! -f .make-pkg-stage-db2ada ]; then
+        echo "  >> [2/$TASK_COUNT_TOTAL] Packaging GNATColl-DB - DB2Ada ($3)..."
+
+        gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "gnatcoll_db2ada/gnatcoll_db2ada.gpr" "${GNATCOLL_DB_DIR}-db2ada"
+
+        check_error .make-pkg-stage-db2ada
+
+        if [ ! -f .make-pkg-db2ada ]; then
+            cd $STAGE_DIR
+
+            tar -cjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-db2ada.tbz2 .
+
+            check_error $OBD/$GNATCOLL_DB_DIR/.make-pkg-db2ada
+
+            cd $OBD/$GNATCOLL_DB_DIR
+            rm -rf /tmp/opt
+        fi
+    fi
+
+    if [ ! -f .make-install ]; then
+        echo "  >> [3/$TASK_COUNT_TOTAL] Installing GNATColl-DB - DB2Ada ($3)..."
+
+        tar -xjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-db2ada.tbz2 -C $INSTALL_BASE_DIR
+
+        check_error .make-install-db2ada
+    fi
+
+    echo "  >> GNATColl-DB - DB2Ada ($3) Installed"
+}
+
+# $1 - Host triple
+# $2 - Build triple
+# $3 - Target triple
+function gnatcoll_db_sqlite2ada()
+{
+	local TASK_COUNT_TOTAL=3
+ 	VER="$build_type/$3"
+	LOGPRE=$LOG/$VER
+	OBD=$BLD/$VER
+
+    cd $OBD/$GNATCOLL_DB_DIR
+
+    # The make stage
+    if [ ! -f .make-sqlite2ada ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Building GNATColl-DB - SQLite2Ada ($3)..."
+
+        gnatcoll_build_component "" "gnatcoll_db2ada/gnatcoll_sqlite2ada.gpr" "-ldl" "${GNATCOLL_DB_DIR}-sqlite2ada"
+
+        check_error .make-sqlite2ada
+    fi
+
+    # Staging area.
+    if [ ! -f .make-pkg-stage-sqlite2ada ]; then
+        echo "  >> [2/$TASK_COUNT_TOTAL] Building GNATColl-DB - SQLite2Ada ($3)..."
+
+        gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "gnatcoll_db2ada/gnatcoll_sqlite2ada.gpr" "${GNATCOLL_DB_DIR}-sqlite2ada"
+
+        check_error .make-pkg-stage-sqlite2ada
+
+        if [ ! -f .make-pkg-sqlite2ada ]; then
+            cd $STAGE_DIR
+
+            tar -cjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-sqlite2ada.tbz2 .
+
+            check_error $OBD/$GNATCOLL_DB_DIR/.make-pkg-sqlite2ada
+
+            cd $OBD/$GNATCOLL_DB_DIR
+            rm -rf /tmp/opt
+        fi
+    fi
+
+    if [ ! -f .make-install-sqlite2ada ]; then
+        echo "  >> [3/$TASK_COUNT_TOTAL] Installing GNATColl-DB ($3)..."
+
+        tar -xjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-sqlite2ada.tbz2 -C $INSTALL_BASE_DIR
+
+        check_error .make-install-sqlite2ada
+    fi
+
+    echo "  >> GNATColl-DB ($3) Installed"
+}
+
+# $1 - Host triple
+# $2 - Build triple
+# $3 - Target triple
+function gnatcoll_db_postgres2ada()
+{
+	local TASK_COUNT_TOTAL=3
+ 	VER="$build_type/$3"
+	LOGPRE=$LOG/$VER
+	OBD=$BLD/$VER
+
+    cd $OBD/$GNATCOLL_DB_DIR
+
+    # The make stage
+    if [ ! -f .make-postgres2ada ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Building GNATColl-DB - Postgres2Ada ($3)..."
+
+        gnatcoll_build_component "" "gnatcoll_db2ada/gnatcoll_postgres2ada.gpr" "-largs -ldl" "${GNATCOLL_DB_DIR}-postgres2ada"
+
+        check_error .make-postgres2ada
+    fi
+
+    # Staging area.
+    if [ ! -f .make-pkg-stage-postgres2ada ]; then
+        echo "  >> [2/$TASK_COUNT_TOTAL] Building GNATColl-DB - Postgres2Ada ($3)..."
+
+        gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "gnatcoll_db2ada/gnatcoll_postgres2ada.gpr" "${GNATCOLL_DB_DIR}-postgres2ada"
+
+        check_error .make-pkg-stage-postgres2ada
+
+        if [ ! -f .make-pkg-postgres2ada ]; then
+            cd $STAGE_DIR
+
+            tar -cjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-postgres2ada.tbz2 .
+
+            check_error $OBD/$GNATCOLL_DB_DIR/.make-pkg-postgres2ada
+
+            cd $OBD/$GNATCOLL_DB_DIR
+            rm -rf /tmp/opt
+        fi
+    fi
+
+    if [ ! -f .make-install-postgres2ada ]; then
+        echo "  >> [3/$TASK_COUNT_TOTAL] Installing GNATColl-DB - Postgres2Ada ($3)..."
+
+        tar -xjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-postgres2ada.tbz2 -C $INSTALL_BASE_DIR
+
+        check_error .make-install-postgres2ada
+    fi
+
+    echo "  >> GNATColl-DB - Postgres2Ada ($3) Installed"
+}
+
+# $1 - Host triple
+# $2 - Build triple
+# $3 - Target triple
+function gnatcoll_db_xref()
+{
+	local TASK_COUNT_TOTAL=3
+ 	VER="$build_type/$3"
+	LOGPRE=$LOG/$VER
+	OBD=$BLD/$VER
+
+    cd $OBD/$GNATCOLL_DB_DIR
+
+    # The make stage
+    if [ ! -f .make-xref ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Building GNATColl-DB - XRef ($3)..."
+
+        gnatcoll_build_component "" "xref/gnatcoll_xref.gpr" "" "${GNATCOLL_DB_DIR}-xref"
+
+        check_error .make-xref
+    fi
+
+    # Staging area.
+    if [ ! -f .make-pkg-stage-xref ]; then
+        echo "  >> [2/$TASK_COUNT_TOTAL] Building GNATColl-DB - XRef ($3)..."
+
+        gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "xref/gnatcoll_xref.gpr" "${GNATCOLL_DB_DIR}-xref"
+
+        check_error .make-pkg-stage-xref
+
+        if [ ! -f .make-pkg-xref ]; then
+            cd $STAGE_DIR
+
+            tar -cjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-xref.tbz2 .
+
+            check_error $OBD/$GNATCOLL_DB_DIR/.make-pkg-xref
+
+            cd $OBD/$GNATCOLL_DB_DIR
+            rm -rf /tmp/opt
+        fi
+    fi
+
+    if [ ! -f .make-install-xref ]; then
+        echo "  >> [3/$TASK_COUNT_TOTAL] Installing GNATColl-DB - XRef ($3)..."
+
+        tar -xjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-xref.tbz2 -C $INSTALL_BASE_DIR
+
+        check_error .make-install-xref
+    fi
+
+    echo "  >> GNATColl-DB - XRef ($3) Installed"
+}
+
+# $1 - Host triple
+# $2 - Build triple
+# $3 - Target triple
+function gnatcoll_db_gnatinspect()
+{
+	local TASK_COUNT_TOTAL=3
+ 	VER="$build_type/$3"
+	LOGPRE=$LOG/$VER
+	OBD=$BLD/$VER
+
+    cd $OBD/$GNATCOLL_DB_DIR
+
+    # The make stage
+    if [ ! -f .make-gnatinspect ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Building GNATColl-DB - GNATInspect ($3)..."
+
+        gnatcoll_build_component "" "gnatinspect/gnatinspect.gpr" "-ldl" "${GNATCOLL_DB_DIR}-gnatinspect"
+
+        check_error .make-gnatinspect
+    fi
+
+    # Staging area.
+    if [ ! -f .make-pkg-stage-gnatinspect ]; then
+        echo "  >> [2/$TASK_COUNT_TOTAL] Building GNATColl-DB - GNATInspect ($3)..."
+
+        gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "gnatinspect/gnatinspect.gpr" "${GNATCOLL_DB_DIR}-gnatinspect"
+
+        check_error .make-pkg-stage-gnatinspect
+
+        if [ ! -f .make-pkg-gnatinspect ]; then
+            cd $STAGE_DIR
+
+            tar -cjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-gnatinspect.tbz2 .
+
+            check_error $OBD/$GNATCOLL_DB_DIR/.make-pkg-gnatinspect
+
+            cd $OBD/$GNATCOLL_DB_DIR
+            rm -rf /tmp/opt
+        fi
+    fi
+
+    if [ ! -f .make-install-gnatinspect ]; then
+        echo "  >> [3/$TASK_COUNT_TOTAL] Installing GNATColl-DB - GNATInspect ($3)..."
+
+        tar -xjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-gnatinspect.tbz2 -C $INSTALL_BASE_DIR
+
+        check_error .make-install-gnatinspect
+    fi
+
+    echo "  >> GNATColl-DB - GNATInspect ($3) Installed"
+}
+
+
 ################################################################################
 # This function builds a version of libgnat_util using AdaCore's GPL'd
 # makefiles, but uses the source from the FSF GNAT we are using. The source has

@@ -27,6 +27,7 @@ The following are AdaCore GPL-2018 versions:
 * ~~GNATMem~~
 * GNATColl
 * GNATColl-Bindings
+* GNATColl-DB
 * ~~ASIS (with tools)~~
 * ~~PolyORB~~
 * ~~Florist~~
