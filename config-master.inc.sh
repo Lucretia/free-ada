@@ -111,8 +111,8 @@ export BINUTILS_SNAPSHOT=n
 
 if [ $BINUTILS_SNAPSHOT == "y" ]; then
     # Snapshot
-    export BINUTILS_VERSION=2.28.90 # filename version
-    export BINUTILS_SRC_VERSION=2.28.90 # extracted version
+    export BINUTILS_VERSION=2.31.1 # filename version
+    export BINUTILS_SRC_VERSION=2.31.1 # extracted version
     export BINUTILS_MIRROR=ftp://sourceware.org/pub/binutils/snapshots
     export BINUTILS_TARBALL=binutils-$BINUTILS_VERSION.tar.bz2
     export BINUTILS_DIR=binutils-$BINUTILS_SRC_VERSION
