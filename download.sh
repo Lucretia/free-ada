@@ -365,6 +365,15 @@ download_unpack_package "PYTHON" "J"
 download_git_package "GPRBUILD"
 download_git_package "XMLADA"
 download_git_package "GNATCOLL_CORE"
+download_git_package "GNATCOLL_BINDINGS"
+
+# Remove the link lib iconv as this is in glibc
+if [ ! -f .gnatcoll-bindings-commented-out-iconv ]; then
+    sed -i '51,58 {s/^/--/}' gnatcoll-bindings/iconv/gnatcoll_iconv.gpr
+    sed -i '98,100 {s/^/--/}' gnatcoll-bindings/iconv/gnatcoll_iconv.gpr
+
+    check_error .gnatcoll-bindings-commented-out-iconv
+fi
 # download_git_package "GTKADA"
 # download_git_package "LANGKIT"
 # download_git_package "LIBADALANG"
