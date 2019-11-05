@@ -380,6 +380,8 @@ download_git_package "GNATCOLL_DB"
 download_git_package "LANGKIT"
 apply_patches "LANGKIT"
 
+download_git_package "LIBADALANG"
+
 # download_git_package "GTKADA"
 # download_git_package "LANGKIT"
 # download_git_package "LIBADALANG"

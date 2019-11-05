@@ -281,6 +281,11 @@ export LANGKIT_BRANCH="stable"
 export LANGKIT_COMMIT="8f8d6b56d9c63a27b29a6c984bec62fb5df40309"
 export LANGKIT_PATCHES="${FILES}/${LANGKIT_DIR}/0001-Add-view-conversion-to-fix-compile.patch"
 
+export LIBADALANG_DIR="libadalang"
+export LIBADALANG_GIT="${ADACORE_GITHUB}/libadalang.git"
+export LIBADALANG_BRANCH="stable"
+export LIBADALANG_COMMIT="85539c5896f5841b5b8d5007354f5bdc73663f83"
+
 export GNAT_UTIL_DIR=gnat_util
 
 export ASIS_GPL_YEAR=2016
