@@ -294,18 +294,11 @@ export GNATCOLL_DB_BRANCH="master"
 export GNATCOLL_DB_COMMIT="a75c22bf43876fd299b30f65e472898bf9a0971e"
 export GNATCOLL_DB=y
 
-export GNATCOLL_BINDINGS_DIR="gnatcoll-bindings"
-export GNATCOLL_BINDINGS_GIT="${ADACORE_GITHUB}/gnatcoll-bindings.git"
-export GNATCOLL_BINDINGS_BRANCH="master"
-export GNATCOLL_BINDINGS_COMMIT="d04601a9dbacbf73cf688fe48804431c847c32c5"
-export GNATCOLL_BINDINGS_GMP=y
-export GNATCOLL_BINDINGS_ICONV=y
-export GNATCOLL_BINDINGS_LZMA=y
-export GNATCOLL_BINDINGS_OMP=y
-export GNATCOLL_BINDINGS_PYTHON=y
-export GNATCOLL_BINDINGS_READLINE=y
-export GNATCOLL_BINDINGS_SYSLOG=y
-export GNATCOLL_BINDINGS_ZLIB=y
+export LANGKIT_DIR="langkit"
+export LANGKIT_GIT="${ADACORE_GITHUB}/langkit.git"
+export LANGKIT_BRANCH="stable"
+export LANGKIT_COMMIT="8f8d6b56d9c63a27b29a6c984bec62fb5df40309"
+export LANGKIT_PATCHES="${FILES}/${LANGKIT_DIR}/0001-Add-view-conversion-to-fix-compile.patch"
 
 export GNAT_UTIL_DIR=gnat_util
 
@@ -321,9 +314,6 @@ export ASIS_DIR=${ASIS_VERSION_PREFIX}
 
 export GTKADA_MIRROR="${ADACORE_GITHUB}/gtkada.git"
 export GTKADA_DIR=gtkada
-
-export LANGKIT_MIRROR="${ADACORE_GITHUB}/langkit.git"
-export LANGKIT_DIR=langkit
 
 export LIBADALANG_MIRROR="${ADACORE_GITHUB}/libadalang.git"
 export LIBADALANG_DIR=libadalang

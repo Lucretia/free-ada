@@ -1,0 +1,25 @@
+From 70dc3b7bf176a4b0161f395fd7473fa025c7e85b Mon Sep 17 00:00:00 2001
+From: "Luke A. Guest" <laguest@archeia.com>
+Date: Tue, 5 Nov 2019 13:56:09 +0000
+Subject: [PATCH] Add view conversion to fix compile.
+
+---
+ langkit/support/langkit_support-adalog-eq_same.ads | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/langkit/support/langkit_support-adalog-eq_same.ads b/langkit/support/langkit_support-adalog-eq_same.ads
+index cc45f660..b8ac074b 100644
+--- a/langkit/support/langkit_support-adalog-eq_same.ads
++++ b/langkit/support/langkit_support-adalog-eq_same.ads
+@@ -123,7 +123,7 @@ package Langkit_Support.Adalog.Eq_Same is
+          Eq_Data   : Equals_Data;
+          Sloc_Info : String_Access := null) return Relation
+       is
+-        (Impl.Equals (L, R, Data, Eq_Data, Sloc_Info));
++        (Relation (Impl.Equals (L, R, Data, Eq_Data, Sloc_Info)));
+ 
+       function Create
+         (L         : LR_Type;
+-- 
+2.23.0
+

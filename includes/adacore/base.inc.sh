@@ -959,6 +959,96 @@ function gnatcoll_db_gnatinspect()
     echo "  >> GNATColl-DB - GNATInspect ($3) Installed"
 }
 
+# $1 - Host triple
+# $2 - Build triple
+# $3 - Target triple
+function langkit()
+{
+	local TASK_COUNT_TOTAL=4
+    VER="$build_type/$3"
+	DIRS="$LANGKIT_DIR"
+	LOGPRE=$LOG/$VER
+	OBD=$BLD/$VER
+
+    export PYTHONPATH=$SRC/$LANGKIT_DIR
+
+    echo "  >> Creating Directories (if needed)..."
+
+    cd $BLD
+    for d in $DIRS; do
+        if [ ! -d $VER/$d ]; then
+            mkdir -p $VER/$d
+        fi
+    done
+
+    cd $OBD #/$LANGKIT_DIR
+
+    if [ ! -f $LANGKIT_DIR/.config ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Configuring LangKit ($3)..."
+
+        # Taken from Arch.
+        python2.7 $SRC/$LANGKIT_DIR/scripts/build-langkit_support.py \
+            --build-dir $LANGKIT_DIR \
+            generate &> $LOGPRE/$LANGKIT_DIR-config.txt
+
+        check_error $LANGKIT_DIR/.config
+    fi
+
+    if [ ! -f $LANGKIT_DIR/.make ]; then
+        echo "  >> [2/$TASK_COUNT_TOTAL] Building LangKit ($3)..."
+
+        python2.7 $SRC/$LANGKIT_DIR/scripts/build-langkit_support.py \
+            --library-types relocatable \
+            --build-dir $LANGKIT_DIR \
+            build \
+            --build-mode=prod --gargs="-R" \
+                &> $LOGPRE/$LANGKIT_DIR-make.txt
+
+        check_error $LANGKIT_DIR/.make
+    fi
+
+    if [ ! -f $LANGKIT_DIR/.make-pkg-stage ]; then
+        echo "  >> [3/$TASK_COUNT_TOTAL] Packaging LangKit ($3)..."
+
+        python2.7 $SRC/$LANGKIT_DIR/setup.py install --prefix=$STAGE_BASE_DIR$INSTALL_DIR  &> $LOGPRE/$LANGKIT_DIR-pkg.txt
+
+        check_error $LANGKIT_DIR/.make-pkg-stage1
+
+        python2.7 $SRC/$LANGKIT_DIR/scripts/build-langkit_support.py \
+            --library-types relocatable \
+            --build-dir $LANGKIT_DIR \
+            install $STAGE_BASE_DIR$INSTALL_DIR \
+                >>$LOGPRE/$LANGKIT_DIR-pkg.txt 2>&1
+
+        check_error $LANGKIT_DIR/.make-pkg-stage2
+
+        sed -i 's@/usr/lib/python-exec/python2.7/python2@'"$INSTALL_DIR"'/bin/python2.7@' $STAGE_BASE_DIR$INSTALL_DIR/bin/create-project.py
+
+        check_error $LANGKIT_DIR/.make-pkg-stage
+
+        if [ ! -f $LANGKIT_DIR/.make-pkg ]; then
+            cd $STAGE_DIR
+
+            tar -cjpf $PKG/$PROJECT-$1-$LANGKIT_DIR.tbz2 .
+
+            check_error $OBD/$LANGKIT_DIR/.make-pkg
+
+            cd $OBD/$LANGKIT_DIR
+            rm -rf /tmp/opt
+        fi
+    fi
+
+    if [ ! -f .make-install ]; then
+        echo "  >> [4/$TASK_COUNT_TOTAL] Installing LangKit ($3)..."
+
+        tar -xjpf $PKG/$PROJECT-$1-$LANGKIT_DIR.tbz2 -C $INSTALL_BASE_DIR
+
+        check_error .make-install
+    fi
+
+    echo "  >> LangKit ($3) Installed"
+}
+
 ################################################################################
 # This function builds a version of libgnat_util using AdaCore's GPL'd
 # makefiles, but uses the source from the FSF GNAT we are using. The source has
