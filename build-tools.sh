@@ -564,6 +564,7 @@ case "$build_type" in
                 export LD_LIBRARY_PATH=$($INSTALL_DIR/bin/gnatls -v | grep adalib | xargs):$LD_LIBRARY_PATH
 
                 python $HOST $BUILD $TARGET
+                install_python_packages
                 gdb $HOST $BUILD $TARGET
                 gpr_bootstrap $HOST
                 xmlada $HOST $BUILD $TARGET
