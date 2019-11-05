@@ -284,6 +284,12 @@ export GNATCOLL_DB_BRANCH="master"
 export GNATCOLL_DB_COMMIT="a75c22bf43876fd299b30f65e472898bf9a0971e"
 export GNATCOLL_DB=y
 
+export LANGKIT_DIR="langkit"
+export LANGKIT_GIT="${ADACORE_GITHUB}/langkit.git"
+export LANGKIT_BRANCH="stable"
+export LANGKIT_COMMIT="8f8d6b56d9c63a27b29a6c984bec62fb5df40309"
+export LANGKIT_PATCHES="${FILES}/${LANGKIT_DIR}/0001-Add-view-conversion-to-fix-compile.patch"
+
 export GNAT_UTIL_DIR=gnat_util
 
 export ASIS_GPL_YEAR=2016
@@ -298,9 +304,6 @@ export ASIS_DIR=${ASIS_VERSION_PREFIX}
 
 export GTKADA_MIRROR="${ADACORE_GITHUB}/gtkada.git"
 export GTKADA_DIR=gtkada
-
-export LANGKIT_MIRROR="${ADACORE_GITHUB}/langkit.git"
-export LANGKIT_DIR=langkit
 
 export LIBADALANG_MIRROR="${ADACORE_GITHUB}/libadalang.git"
 export LIBADALANG_DIR=libadalang
