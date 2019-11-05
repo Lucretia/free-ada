@@ -581,6 +581,7 @@ case "$build_type" in
                 gnatcoll_db_xref $HOST $BUILD $TARGET
                 gnatcoll_db_gnatinspect $HOST $BUILD $TARGET
                 langkit $HOST $BUILD $TARGET
+                libadalang $HOST $BUILD $TARGET
                 exit 0
                 gnat_util $HOST $BUILD $TARGET
                 asis $HOST $BUILD $TARGET

@@ -1049,6 +1049,82 @@ function langkit()
     echo "  >> LangKit ($3) Installed"
 }
 
+# $1 - Host triple
+# $2 - Build triple
+# $3 - Target triple
+function libadalang()
+{
+	local TASK_COUNT_TOTAL=5
+ 	VER="$build_type/$3"
+	#DIRS="$LIBADALANG_DIR"
+	LOGPRE=$LOG/$VER
+	OBD=$BLD/$VER
+
+    echo "  >> Creating Directories (if needed)..."
+
+    cd $OBD
+
+    if [ ! -f .libadalang-copied ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Copying LibAdaLang due to not being able to specify a build directory ($3)..."
+
+        cp -Ra $SRC/$LIBADALANG_DIR .
+
+        check_error .libadalang-copied
+    fi
+
+    cd $OBD/$LIBADALANG_DIR
+
+    if [ ! -f .config ]; then
+        echo "  >> [2/$TASK_COUNT_TOTAL] Configuring LibAdaLang ($3)..."
+
+        gprconfig -o config.cgpr --batch --config=c,,,,GCC --config=ada,,,, &> $LOGPRE/$LIBADALANG_DIR-config.txt
+
+        check_error .config
+    fi
+
+    if [ ! -f .make ]; then
+        echo "  >> [3/$TASK_COUNT_TOTAL] Building LibAdaLang ($3)..."
+
+        python2.7 ada/manage.py --no-langkit-support generate --no-pretty-print &> $LOGPRE/$LIBADALANG_DIR-make-generate.txt
+
+        check_error .make-generate
+        
+        python2.7 ada/manage.py --library-types relocatable --no-langkit-support build --build-mode=prod --gargs="-R --config=$PWD/config.cgpr" \
+            &> $LOGPRE/$LIBADALANG_DIR-make.txt
+
+        check_error .make
+    fi
+
+    if [ ! -f .make-pkg-stage ]; then
+        echo "  >> [4/$TASK_COUNT_TOTAL] Packaging LibAdaLang ($3)..."
+
+        python2.7 ada/manage.py --library-types relocatable --no-langkit-support install $STAGE_BASE_DIR$INSTALL_DIR &> $LOGPRE/$LIBADALANG_DIR-pkg.txt
+
+        check_error .make-pkg-stage
+
+        if [ ! -f .make-pkg ]; then
+            cd $STAGE_DIR
+
+            tar -cjpf $PKG/$PROJECT-$1-$LIBADALANG_DIR.tbz2 .
+
+            check_error $OBD/$LIBADALANG_DIR/.make-pkg
+
+            cd $OBD/$LIBADALANG_DIR
+            rm -rf /tmp/opt
+        fi
+    fi
+
+    if [ ! -f .make-install ]; then
+        echo "  >> [5/$TASK_COUNT_TOTAL] Installing LibAdaLang (Native)..."
+
+        tar -xjpf $PKG/$PROJECT-$1-$LIBADALANG_DIR.tbz2 -C $INSTALL_BASE_DIR
+
+        check_error .make-install
+    fi
+
+    echo "  >> LibAdaLang (Native) Installed"
+}
+
 
 ################################################################################
 # This function builds a version of libgnat_util using AdaCore's GPL'd
