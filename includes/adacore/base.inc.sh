@@ -201,7 +201,7 @@ function build_gprbuild()
         check_error .make-install
     fi
 
-    echo "  >> GPRBuild bootstrap ($3) Installed"
+    echo "  >> GPRBuild ($3) Installed"
 }
 
 # $1 - Host triple
