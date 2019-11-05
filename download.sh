@@ -259,7 +259,7 @@ download_package "PYTHON"
 
 # AdaCore Libraries/Tools ###########################################################
 
-download_adacore_cdn_package "GPRBUILD"
+# download_adacore_cdn_package "GPRBUILD"
 download_adacore_cdn_package "XMLADA"
 # download_adacore_cdn_package "GNATCOLL"
 # download_adacore_cdn_package "ASIS"
@@ -342,10 +342,10 @@ download_unpack_package "ISL" "j"
 
 download_unpack_package "PYTHON" "J"
 
-download_unpack_package "GPRBUILD" "z"
-apply_patches "GPRBUILD"
+# download_unpack_package "GPRBUILD" "z"
+# apply_patches "GPRBUILD"
 
-download_unpack_package "XMLADA" "z"
+# download_unpack_package "XMLADA" "z"
 # download_unpack_package "GNATCOLL" "z"
 # download_unpack_package "ASIS" "z"
 
@@ -362,8 +362,8 @@ download_unpack_package "XMLADA" "z"
 
 #~ cd $SRC
 
-# download_git_package "GPRBUILD"
-# download_git_package "XMLADA"
+download_git_package "GPRBUILD"
+download_git_package "XMLADA"
 download_git_package "GNATCOLL_CORE"
 download_git_package "GNATCOLL_BINDINGS"
 

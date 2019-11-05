@@ -224,8 +224,6 @@ export PYTHON_DIR=Python-$PYTHON_VERSION
 # AdaCore GPL components #######################################################
 ################################################################################
 export GPL_YEAR=2018
-#export XMLADA_HASH=065e0e6750288d9ecc2f7780d3ed8ef3c86ab991
-#export XMLADA_VERSION=xmlada-gpl-$GPL_YEAR-src
 #export ASIS_HASH=51ecea080c3c6760cd024e8b467502de26f3c3f2
 #export ASIS_VERSION=asis-gpl-$GPL_YEAR-src
 #export GNATMEM_HASH=6de65bb7e300e299711f90396710ace741123656
@@ -243,22 +241,15 @@ export GPL_YEAR=2018
 export ADACORE_DOWNLOAD_MIRROR="http://mirrors.cdn.adacore.com/art/"
 export ADACORE_GITHUB="https://github.com/AdaCore"
 
-export GPRBUILD_HASH=5b0819dfc7a447df26c27a68
-export GPRBUILD_VERSION_PREFIX=gprbuild-gpl-${GPL_YEAR}-src
-export GPRBUILD_VERSION=${GPRBUILD_VERSION_PREFIX}
+export GPRBUILD_DIR="gprbuild"
+export GPRBUILD_GIT="${ADACORE_GITHUB}/gprbuild.git"
+export GPRBUILD_BRANCH="master"
+export GPRBUILD_COMMIT="a10ee080de8e4ca0db9d4cb98d434b9307afccaf"
 
-export GPRBUILD_MIRROR="${ADACORE_DOWNLOAD_MIRROR}"
-export GPRBUILD_TARBALL="${GPRBUILD_VERSION}-20180524.tar.gz"
-export GPRBUILD_DIR=${GPRBUILD_VERSION_PREFIX}
-export GPRBUILD_PATCHES="${FILES}/gprbuild/relocatable-build.patch ${FILES}/gprbuild/expose-cargs-and-largs-makefile.patch"
-
-export XMLADA_HASH=5b0819dec7a447df26c27a40
-export XMLADA_VERSION_PREFIX=xmlada-gpl-${GPL_YEAR}-src
-export XMLADA_VERSION=${XMLADA_VERSION_PREFIX}
-
-export XMLADA_MIRROR="${ADACORE_DOWNLOAD_MIRROR}"
-export XMLADA_TARBALL="${XMLADA_VERSION}-20180524.tar.gz"
-export XMLADA_DIR=${XMLADA_VERSION_PREFIX}
+export XMLADA_DIR="xmlada"
+export XMLADA_GIT="${ADACORE_GITHUB}/xmlada.git"
+export XMLADA_BRANCH="master"
+export XMLADA_COMMIT="b9344050e922545c0dbd4e1dabe8564705153bf7"
 
 export GNATCOLL_CORE_DIR="gnatcoll-core"
 export GNATCOLL_CORE_GIT="${ADACORE_GITHUB}/gnatcoll-core.git"
