@@ -259,7 +259,7 @@ download_package "PYTHON"
 
 # AdaCore Libraries/Tools ###########################################################
 
-download_adacore_cdn_package "GPRBUILD"
+# download_adacore_cdn_package "GPRBUILD"
 download_adacore_cdn_package "XMLADA"
 # download_adacore_cdn_package "GNATCOLL"
 # download_adacore_cdn_package "ASIS"
