@@ -12,7 +12,7 @@
 # Include everything we need here.
 ########################################################################################################################
 
-# Cannot put this into config.inc.
+# Cannot put this into config.inc.sh.
 export TOP=`pwd`
 export INC=$TOP/includes
 
@@ -57,9 +57,9 @@ BUILD=$HOST
 ########################################################################################################################
 # Incudes with common function declarations
 ########################################################################################################################
-source $INC/version.inc
-source $INC/errors.inc
-source $INC/arithmetic.inc
+source $INC/version.inc.sh
+source $INC/errors.inc.sh
+source $INC/arithmetic.inc.sh
 #source $INC/native.inc
 #source $INC/bare_metal.inc
 #source $INC/cross.inc
@@ -70,18 +70,18 @@ VERSION="build-tools.sh ($VERSION_DATE)"
 # Enforce a personalised configuration
 ########################################################################################################################
 
-if [ ! -f ./config.inc ]; then
+if [ ! -f ./config.inc.sh ]; then
 	display_no_config_error
 else
-	source ./config.inc
+	source ./config.inc.sh
 fi
 
-source $INC/bootstrap.inc
-source $INC/binutils.inc
-source $INC/gdb.inc
-source $INC/gcc.inc
-source $INC/python.inc
-source $INC/adacore/base.inc
+source $INC/bootstrap.inc.sh
+source $INC/binutils.inc.sh
+source $INC/gdb.inc.sh
+source $INC/gcc.inc.sh
+source $INC/python.inc.sh
+source $INC/adacore/base.inc.sh
 
 ########################################################################################################################
 # Check to make sure the source is downloaded.
@@ -294,10 +294,11 @@ fi
 # If neither of the two have a toolchain, we must use the bootstrap.
 ########################################################################################################################
 export PATH=$INSTALL_DIR/bin:$PATH
+# export LD_LIBRARY_PATH=$INSTALL_DIR/lib$BITS:$INSTALL_DIR/lib:$($INSTALL_DIR/bin/gnatls -v | grep adalib | xargs):$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$INSTALL_DIR/lib$BITS:$INSTALL_DIR/lib:$LD_LIBRARY_PATH
 
-#echo "PATH - $PATH"
-#echo "LD_LIBRARY_PATH - $LD_LIBRARY_PATH"
+echo "PATH - $PATH"
+echo "LD_LIBRARY_PATH - $LD_LIBRARY_PATH"
 
 ################################################################################
 # Display some build configuration details
@@ -558,12 +559,31 @@ case "$build_type" in
                 binutils $HOST $BUILD $TARGET "--enable-multilib"
                 gcc $HOST $BUILD $TARGET \
                     "--enable-multilib --enable-threads=posix --enable-libgomp --with-libffi --enable-libsanitizer"
+
+                # Add this here, caused a warning before.
+                export LD_LIBRARY_PATH=$($INSTALL_DIR/bin/gnatls -v | grep adalib | xargs):$LD_LIBRARY_PATH
+
                 python $HOST $BUILD $TARGET
+                install_python_packages
                 gdb $HOST $BUILD $TARGET
-                gpr_bootstrap $TARGET
+                gpr_bootstrap $HOST
                 xmlada $HOST $BUILD $TARGET
-                gprbuild $HOST $BUILD $TARGET
-                gnatcoll $HOST $BUILD $TARGET
+                build_gprbuild $HOST $BUILD $TARGET
+                gnatcoll_core $HOST $BUILD $TARGET
+                gnatcoll_bindings $HOST $BUILD $TARGET
+                gnatcoll_db
+                gnatcoll_db_sql $HOST $BUILD $TARGET
+                gnatcoll_db_sqlite $HOST $BUILD $TARGET
+                gnatcoll_db_postgres $HOST $BUILD $TARGET
+                gnatcoll_db_db2ada $HOST $BUILD $TARGET
+                gnatcoll_db_sqlite2ada $HOST $BUILD $TARGET
+                gnatcoll_db_postgres2ada $HOST $BUILD $TARGET
+                gnatcoll_db_xref $HOST $BUILD $TARGET
+                gnatcoll_db_gnatinspect $HOST $BUILD $TARGET
+                langkit $HOST $BUILD $TARGET
+                libadalang $HOST $BUILD $TARGET
+                libadalang_tools $HOST $BUILD $TARGET
+                exit 0
                 gnat_util $HOST $BUILD $TARGET
                 asis $HOST $BUILD $TARGET
                 #~ build_native_toolchain;

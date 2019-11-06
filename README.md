@@ -2,7 +2,7 @@
 
 ## Who did this?
 
-Copyright (C) 2011-2018 Luke A. Guest with assistance from David Rees
+Copyright (C) 2011-2019 Luke A. Guest with assistance from David Rees
 
 ## What is this?
 
@@ -18,41 +18,53 @@ GCC is a bitch to build and worse still are AdaCore's GPL'd (extra) projects. Ha
 * FSF GCC
 * Binutils
 * GDB
-* libgnat_util (using the FSF sources)
+* ~~libgnat_util (using the FSF sources)~~
 
-The following are AdaCore GPL-2014 versions:
+The following are AdaCore GPL-2018 versions:
 
 * XML/Ada
 * GPRBuild
-* GNATMem
+* ~~GNATMem~~
 * GNATColl
-* ASIS (with tools)
-* PolyORB
-* Florist
+* GNATColl-Bindings
+* GNATColl-DB
+* LibAdaLang
+* LibAdaLang-Tools
+* ~~ASIS (with tools)~~
+* ~~PolyORB~~
+* ~~Florist~~
 
-The following other tools/libraries are built:
+~~The following other tools/libraries are built:~~
 
-* Matreshka
+* ~~Matreshka~~
 
-To find out what versions are built, see the config-master.inc file.
+To find out what versions are built, see the ```config-master.inc.sh``` file.
+
+## Package manager
+
+You can try [Alire](https://github.com/mosteo/alire) to handle the installation of Ada packages.
 
 ## Help
 
 Get help with the scripts and what can be built so far:
 
+```bash
   ./build-tools.sh -h
+```
 
 ## Building instructions
 
 To get a native toolchain, use the following instructions:
 
-  cp config-master.inc config.inc
-  <modify config.inc as required>
+```bash
+  cp config-master.inc.sh config.inc.sh
+  # modify config.inc as required
   ./download.sh
   ./build-tools.sh -t 1
+```
 
 If you leave everything as default, you will have a bunch of archives in a packages directory and the toolchain installed
-to ```$HOME/opt/free-ada-new
+to ```$HOME/opt/free-ada-new```
 
 ### Gentoo
 
@@ -78,3 +90,4 @@ The following targets have been built, but any target supported by GCC should bu
 
 * This project no longer uses git flow.
 * GNATColl requires Python 2 to create documentation, it will not build with Python 3.
+* If you want to build the new [GNAT-LLVM](https://github.com/AdaCore/gnat-llvm) compiler, you need the gcc-9.x branch.

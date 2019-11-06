@@ -2,18 +2,18 @@
 # Filename    # download.sh
 # Purpose     # Downloads the source required to build the toolchains
 # Description #
-# Copyright   # Copyright (C) 2011-2014 Luke A. Guest, David Rees.
+# Copyright   # Copyright (C) 2011-2018 Luke A. Guest, David Rees.
 #             # All Rights Reserved.
 ################################################################################
 #!/bin/bash
 
-# Cannot put this into config.inc.
+# Cannot put this into config.inc.sh.
 export TOP=`pwd`
 export INC=$TOP/includes
 
 # Incudes with common function declarations
-source $INC/version.inc
-source $INC/errors.inc
+source $INC/version.inc.sh
+source $INC/errors.inc.sh
 
 VERSION="download.sh ($VERSION_DATE)"
 
@@ -94,13 +94,13 @@ read x
 # Enforce a personalised configuration
 ################################################################################
 
-if [ ! -f ./config.inc ]; then
+if [ ! -f ./config.inc.sh ]; then
 	display_no_config_error
 else
-	source ./config.inc
+	source ./config.inc.sh
 fi
 
-source $INC/bootstrap.inc
+source $INC/bootstrap.inc.sh
 
 function check_for_spark()
 {
@@ -153,12 +153,20 @@ function download_package()
 function download_git_package()
 {
     local PKG_DIR="$1_DIR"
-    local PKG_MIRROR="$1_MIRROR"
+    local PKG_GIT="$1_GIT"
+    local PKG_BRANCH="$1_BRANCH"
+    local PKG_COMMIT="$1_COMMIT"
     
     if [ ! -d ${!PKG_DIR} ]; then
         echo "  >> Downloading ${!PKG_DIR}..."
 
-        git clone ${!PKG_MIRROR} ${!PKG_DIR}
+        git clone -b ${!PKG_BRANCH} ${!PKG_GIT} ${!PKG_DIR}
+
+        if [ ! -z ${!PKG_COMMIT} ]; then
+            cd ${!PKG_DIR}
+            git checkout ${!PKG_COMMIT}
+            cd ..
+        fi
 
         check_error_exit
     else
@@ -200,6 +208,30 @@ function download_unpack_package()
     fi
 }
 
+# $1 - Package macro prefix (in upper case)
+function apply_patches()
+{
+    local PATCHES="$1_PATCHES"
+    local PKG_DIR="$1_DIR"
+    local PKG_NAME="$(echo $1 | tr [:upper:] [:lower:])"
+
+    pushd ${!PKG_DIR} &>/dev/null
+
+    for p in ${!PATCHES}; do
+        local PATCH_NAME="$(basename ${p})"
+
+        if [ ! -f .patched-${PATCH_NAME} ]; then
+            echo "  >> Applying ${PATCH_NAME} to ${PKG_NAME}..."
+
+            patch -Np1 < ${p} &>/dev/null
+
+            check_error .patched-${PATCH_NAME}
+        fi
+    done
+
+    popd &>/dev/null
+}
+
 cd $ARC
 
 # Begin Downloading ############################################################
@@ -224,137 +256,13 @@ download_package "MPC"
 download_package "MPFR"
 download_package "ISL"
 download_package "PYTHON"
-download_adacore_cdn_package "GNATCOLL"
-download_adacore_cdn_package "ASIS"
 
 # AdaCore Libraries/Tools ###########################################################
 
-#~ if [ $XMLADA_GIT = "y" ]; then
-    #~ echo "  >> Downloading XMLAda..."
-
-    #~ cd $SRC
-
-    #~ if [ ! -d xmlada ]; then
-	#~ git clone $XMLADA_REPO
-    #~ else
-	#~ cd xmlada
-	#~ git pull
-	#~ cd ..
-    #~ fi
-
-    #~ cd $ARC
-#~ else
-    #~ if [ ! -f $XMLADA_VERSION.tar.gz ]; then
-	#~ echo "  >> Downloading $XMLADA_VERSION..."
-	#~ wget -c -O $XMLADA_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$XMLADA_HASH
-    #~ else
-	#~ echo "  (x) Already have $XMLADA_VERSION"
-    #~ fi
-#~ fi
-
-#~ if [ $GPRBUILD_GIT = "y" ]; then
-    #~ echo "  >> Downloading GPRBuild..."
-
-    #~ cd $SRC
-
-    #~ if [ ! -d gprbuild ]; then
-	#~ git clone $GPRBUILD_REPO
-    #~ else
-	#~ cd gprbuild
-	#~ git pull
-	#~ cd ..
-    #~ fi
-
-    #~ cd $ARC
-#~ else
-    #~ if [ ! -f $GPRBUILD_VERSION.tar.gz ]; then
-	#~ echo "  >> Downloading $GPRBUILD_VERSION..."
-	#~ wget -c -O $GPRBUILD_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$GPRBUILD_HASH
-    #~ else
-	#~ echo "  (x) Already have $GPRBUILD_VERSION"
-    #~ fi
-#~ fi
-
-#~ if [ ! -f $ASIS_VERSION.tar.gz ]; then
-    #~ echo "  >> Downloading $ASIS_VERSION..."
-    #~ wget -c -O $ASIS_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$ASIS_HASH
-#~ else
-	#~ echo "  (x) Already have $ASIS_VERSION"
-#~ fi
-
-#~ if [ ! -f $GNATMEM_VERSION.tar.gz ]; then
-    #~ echo "  >> Downloading $GNATMEM_VERSION..."
-    #~ wget -c -O $GNATMEM_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$GNATMEM_HASH
-#~ else
-	#~ echo "  (x) Already have $GNATMEM_VERSION"
-#~ fi
-
-#~ if [ ! -f $AUNIT_VERSION.tar.gz ]; then
-    #~ echo "  >> Downloading $AUNIT_VERSION..."
-    #~ wget -c -O $AUNIT_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$AUNIT_HASH
-#~ else
-	#~ echo "  (x) Already have $AUNIT_VERSION"
-#~ fi
-
-#~ if [ $GNATCOLL_GIT = "y" ]; then
-    #~ echo "  >> Downloading GNATColl..."
-
-    #~ cd $SRC
-
-    #~ if [ ! -d gnatcoll ]; then
-	#~ git clone $GNATCOLL_REPO
-    #~ else
-	#~ cd gnatcoll
-	#~ git pull
-	#~ cd ..
-    #~ fi
-
-    #~ cd $ARC
-#~ else
-    #~ if [ ! -f $GNATCOLL_VERSION.tar.gz ]; then
-	#~ echo "  >> Downloading $GNATCOLL_VERSION..."
-	#~ wget -c -O $GNATCOLL_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$GNATCOLL_HASH
-    #~ else
-	#~ echo "  (x) Already have $GNATCOLL_VERSION"
-    #~ fi
-#~ fi
-
-#~ if [ ! -f $POLYORB_VERSION.tar.gz ]; then
-    #~ echo "  >> Downloading $POLYORB_VERSION..."
-    #~ wget -c -O $POLYORB_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$POLYORB_HASH
-#~ else
-	#~ echo "  (x) Already have $POLYORB_VERSION"
-#~ fi
-
-#~ if [ ! -f $FLORIST_VERSION.tar.gz ]; then
-    #~ echo "  >> Downloading $FLORIST_VERSION..."
-    #~ wget -c -O $FLORIST_VERSION.tar.gz http://mirrors.cdn.adacore.com/art/$FLORIST_HASH
-#~ else
-	#~ echo "  (x) Already have $FLORIST_VERSION"
-#~ fi
-
-#~ if [ $GPS_GIT = "y" ]; then
-    #~ echo "  >> Downloading GPS..."
-
-    #~ if [ ! -d gps ]; then
-	#~ git clone $GPS_REPO
-    #~ else
-	#~ cd gps
-	#~ git pull
-	#~ cd ..
-    #~ fi
-
-    #~ cd $ARC
-#~ fi
-
-# Other Libraries/Tools ###########################################################
-
-#~ if [ ! -f matreshka-$MATRESHKA_VERSION.tar.gz ]; then
-    #~ echo "  >> Downloading matreshka-$MATRESHKA_VERSION..."
-    #~ wget -c $MATRESHKA_MIRROR/matreshka-$MATRESHKA_VERSION.tar.gz
-#~ else
-	#~ echo "  (x) Already have matreshka-$MATRESHKA_VERSION"
-#~ fi
+# download_adacore_cdn_package "GPRBUILD"
+download_adacore_cdn_package "XMLADA"
+# download_adacore_cdn_package "GNATCOLL"
+# download_adacore_cdn_package "ASIS"
 
 #################################################################################
 # Unpack the downloaded archives.
@@ -419,9 +327,13 @@ cd $SRC
 cd $GCC_DIR
 if [ ! -f .patched ]; then
     cd gcc/ada
-    patch -p0 < $FILES/$GCC_DIR/finalization_size.patch
 
-    check_error .patched
+    # Make sure there is a directory of patches.
+    if [ -d $FILES/$GCC_DIR ]; then
+        patch -p0 < $FILES/$GCC_DIR/finalization_size.patch
+
+        check_error .patched
+    fi
 fi
 cd $SRC
 
@@ -430,8 +342,12 @@ download_unpack_package "ISL" "j"
 
 download_unpack_package "PYTHON" "J"
 
-download_unpack_package "GNATCOLL" "z"
-download_unpack_package "ASIS" "z"
+# download_unpack_package "GPRBUILD" "z"
+# apply_patches "GPRBUILD"
+
+# download_unpack_package "XMLADA" "z"
+# download_unpack_package "GNATCOLL" "z"
+# download_unpack_package "ASIS" "z"
 
 
 # if [ ! -d gcc ]; then
@@ -448,37 +364,26 @@ download_unpack_package "ASIS" "z"
 
 download_git_package "GPRBUILD"
 download_git_package "XMLADA"
-#download_git_package "GNATCOLL"
-download_git_package "GTKADA"
+download_git_package "GNATCOLL_CORE"
+download_git_package "GNATCOLL_BINDINGS"
+
+# Remove the link lib iconv as this is in glibc
+if [ ! -f .gnatcoll-bindings-commented-out-iconv ]; then
+    sed -i '51,58 {s/^/--/}' gnatcoll-bindings/iconv/gnatcoll_iconv.gpr
+    sed -i '98,100 {s/^/--/}' gnatcoll-bindings/iconv/gnatcoll_iconv.gpr
+
+    check_error .gnatcoll-bindings-commented-out-iconv
+fi
+
+download_git_package "GNATCOLL_DB"
+
 download_git_package "LANGKIT"
+apply_patches "LANGKIT"
+
 download_git_package "LIBADALANG"
-download_git_package "GPS"
+download_git_package "LIBADALANG_TOOLS"
 
-#~ if [ $GPRBUILD_GIT = "y" ]; then
-    #~ if [ -d gprbuild ] && [ ! -f .patched ]; then
-	#~ cd gprbuild
-
-	#~ exists=`git show-ref refs/heads/$GPRBUILD_GIT_BRANCH`
-
-	#~ if [ -n "$exists" ]; then
-	    #~ # Just make sure this is the right branch.
-	    #~ git co $GPRBUILD_GIT_BRANCH
-	#~ else
-	    #~ # Make the branch and patch it.
-	    #~ echo "  >> Patching GPRBuild for GCC-$GCC_VERSION..."
-	    #~ git co -b $GPRBUILD_GIT_BRANCH $GPRBUILD_GIT_REMOTE_BRANCH
-
-	    #~ for f in $FILES/gprbuild/$GCC_VERSION/*; do
-		#~ #git apply -p 1 $f
-		#~ git am $f
-		#~ check_error_exit
-	    #~ done
-
-	    #~ check_error .patched
-	#~ fi
-
-	#~ cd ..
-    #~ fi
-#~ fi
-
-
+# download_git_package "GTKADA"
+# download_git_package "LANGKIT"
+# download_git_package "LIBADALANG"
+# download_git_package "GPS"
