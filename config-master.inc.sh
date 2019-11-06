@@ -286,6 +286,11 @@ export LIBADALANG_GIT="${ADACORE_GITHUB}/libadalang.git"
 export LIBADALANG_BRANCH="stable"
 export LIBADALANG_COMMIT="85539c5896f5841b5b8d5007354f5bdc73663f83"
 
+export LIBADALANG_TOOLS_DIR="libadalang-tools"
+export LIBADALANG_TOOLS_GIT="${ADACORE_GITHUB}/libadalang-tools.git"
+export LIBADALANG_TOOLS_BRANCH="master"
+export LIBADALANG_TOOLS_COMMIT="3c25ee812ceb1d944f8031235e72af98aa4ee8ea"
+
 export GNAT_UTIL_DIR=gnat_util
 
 export ASIS_GPL_YEAR=2016

@@ -1115,14 +1115,82 @@ function libadalang()
     fi
 
     if [ ! -f .make-install ]; then
-        echo "  >> [5/$TASK_COUNT_TOTAL] Installing LibAdaLang (Native)..."
+        echo "  >> [5/$TASK_COUNT_TOTAL] Installing LibAdaLang ($3)..."
 
         tar -xjpf $PKG/$PROJECT-$1-$LIBADALANG_DIR.tbz2 -C $INSTALL_BASE_DIR
 
         check_error .make-install
     fi
 
-    echo "  >> LibAdaLang (Native) Installed"
+    echo "  >> LibAdaLang ($3) Installed"
+}
+
+# $1 - Host triple
+# $2 - Build triple
+# $3 - Target triple
+function libadalang_tools()
+{
+	local TASK_COUNT_TOTAL=4
+ 	VER="$build_type/$3"
+	#DIRS="$LIBADALANG_TOOLS_DIR"
+	LOGPRE=$LOG/$VER
+	OBD=$BLD/$VER
+
+    echo "  >> Creating Directories (if needed)..."
+
+    cd $OBD
+
+    if [ ! -f .libadalang-tools-copied ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Copying LibAdaLang due to not being able to specify a build directory ($3)..."
+
+        cp -Ra $SRC/$LIBADALANG_TOOLS_DIR .
+
+        check_error .libadalang-tools-copied
+    fi
+
+    cd $OBD/$LIBADALANG_TOOLS_DIR
+
+    if [ ! -f .make ]; then
+        echo "  >> [2/$TASK_COUNT_TOTAL] Building LibAdaLang Tools ($3)..."
+
+        make BUILD_MODE=prod LIBRARY_TYPE=relocatable PROCESSORS=${JOBS_NUM} &> $LOGPRE/$LIBADALANG_TOOLS_DIR-make.txt
+
+        check_error .make
+    fi
+
+    if [ ! -f .make-pkg-stage ]; then
+        echo "  >> [3/$TASK_COUNT_TOTAL] Packaging LibAdaLang Tools ($3)..."
+
+        mkdir -p $STAGE_BASE_DIR$INSTALL_DIR/bin
+
+        for program in gnatpp gnatmetric gnatstub
+        do
+            install -m755 bin/$program "$STAGE_BASE_DIR$INSTALL_DIR/bin/"
+        done
+
+        check_error .make-pkg-stage
+
+        if [ ! -f .make-pkg ]; then
+            cd $STAGE_DIR
+
+            tar -cjpf $PKG/$PROJECT-$1-$LIBADALANG_TOOLS_DIR.tbz2 .
+
+            check_error $OBD/$LIBADALANG_TOOLS_DIR/.make-pkg
+
+            cd $OBD/$LIBADALANG_TOOLS_DIR
+            rm -rf /tmp/opt
+        fi
+    fi
+
+    if [ ! -f .make-install ]; then
+        echo "  >> [4/$TASK_COUNT_TOTAL] Installing LibAdaLang Tools ($3)..."
+
+        tar -xjpf $PKG/$PROJECT-$1-$LIBADALANG_TOOLS_DIR.tbz2 -C $INSTALL_BASE_DIR
+
+        check_error .make-install
+    fi
+
+    echo "  >> LibAdaLang Tools ($3) Installed"
 }
 
 
