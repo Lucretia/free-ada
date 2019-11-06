@@ -228,9 +228,6 @@ export GPL_YEAR=2018
 #export ASIS_VERSION=asis-gpl-$GPL_YEAR-src
 #export GNATMEM_HASH=6de65bb7e300e299711f90396710ace741123656
 #export GNATMEM_VERSION=gnatmem-gpl-$GPL_YEAR-src
-#export AUNIT_HASH=43f6630248c40941c77be5c06571000925764bbb
-#export AUNIT_VERSION=aunit-gpl-$GPL_YEAR-src
-#export AUNIT_DIR=aunit-3.7.0w-src
 #export POLYORB_HASH=22f27fec50a9c2b92be2e10aa5027eb49567787c
 #export POLYORB_VERSION=polyorb-gpl-$GPL_YEAR-src
 #export POLYORB_DIR=polyorb-$GPL_YEAR-src
@@ -290,6 +287,11 @@ export LIBADALANG_TOOLS_DIR="libadalang-tools"
 export LIBADALANG_TOOLS_GIT="${ADACORE_GITHUB}/libadalang-tools.git"
 export LIBADALANG_TOOLS_BRANCH="master"
 export LIBADALANG_TOOLS_COMMIT="3c25ee812ceb1d944f8031235e72af98aa4ee8ea"
+
+export AUNIT_DIR="aunit"
+export AUNIT_GIT="${ADACORE_GITHUB}/aunit.git"
+export AUNIT_BRANCH="master"
+export AUNIT_COMMIT="fd9801b79b56f5dd55ab1e6500f16daf5dd12fc9"
 
 export GNAT_UTIL_DIR=gnat_util
 
