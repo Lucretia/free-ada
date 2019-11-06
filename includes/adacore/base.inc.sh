@@ -793,14 +793,14 @@ function gnatcoll_db_sqlite2ada()
     fi
 
     if [ ! -f .make-install-sqlite2ada ]; then
-        echo "  >> [3/$TASK_COUNT_TOTAL] Installing GNATColl-DB ($3)..."
+        echo "  >> [3/$TASK_COUNT_TOTAL] Installing GNATColl-DB - SQLite2Ada ($3)..."
 
         tar -xjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-sqlite2ada.tbz2 -C $INSTALL_BASE_DIR
 
         check_error .make-install-sqlite2ada
     fi
 
-    echo "  >> GNATColl-DB ($3) Installed"
+    echo "  >> GNATColl-DB - SQLite2Ada ($3) Installed"
 }
 
 # $1 - Host triple
