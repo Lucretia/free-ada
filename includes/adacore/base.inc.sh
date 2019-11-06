@@ -1193,6 +1193,71 @@ function libadalang_tools()
     echo "  >> LibAdaLang Tools ($3) Installed"
 }
 
+# $1 - Host triple
+# $2 - Build triple
+# $3 - Target triple
+function aunit()
+{
+	local TASK_COUNT_TOTAL=4
+ 	VER="$build_type/$3"
+	#DIRS="$AUNIT_DIR"
+	LOGPRE=$LOG/$VER
+	OBD=$BLD/$VER
+
+    echo "  >> Creating Directories (if needed)..."
+
+    cd $OBD
+
+    if [ ! -f .aunit-copied ]; then
+        echo "  >> [1/$TASK_COUNT_TOTAL] Copying AUnit due to broken Makefile ($3)..."
+
+        cp -Ra $SRC/$AUNIT_DIR .
+
+        check_error .aunit-copied
+    fi
+
+    cd $OBD/$AUNIT_DIR
+
+    if [ ! -f .make ]; then
+        echo "  >> [2/$TASK_COUNT_TOTAL] Building AUnit ($3)..."
+        
+        make all $JOBS &> $LOGPRE/$AUNIT_DIR-make.txt
+
+        check_error .make
+    fi
+
+    if [ ! -f .make-pkg-stage ]; then
+        echo "  >> [3/$TASK_COUNT_TOTAL] Packaging AUnit ($3)..."
+        
+        # Easier than patching the makefile.
+        gprinstall -p -f --prefix=$STAGE_BASE_DIR$INSTALL_DIR -XMODE=Install -XRUNTIME=full -XPLATFORM=native --no-build-var \
+            lib/gnat/aunit.gpr &> $LOGPRE/$AUNIT_DIR-pkg.txt
+
+        check_error .make-pkg-stage
+
+        if [ ! -f .make-pkg ]; then
+            cd $STAGE_DIR
+
+            tar -cjpf $PKG/$PROJECT-$1-$AUNIT_DIR.tbz2 .
+
+            check_error $OBD/$AUNIT_DIR/.make-pkg
+
+            cd $OBD/$AUNIT_DIR
+            rm -rf /tmp/opt
+        fi
+    fi
+
+    if [ ! -f .make-install ]; then
+        echo "  >> [4/$TASK_COUNT_TOTAL] Installing AUnit ($3)..."
+
+        tar -xjpf $PKG/$PROJECT-$1-$AUNIT_DIR.tbz2 -C $INSTALL_BASE_DIR
+
+        check_error .make-install
+    fi
+
+    echo "  >> AUnit ($3) Installed"
+}
+
 
 ################################################################################
 # This function builds a version of libgnat_util using AdaCore's GPL'd
