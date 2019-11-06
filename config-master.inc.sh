@@ -20,7 +20,7 @@ export PROJECT_NAME=free-ada
 # PROJECT variable.
 # TODO: Put in a check when building cross compilers.
 ################################################################################
-export PROJECT=$PROJECT_NAME-8.3.0
+export PROJECT=$PROJECT_NAME-9.2.0
 
 ################################################################################
 # INSTALL_BASE_DIR - This is where tar needs to change directory to.
@@ -148,7 +148,7 @@ export GCC_RELEASE=y
 export GCC_TESTS=n
 
 if [ $GCC_RELEASE == "y" ]; then
-    export GCC_VERSION=8.3.0 # filename version
+    export GCC_VERSION=9.2.0 # filename version
     export GCC_SRC_VERSION=$GCC_VERSION # extracted version, change if different
     export GCC_MIRROR=ftp://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-$GCC_VERSION
     export GCC_TARBALL=gcc-$GCC_VERSION.tar.xz
@@ -228,9 +228,6 @@ export GPL_YEAR=2018
 #export ASIS_VERSION=asis-gpl-$GPL_YEAR-src
 #export GNATMEM_HASH=6de65bb7e300e299711f90396710ace741123656
 #export GNATMEM_VERSION=gnatmem-gpl-$GPL_YEAR-src
-#export AUNIT_HASH=43f6630248c40941c77be5c06571000925764bbb
-#export AUNIT_VERSION=aunit-gpl-$GPL_YEAR-src
-#export AUNIT_DIR=aunit-3.7.0w-src
 #export POLYORB_HASH=22f27fec50a9c2b92be2e10aa5027eb49567787c
 #export POLYORB_VERSION=polyorb-gpl-$GPL_YEAR-src
 #export POLYORB_DIR=polyorb-$GPL_YEAR-src
@@ -290,6 +287,11 @@ export LIBADALANG_TOOLS_DIR="libadalang-tools"
 export LIBADALANG_TOOLS_GIT="${ADACORE_GITHUB}/libadalang-tools.git"
 export LIBADALANG_TOOLS_BRANCH="master"
 export LIBADALANG_TOOLS_COMMIT="3c25ee812ceb1d944f8031235e72af98aa4ee8ea"
+
+export AUNIT_DIR="aunit"
+export AUNIT_GIT="${ADACORE_GITHUB}/aunit.git"
+export AUNIT_BRANCH="master"
+export AUNIT_COMMIT="fd9801b79b56f5dd55ab1e6500f16daf5dd12fc9"
 
 export GNAT_UTIL_DIR=gnat_util
 
