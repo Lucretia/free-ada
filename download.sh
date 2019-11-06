@@ -381,6 +381,7 @@ download_git_package "LANGKIT"
 apply_patches "LANGKIT"
 
 download_git_package "LIBADALANG"
+download_git_package "LIBADALANG_TOOLS"
 
 # download_git_package "GTKADA"
 # download_git_package "LANGKIT"
