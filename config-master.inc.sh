@@ -180,7 +180,7 @@ export GMP_DIR=gmp-$GMP_VERSION
 #export MPC_VERSION=0.8.1
 #export MPC_VERSION=1.0.2
 export MPC_VERSION=1.0.3
-export MPC_MIRROR=http://www.multiprecision.org/mpc/download
+export MPC_MIRROR=https://ftp.gnu.org/gnu/mpc
 export MPC_TARBALL=mpc-$MPC_VERSION.tar.gz
 export MPC_DIR=mpc-$MPC_VERSION
 
