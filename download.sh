@@ -302,7 +302,7 @@ cd mpfr-$MPFR_VERSION
 
 if [ ! -v $MPFR_PATCHES ] && [ ! -f .patched ]; then
 	echo "  >> Downloading mpfr-$MPFR_VERSION patches..."
-	wget -c $MPFR_PATCHES
+	wget -c $MPFR_PATCHES -O allpatches
 	check_error_exit
 
 	mv allpatches ../mpfr-$MPFR_VERSION.patch

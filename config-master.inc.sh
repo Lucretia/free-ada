@@ -199,7 +199,7 @@ export MPC_DIR=mpc-$MPC_VERSION
 #export MPFR_VERSION=3.1.2
 export MPFR_VERSION=3.1.5
 export MPFR_MIRROR=https://www.mpfr.org/mpfr-3.1.5/
-export MPFR_PATCHES=http://mpfr.loria.fr/mpfr-current/allpatches
+export MPFR_PATCHES="https://gforge.inria.fr/scm/viewvc.php/mpfr/misc/www/mpfr-3.1.5/allpatches?view=co"
 export MPFR_TARBALL=mpfr-$MPFR_VERSION.tar.xz
 export MPFR_DIR=mpfr-$MPFR_VERSION
 
