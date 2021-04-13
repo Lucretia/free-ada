@@ -28,7 +28,7 @@ function gpr_bootstrap()
 
     if [ ! -f .gprbuild_strap ]; then
         echo "  >> [1/$TASK_COUNT_TOTAL] Building and installing GPRBuild bootstrap ($1)..."
-        
+
         $SRC/$GPRBUILD_DIR/bootstrap.sh --srcdir=$SRC/$GPRBUILD_DIR --with-xmlada=$SRC/$XMLADA_DIR --prefix=$INSTALL_DIR &> $LOGPRE/$GPRBUILD_DIR-strap.txt
 
         check_error .gprbuild_strap
@@ -78,7 +78,7 @@ function xmlada()
 
     if [ ! -f .make ]; then
         echo "  >> [3/$TASK_COUNT_TOTAL] Building XMLAda ($3)..."
-        
+
         make all $JOBS &> $LOGPRE/$XMLADA_DIR-make.txt
 
         check_error .make
@@ -86,7 +86,7 @@ function xmlada()
 
     if [ ! -f .make-pkg-stage ]; then
         echo "  >> [4/$TASK_COUNT_TOTAL] Packaging XMLAda ($3)..."
-        
+
         make install &> $LOGPRE/$XMLADA_DIR-pkg.txt
 
         check_error .make-pkg-stage
@@ -119,6 +119,7 @@ function xmlada()
 # $3 - Target triple
 function build_gprbuild()
 {
+    # echo -e "build_gprbuild - $1\t$2\t$3"
 	local TASK_COUNT_TOTAL=4
  	VER="$build_type/$3"
 	DIRS="$GPRBUILD_DIR"
@@ -137,7 +138,7 @@ function build_gprbuild()
     cd $OBD/$GPRBUILD_DIR
 
     MAKEFILE=$SRC/$GPRBUILD_DIR/Makefile
-    
+
     if [ ! -f .config ]; then
         echo "  >> [1/$TASK_COUNT_TOTAL] Configuring GPRBuild ($3)..."
 
@@ -145,31 +146,31 @@ function build_gprbuild()
         # Make using a single job (-j1) to avoid the same file being compiled at the same time.
         make -f $MAKEFILE \
             -j1 \
-            prefix=$INSTALL_DIR \
-            SOURCE_DIR=$SRC/$GPRBUILD_DIR \
+            prefix=${INSTALL_DIR} \
+            SOURCE_DIR=${SRC}/${GPRBUILD_DIR} \
             ENABLE_SHARED="yes" \
             BUILD=production \
-            TARGET=$3 \
-            setup &> $LOGPRE/$GPRBUILD_DIR-config.txt
+            TARGET=${3} \
+            setup &> ${LOGPRE}/${GPRBUILD_DIR}-config.txt
 
         check_error .config
     fi
 
     if [ ! -f .make ]; then
         echo "  >> [2/$TASK_COUNT_TOTAL] Building GPRBuild ($3)..."
-        
-        make -f $MAKEFILE \
+
+        GPRBUILD="gprbuild -vh" make -f ${MAKEFILE} --debug=v \
             -j1 \
             BUILD=production \
             GPRBUILD_OPTIONS=-R \
-            all libgpr.build &> $LOGPRE/$GPRBUILD_DIR-make.txt
+            all libgpr.build &> ${LOGPRE}/${GPRBUILD_DIR}-make.txt
 
         check_error .make
     fi
 
     if [ ! -f .make-pkg-stage ]; then
         echo "  >> [3/$TASK_COUNT_TOTAL] Packaging GPRBuild ($3)..."
-        
+
         LD_LIBRARY_PATH=$(pwd)/gpr/lib/production/relocatable:$LD_LIBRARY_PATH \
             make -f $MAKEFILE \
                 prefix=$STAGE_BASE_DIR$INSTALL_DIR \
@@ -195,9 +196,9 @@ function build_gprbuild()
 
     if [ ! -f .make-install ]; then
         echo "  >> [4/$TASK_COUNT_TOTAL] Installing GPRBuild ($3)..."
-        
+
         tar -xjpf $PKG/$PROJECT-$1-$GPRBUILD_DIR.tbz2 -C $INSTALL_BASE_DIR
-        
+
         check_error .make-install
     fi
 
@@ -291,20 +292,21 @@ function gnatcoll_build_component()
     declare -a BUILD_TYPES="relocatable"
 
     for gc_type in ${BUILD_TYPES[@]}; do
-        gprbuild -P ${2} -XBUILD=PROD -XLIBRARY_TYPE=${gc_type} -p ${GNATCOLL_LINKER_FLAGS} &> ${LOGPRE}/${4}-${gc_type}-make.txt
+        gprbuild -P ${2} -XBUILD=PROD -XLIBRARY_TYPE=${gc_type} ${1} -p ${GNATCOLL_LINKER_FLAGS} &> ${LOGPRE}/${4}-${gc_type}-make.txt
     done
 }
 
 # $1 - Prefix
 # $2 - GPR file
 # $3 - Name
+# $4 - Env vars
 function gnatcoll_install_component()
 {
     # declare -a BUILD_TYPES="static static-pic relocatable"
     declare -a BUILD_TYPES="relocatable"
 
     for gc_type in ${BUILD_TYPES[@]}; do
-        gprinstall -f --prefix=${1} -P ${2} -XBUILD=PROD -XLIBRARY_TYPE=${gc_type} -p &> ${LOGPRE}/${3}-${gc_type}-pkg.txt
+        gprinstall -f --prefix=${1} -P ${2} -XBUILD=PROD -XLIBRARY_TYPE=${gc_type} ${4} -p &> ${LOGPRE}/${3}-${gc_type}-pkg.txt
     done
 }
 
@@ -349,7 +351,13 @@ function gnatcoll_bindings()
         if [ ! -f .make-iconv ]; then
             echo "  >> [2.2/$TASK_COUNT_TOTAL] Building GNATColl-Bindings - IConv ($3)..."
 
-            gnatcoll_build_component "" "iconv/gnatcoll_iconv.gpr" "" "${GNATCOLL_BINDINGS_DIR}-iconv"
+            local ENV_VARS=""
+
+            if [ $(uname -s) == "Linux" ]; then
+                ENV_VARS='-XGNATCOLL_ICONV_OPT='
+            fi
+
+            gnatcoll_build_component ${ENV_VARS} "iconv/gnatcoll_iconv.gpr" "" "${GNATCOLL_BINDINGS_DIR}-iconv"
 
             check_error .make-iconv
         fi
@@ -439,7 +447,11 @@ function gnatcoll_bindings()
         if [ ! -f .make-pkg-stage-iconv ]; then
             echo "  >> [2.2/$TASK_COUNT_TOTAL] Packaging GNATColl-Bindings - IConv ($3)..."
 
-            gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "iconv/gnatcoll_iconv.gpr" "${GNATCOLL_BINDINGS_DIR}-iconv"
+            if [ $(uname -s) == "Linux" ]; then
+                ENV_VARS='-XGNATCOLL_ICONV_OPT='
+            fi
+
+            gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "iconv/gnatcoll_iconv.gpr" "${GNATCOLL_BINDINGS_DIR}-iconv" "${ENV_VARS}"
 
             check_error .make-pkg-stage-iconv
         fi
@@ -469,7 +481,7 @@ function gnatcoll_bindings()
         if [ ! -f .make-pkg-stage-python ]; then
             echo "  >> [2.5/$TASK_COUNT_TOTAL] Packaging GNATColl-Bindings - Python ($3)..."
 
-            gnatcoll_build_component "$STAGE_BASE_DIR$INSTALL_DIR" "python/gnatcoll_python.gpr" "${GNATCOLL_BINDINGS_DIR}-python"
+            gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "python/gnatcoll_python.gpr" "${GNATCOLL_BINDINGS_DIR}-python"
 
             check_error .make-pkg-stage-python
         fi
@@ -878,7 +890,7 @@ function gnatcoll_db_xref()
 
     # Staging area.
     if [ ! -f .make-pkg-stage-xref ]; then
-        echo "  >> [2/$TASK_COUNT_TOTAL] Building GNATColl-DB - XRef ($3)..."
+        echo "  >> [2/$TASK_COUNT_TOTAL] Installing GNATColl-DB - XRef ($3)..."
 
         gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "xref/gnatcoll_xref.gpr" "${GNATCOLL_DB_DIR}-xref"
 
@@ -897,7 +909,7 @@ function gnatcoll_db_xref()
     fi
 
     if [ ! -f .make-install-xref ]; then
-        echo "  >> [3/$TASK_COUNT_TOTAL] Installing GNATColl-DB - XRef ($3)..."
+        echo "  >> [3/$TASK_COUNT_TOTAL] Packaging GNATColl-DB - XRef ($3)..."
 
         tar -xjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-xref.tbz2 -C $INSTALL_BASE_DIR
 
@@ -930,7 +942,7 @@ function gnatcoll_db_gnatinspect()
 
     # Staging area.
     if [ ! -f .make-pkg-stage-gnatinspect ]; then
-        echo "  >> [2/$TASK_COUNT_TOTAL] Building GNATColl-DB - GNATInspect ($3)..."
+        echo "  >> [2/$TASK_COUNT_TOTAL] Installing GNATColl-DB - GNATInspect ($3)..."
 
         gnatcoll_install_component "$STAGE_BASE_DIR$INSTALL_DIR" "gnatinspect/gnatinspect.gpr" "${GNATCOLL_DB_DIR}-gnatinspect"
 
@@ -949,7 +961,7 @@ function gnatcoll_db_gnatinspect()
     fi
 
     if [ ! -f .make-install-gnatinspect ]; then
-        echo "  >> [3/$TASK_COUNT_TOTAL] Installing GNATColl-DB - GNATInspect ($3)..."
+        echo "  >> [3/$TASK_COUNT_TOTAL] Packaging GNATColl-DB - GNATInspect ($3)..."
 
         tar -xjpf $PKG/$PROJECT-$1_$2_$3-$GNATCOLL_DB_DIR-gnatinspect.tbz2 -C $INSTALL_BASE_DIR
 
@@ -1088,7 +1100,7 @@ function libadalang()
         python2.7 ada/manage.py --no-langkit-support generate --no-pretty-print &> $LOGPRE/$LIBADALANG_DIR-make-generate.txt
 
         check_error .make-generate
-        
+
         python2.7 ada/manage.py --library-types relocatable --no-langkit-support build --build-mode=prod --gargs="-R --config=$PWD/config.cgpr" \
             &> $LOGPRE/$LIBADALANG_DIR-make.txt
 
@@ -1220,7 +1232,7 @@ function aunit()
 
     if [ ! -f .make ]; then
         echo "  >> [2/$TASK_COUNT_TOTAL] Building AUnit ($3)..."
-        
+
         make all $JOBS &> $LOGPRE/$AUNIT_DIR-make.txt
 
         check_error .make
@@ -1228,7 +1240,7 @@ function aunit()
 
     if [ ! -f .make-pkg-stage ]; then
         echo "  >> [3/$TASK_COUNT_TOTAL] Packaging AUnit ($3)..."
-        
+
         # Easier than patching the makefile.
         gprinstall -p -f --prefix=$STAGE_BASE_DIR$INSTALL_DIR -XMODE=Install -XRUNTIME=full -XPLATFORM=native --no-build-var \
             lib/gnat/aunit.gpr &> $LOGPRE/$AUNIT_DIR-pkg.txt
