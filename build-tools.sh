@@ -17,46 +17,9 @@ export TOP=`pwd`
 export INC=$TOP/includes
 
 ########################################################################################################################
-# Find out what platform we are on using the GCC config.guess script.
-########################################################################################################################
-#export HOST=$($SRC/gcc-$GCC_VERSION/config.guess)
-
-########################################################################################################################
-# What OS are we on? e.g. Linux, Darwin, MSYS_*
-# N.B: Don't call is OS because gprbuild.gpr grabs the variable.
-# TODO: Need to get the correct Darwin version!
-# Cannot rely on GCC config.guess script giving the correct value, gives x86_64-unknown-linux-gnu insteaed of
-# x86_64-pc-linux-gnu!
-#
-# N.B: Do not rename this variable to OS, it conflicts with a variable inside GPRBuild's gpr file.
-########################################################################################################################
-export THIS_OS=`uname -s`
-
-########################################################################################################################
-# What archtecture is this? e.g. x86_64, i686
-########################################################################################################################
-export CPU=`uname -m`
-
-########################################################################################################################
-# Find out what platform we are on.
-########################################################################################################################
-case $THIS_OS in
-    "Linux")
-        HOST="${CPU}-pc-linux-gnu"
-        ;;
-    "Darwin")
-        HOST="${CPU}-apple-darwin15"
-        ;;
-    "MSYS*")
-        ;;
-esac
-
-# As default, set the build system to the host, i.e. either native or cross build.
-BUILD=$HOST
-
-########################################################################################################################
 # Incudes with common function declarations
 ########################################################################################################################
+source $INC/build_triple.inc.sh
 source $INC/version.inc.sh
 source $INC/errors.inc.sh
 source $INC/arithmetic.inc.sh
@@ -99,7 +62,7 @@ $COPYRIGHT
 
 Automate the build of compiler toolchains.
 
-Usage: $0 [-t] TARGET
+Usage: $0 [-t] TARGET_TRIPLE
 
 Options:
 
@@ -109,7 +72,7 @@ Options:
 
                       Valid values for TARGET
                       -----------------------
-                       1  - ${HOST}                (This platform - native build)
+                       1  - ${BUILD_TRIPLE}        (This platform - native build)
                        2  - arm-none-eabi          (Generic boards)
                        3  - aarch64-unknown-elf    (Generic boards)
                        4  - mips-elf               (Generic boards)"
@@ -155,22 +118,23 @@ case "$1" in
                 # TODO: build_type: native, cross, canadian
                 build_type="native"
                 variant=""
-                TARGET=$HOST
+                HOST_TRIPLE=${BUILD_TRIPLE}
+                TARGET_TRIPLE=${BUILD_TRIPLE}
                 ;;
             2)
                 build_type="cross"
                 variant="bare"
-                TARGET="arm-none-eabi"
+                TARGET_TRIPLE="arm-none-eabi"
                 ;;
             3)
                 build_type="cross"
                 variant="bare"
-                TARGET="aarch64-unknown-elf"
+                TARGET_TRIPLE="aarch64-unknown-elf"
                 ;;
             4)
                 build_type="cross"
                 variant="bare"
-                TARGET="mips-elf"
+                TARGET_TRIPLE="mips-elf"
                 ;;
 #            3)
 #                build_type="i586-elf"
@@ -293,54 +257,61 @@ fi
 # in $INSTALL_DIR/bin if the OS doesn't already have one available.
 # If neither of the two have a toolchain, we must use the bootstrap.
 ########################################################################################################################
-export PATH=$INSTALL_DIR/bin:$PATH
+export PATH=${INSTALL_DIR}/bin:$(bootstrap_path)/bin:${PATH}
 # export LD_LIBRARY_PATH=$INSTALL_DIR/lib$BITS:$INSTALL_DIR/lib:$($INSTALL_DIR/bin/gnatls -v | grep adalib | xargs):$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=$INSTALL_DIR/lib$BITS:$INSTALL_DIR/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=${INSTALL_DIR}/lib${BITS}:${INSTALL_DIR}/lib:$(bootstrap_path)/lib:$(bootstrap_path)/lib${BITS}:${LD_LIBRARY_PATH}
 
-echo "PATH - $PATH"
-echo "LD_LIBRARY_PATH - $LD_LIBRARY_PATH"
+# echo "PATH            - ${PATH}"
+# echo "LD_LIBRARY_PATH - ${LD_LIBRARY_PATH}"
 
 ################################################################################
 # Display some build configuration details
 ################################################################################
 
+# Failsafe, check that GNAT is available in some form and exit otherwise.
+if ! command -v gnat >/dev/null 2>&1; then
+    echo -e "\nError! GNAT is still not available, check the bootstrap compiler."
+
+    exit 2;
+fi
+
 cd $TOP
 echo "  Directories"
 echo "  -----------"
-echo "  Toolchain     : " $(dirname $(command -v gnat))
+echo "  Using toolchain  : " $(dirname $(command -v gnat))
 
 if [[ "$variant" == "bare" ]]; then
-    echo "  Build Type    :  $build_type - bare metal build"
+    echo "  Build Type       :  $build_type - bare metal build"
 else
-    echo "  Build Type    : " $build_type
+    echo "  Build Type       : " $build_type
 fi
 
 #echo "  Multilib      : " $multilib_enabled
-echo "  Host          : " $HOST
-echo "  Build         : " $BUILD
-echo "  Target        : " $TARGET
-echo "  Source        : " $SRC
-echo "  Build         : " $BLD
-echo "  Log           : " $LOG
-echo "  Install dir   : " $INSTALL_DIR
-echo "  Stage base dir: " $STAGE_BASE_DIR
-echo "  Stage dir     : " $STAGE_DIR
-#echo "  GCC Source    : " $GCC_DIR
-#echo "  Cross         : " $CROSS_PREFIX
+echo "  Host             : " ${HOST_TRIPLE}
+echo "  Build            : " ${BUILD_TRIPLE}
+echo "  Target           : " ${TARGET_TRIPLE}
+echo "  Source           : " ${SRC}
+echo "  Build            : " ${BLD}
+echo "  Log              : " ${LOG}
+echo "  Install dir      : " ${INSTALL_DIR}
+echo "  Stage base dir   : " ${STAGE_BASE_DIR}
+echo "  Stage dir        : " ${STAGE_DIR}
+#echo "  GCC Source       : " $GCC_DIR
+#echo "  Cross            : " $CROSS_PREFIX
 echo ""
 echo "  Versions"
 echo "  --------"
-echo "  GMP           : " $GMP_VERSION
-echo "  MPFR          : " $MPFR_VERSION
-echo "  MPC           : " $MPC_VERSION
-echo "  ISL           : " $ISL_VERSION
-#echo "  NewLib        : " $NEWLIB_VERSION
-echo "  Binutils      : " $BINUTILS_SRC_VERSION
+echo "  GMP              : " ${GMP_VERSION}
+echo "  MPFR             : " ${MPFR_VERSION}
+echo "  MPC              : " ${MPC_VERSION}
+echo "  ISL              : " ${ISL_VERSION}
+#echo "  NewLib           : " ${NEWLIB_VERSION}
+echo "  Binutils         : " ${BINUTILS_SRC_VERSION}
 
 if [ $GCC_RELEASE == "y" ]; then
-    echo "  GCC           : " $GCC_VERSION
+    echo "  GCC              : " ${GCC_VERSION}
 else
-    echo "  GCC           :  GitHub"
+    echo "  GCC              :  GitHub"
 fi
 
 #~ if [ $GCC_JIT == "y" ]; then
@@ -349,9 +320,9 @@ fi
     #~ echo "  GCC JIT       :  Disabled"
 #~ fi
 
-echo "  GDB           : " $GDB_VERSION
+echo "  GDB              : " ${GDB_VERSION}
 
-echo "  Python        : " $PYTHON_VERSION
+echo "  Python           : " ${PYTHON_VERSION}
 
 #~ echo "  XMLAda        : " $GPL_YEAR
 #~ echo "  GPRBuild      : " $GPL_YEAR
@@ -366,9 +337,10 @@ echo "  Python        : " $PYTHON_VERSION
 
 #~ echo "  Matreshka     : " $MATRESHKA_VERSION
 
+echo ""
 echo "  Other information"
 echo "  -----------------"
-echo "  Parallelism   : " $JOBS
+echo "  Parallelism      : " ${JOBS}
 
 echo "Press ENTER to continue."
 
@@ -556,37 +528,37 @@ case "$build_type" in
         {
             time {
                 build_arithmetic_libs
-                binutils $HOST $BUILD $TARGET "--enable-multilib"
-                gcc $HOST $BUILD $TARGET \
+                binutils ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE} "--enable-multilib"
+                gcc ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE} \
                     "--enable-multilib --enable-threads=posix --enable-libgomp --with-libffi --enable-libsanitizer"
 
                 # Add this here, caused a warning before.
                 export LD_LIBRARY_PATH=$($INSTALL_DIR/bin/gnatls -v | grep adalib | xargs):$LD_LIBRARY_PATH
 
-                python $HOST $BUILD $TARGET
+                python ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
                 install_python_packages
-                gdb $HOST $BUILD $TARGET
-                gpr_bootstrap $HOST
-                xmlada $HOST $BUILD $TARGET
-                build_gprbuild $HOST $BUILD $TARGET
-                gnatcoll_core $HOST $BUILD $TARGET
-                gnatcoll_bindings $HOST $BUILD $TARGET
+                gdb ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
+                gpr_bootstrap ${HOST_TRIPLE}
+                xmlada ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
+                build_gprbuild ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
+                gnatcoll_core ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
+                gnatcoll_bindings ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
                 gnatcoll_db
-                gnatcoll_db_sql $HOST $BUILD $TARGET
-                gnatcoll_db_sqlite $HOST $BUILD $TARGET
-                gnatcoll_db_postgres $HOST $BUILD $TARGET
-                gnatcoll_db_db2ada $HOST $BUILD $TARGET
-                gnatcoll_db_sqlite2ada $HOST $BUILD $TARGET
-                gnatcoll_db_postgres2ada $HOST $BUILD $TARGET
-                gnatcoll_db_xref $HOST $BUILD $TARGET
-                gnatcoll_db_gnatinspect $HOST $BUILD $TARGET
-                langkit $HOST $BUILD $TARGET
-                libadalang $HOST $BUILD $TARGET
-                libadalang_tools $HOST $BUILD $TARGET
-                aunit $HOST $BUILD $TARGET
+                gnatcoll_db_sql ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
+                gnatcoll_db_sqlite ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
+                gnatcoll_db_postgres ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
+                gnatcoll_db_db2ada ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
+                gnatcoll_db_sqlite2ada ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
+                gnatcoll_db_postgres2ada ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
+                gnatcoll_db_xref ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
+                gnatcoll_db_gnatinspect ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
+                langkit ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
+                libadalang ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
+                libadalang_tools ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
+                aunit ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
                 exit 0
-                gnat_util $HOST $BUILD $TARGET
-                asis $HOST $BUILD $TARGET
+                gnat_util ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
+                asis ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE}
                 #~ build_native_toolchain;
             }
         }
@@ -595,9 +567,9 @@ case "$build_type" in
     cross)
         {
             time {
-                binutils $HOST $BUILD $TARGET \
+                binutils ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE} \
                     "--enable-multilib --enable-interwork --disable-shared --disable-threads"
-                gcc $HOST $BUILD $TARGET \
+                gcc ${HOST_TRIPLE} ${BUILD_TRIPLE} ${TARGET_TRIPLE} \
                     "--enable-multilib --enable-interwork --disable-shared --disable-threads --disable-lto --without-headers"
                 #build_bare_metal_cross_toolchain arm-none-eabi y y n;
             }

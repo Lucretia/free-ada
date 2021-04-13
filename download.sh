@@ -12,6 +12,7 @@ export TOP=`pwd`
 export INC=$TOP/includes
 
 # Incudes with common function declarations
+source $INC/build_triple.inc.sh
 source $INC/version.inc.sh
 source $INC/errors.inc.sh
 
@@ -138,7 +139,7 @@ function download_package()
 {
     local PKG="$1_TARBALL"
     local PKG_MIRROR="$1_MIRROR"
-    
+
     if [ ! -f ${!PKG} ]; then
         echo "  >> Downloading ${!PKG}..."
         wget -c ${!PKG_MIRROR}/${!PKG}
@@ -156,7 +157,7 @@ function download_git_package()
     local PKG_GIT="$1_GIT"
     local PKG_BRANCH="$1_BRANCH"
     local PKG_COMMIT="$1_COMMIT"
-    
+
     if [ ! -d ${!PKG_DIR} ]; then
         echo "  >> Downloading ${!PKG_DIR}..."
 
@@ -180,7 +181,7 @@ function download_adacore_cdn_package()
     local PKG="$1_TARBALL"
     local HASH="$1_HASH"
     local PKG_MIRROR="$1_MIRROR"
-    
+
     if [ ! -f ${!PKG} ]; then
         echo "  >> Downloading ${!PKG}..."
 
@@ -198,10 +199,10 @@ function download_unpack_package()
 {
     local PKG="$1_TARBALL"
     local PKG_DIR="$1_DIR"
-    
+
     if [ ! -d ${!PKG_DIR} ]; then
         echo "  >> Unpacking ${!PKG}..."
-        
+
         tar -x${2}pf $ARC/${!PKG}
 
         check_error_exit
@@ -268,7 +269,7 @@ download_adacore_cdn_package "XMLADA"
 # Unpack the downloaded archives.
 #################################################################################
 
-#bootstrap_install
+bootstrap_install
 
 cd $SRC
 

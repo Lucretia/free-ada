@@ -16,7 +16,7 @@ function build_arithmetic_libs()
 
 	# Constants
 	local TASK_COUNT_TOTAL=21
-	VER="$build_type/$TARGET"
+	VER="$build_type/${TARGET_TRIPLE}"
 	DIRS="$GMP_DIR $MPFR_DIR $MPC_DIR $ISL_DIR"
 	LOGPRE=$LOG/$VER
 	OBD=$BLD/$VER
@@ -50,7 +50,7 @@ function build_arithmetic_libs()
 
         check_error .config
 	fi
-    
+
 	if [ ! -f .make ]; then
 		echo "  >> [3/$TASK_COUNT_TOTAL] Building GMP..."
 

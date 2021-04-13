@@ -20,7 +20,7 @@ export PROJECT_NAME=free-ada
 # PROJECT variable.
 # TODO: Put in a check when building cross compilers.
 ################################################################################
-export PROJECT=$PROJECT_NAME-9.2.0
+export PROJECT=$PROJECT_NAME-9.3.0
 
 ################################################################################
 # INSTALL_BASE_DIR - This is where tar needs to change directory to.
@@ -38,12 +38,13 @@ STAGE_DIR=$STAGE_BASE_DIR$INSTALL_DIR/..
 ################################################################################
 # Basic directories we need.
 ################################################################################
-export SRC=$TOP/source
-export ARC=$TOP/archives
-export LOG=$TOP/build/logs
-export BLD=$TOP/build
-export PKG=$TOP/packages
-export FILES=$TOP/files
+export SRC=${TOP}/source
+export ARC=${TOP}/archives
+export LOG=${TOP}/build/logs
+export BLD=${TOP}/build
+export PKG=${TOP}/packages
+export FILES=${TOP}/files
+export BOOTSTRAPS=${TOP}/bootstraps
 
 ################################################################################
 # Date variable for packaging anything from source control.
@@ -136,7 +137,7 @@ export GDB_SRC_VERSION=8.3.1 # extracted version
 export GDB_MIRROR=ftp://www.mirrorservice.org/sites/ftp.gnu.org/gnu/gdb
 #export GDB_MIRROR=http://ftp.gnu.org/gnu/gdb
 export GDB_TARBALL=gdb-$GDB_VERSION.tar.xz
-export GDB_DIR=gdb-$GDB_SRC_VERSION 
+export GDB_DIR=gdb-$GDB_SRC_VERSION
 
 ################################################################################
 # GCC ##########################################################################
@@ -148,7 +149,7 @@ export GCC_RELEASE=y
 export GCC_TESTS=n
 
 if [ $GCC_RELEASE == "y" ]; then
-    export GCC_VERSION=9.2.0 # filename version
+    export GCC_VERSION=9.3.0 # filename version
     export GCC_SRC_VERSION=$GCC_VERSION # extracted version, change if different
     export GCC_MIRROR=ftp://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-$GCC_VERSION
     export GCC_TARBALL=gcc-$GCC_VERSION.tar.xz
@@ -171,18 +172,18 @@ fi
 # GMP (GNU Multiple Precision Arithmetic Library)
 #export GMP_VERSION=4.3.2
 #export GMP_VERSION=5.1.2
-export GMP_VERSION=6.1.2
-export GMP_MIRROR=ftp://ftp.gmplib.org/pub/gmp-$GMP_VERSION
-export GMP_TARBALL=gmp-$GMP_VERSION.tar.xz
-export GMP_DIR=gmp-$GMP_VERSION
+export GMP_VERSION="6.1.2"
+export GMP_MIRROR="https://gmplib.org/download/gmp"
+export GMP_TARBALL="gmp-${GMP_VERSION}.tar.xz"
+export GMP_DIR="gmp-${GMP_VERSION}"
 
 # MPC
 #export MPC_VERSION=0.8.1
 #export MPC_VERSION=1.0.2
-export MPC_VERSION=1.0.3
-export MPC_MIRROR=http://www.multiprecision.org/mpc/download
-export MPC_TARBALL=mpc-$MPC_VERSION.tar.gz
-export MPC_DIR=mpc-$MPC_VERSION
+export MPC_VERSION="1.0.3"
+export MPC_MIRROR="https://ftp.gnu.org/gnu/mpc"
+export MPC_TARBALL="mpc-${MPC_VERSION}.tar.gz"
+export MPC_DIR="mpc-${MPC_VERSION}"
 
 # MPFR (Multiple Precision Floating Point Computations With Correct Rounding)
 # Warning! Due to the fact that TLS support is now detected automatically, the
@@ -197,11 +198,11 @@ export MPC_DIR=mpc-$MPC_VERSION
 #export MPFR_MIRROR=http://www.mpfr.org/mpfr-$MPFR_VERSION
 #export MPFR_PATCHES=http://www.mpfr.org/mpfr-$MPFR_VERSION/allpatches
 #export MPFR_VERSION=3.1.2
-export MPFR_VERSION=3.1.5
-export MPFR_MIRROR=http://mpfr.loria.fr/mpfr-current
-export MPFR_PATCHES=http://mpfr.loria.fr/mpfr-current/allpatches
-export MPFR_TARBALL=mpfr-$MPFR_VERSION.tar.xz
-export MPFR_DIR=mpfr-$MPFR_VERSION
+export MPFR_VERSION="3.1.5" # "current"
+export MPFR_MIRROR="https://www.mpfr.org/mpfr-${MPFR_VERSION}"
+export MPFR_PATCHES="${MPFR_MIRROR}/allpatches"
+export MPFR_TARBALL="mpfr-${MPFR_VERSION}.tar.xz"
+export MPFR_DIR="mpfr-${MPFR_VERSION}"
 
 # ISL
 # The --with-isl configure option should be used if ISL is not installed in your
@@ -379,19 +380,6 @@ export AHVEN_DIR=ahven-$AHVEN_VERSION
 #BOOTSTRAP_VERSION=$(echo $GCC_VERSION | awk -F \. {'print $1"."$2'})
 #BOOTSTRAP_BASE_DIR=/tmp/free-ada-bootstrap
 #BOOTSTRAP_DIR=$BOOTSTRAP_BASE_DIR/usr
-
-#X86_64_BOOTSTRAP_TARBALL="gnatboot-${BOOTSTRAP_VERSION}-amd64.tar.xz"
-#X86_64_BOOTSTRAP_MIRROR="https://www.dropbox.com/s/8qz551so8xn4t9r/${X86_64_BOOTSTRAP_TARBALL}?dl=0"
-
-BOOTSTRAP_MIRROR="http://mirrors.cdn.adacore.com/art"
-
-X86_64_LINUX_BOOTSTRAP_TARBALL="591c6d80c7a447af2deed1d7"
-X86_64_LINUX_BOOTSTRAP_TARBALL_NAME="gnat-gpl-2017-x86_64-linux-bin.tar.gz"
-X86_64_MACOS_BOOTSTRAP_TARBALL="591c9045c7a447af2deed24e"
-X86_64_MACOS_BOOTSTRAP_TARBALL_NAME="gnat-gpl-2017-x86_64-darwin-bin.tar.gz"
-#X86_64_WINDOWS_BOOTSTRAP_TARBALL=""
-
-BOOTSTRAP_DIR="$HOME/opt/gnat-gpl-2017"
 
 ################################################################################
 # Implementation specific tuning ###############################################
