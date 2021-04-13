@@ -19,10 +19,10 @@ function check_error_exit()
 function check_error()
 {
     if [ $? != 0 ]; then
-	echo "  ERROR: Something went wrong!"
-	exit 2;
+        echo "  ERROR: Something went wrong!"
+        exit 2;
     else
-	touch $1
+    	touch $1
     fi
 }
 
@@ -34,7 +34,7 @@ function check_package_installed()
 
     if [ $? != 0 ]; then
        	echo "  ERROR: $1 not installed on this system, install and restart script!"
-	exit 2;
+	    exit 2;
     fi
 }
 
@@ -49,7 +49,7 @@ cat << 'NOCONFIG_ERR'
   3) Run this script again
 
 NOCONFIG_ERR
-    
+
     exit 2
 }
 
