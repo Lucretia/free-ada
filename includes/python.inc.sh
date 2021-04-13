@@ -30,7 +30,7 @@ function python()
     cd $OBD/$PYTHON_DIR
 
     MAKEFILE=$SRC/$PYTHON_DIR/Makefile
-    
+
     if [ ! -f .config ]; then
         echo "  >> [1/$TASK_COUNT_TOTAL] Configuring Python ($3)..."
 
@@ -44,9 +44,9 @@ function python()
 
     if [ ! -f .make ]; then
         echo "  >> [2/$TASK_COUNT_TOTAL] Building Python ($3)..."
-        
+
         check_error .make
-        
+
         make $JOBS &> $LOGPRE/$PYTHON_DIR-make.txt
 
         check_error_exit
@@ -54,9 +54,9 @@ function python()
 
     if [ ! -f .make-pkg-stage ]; then
         echo "  >> [3/$TASK_COUNT_TOTAL] Packaging Python ($3)..."
-        
+
         make DESTDIR=$STAGE_BASE_DIR altinstall &> $LOGPRE/$PYTHON_DIR-pkg.txt
-        
+
         strip $STAGE_BASE_DIR$INSTALL_DIR/bin/python2.7
 
         check_error .make-pkg-stage
@@ -75,9 +75,9 @@ function python()
 
     if [ ! -f .make-install ]; then
         echo "  >> [4/$TASK_COUNT_TOTAL] Installing Python ($3)..."
-        
+
         tar -xjpf $PKG/$PROJECT-$1-$PYTHON_DIR.tbz2 -C $INSTALL_BASE_DIR
-        
+
         check_error .make-install
     fi
 
@@ -108,7 +108,7 @@ function install_python_packages()
     if [ ! -f get-pip.py ]; then
         echo "  >> [1/$TASK_COUNT_TOTAL] Downloading get-pip.py..."
 
-        curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py &> $LOGPRE/$DIRS-pip-download.txt
+        curl https://bootstrap.pypa.io/pip/2.7/get-pip.py -o get-pip.py &> $LOGPRE/$DIRS-pip-download.txt
 
         check_error_exit
     fi
